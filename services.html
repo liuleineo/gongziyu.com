@@ -6,13 +6,9 @@
   <meta name="description" content="杭州公子鱼科技有限公司服务项目 - 网站开发、小程序开发、企业软件定制、AI解决方案">
   <title>服务项目 - 杭州公子鱼科技有限公司</title>
   
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="assets/styles.css">
   
-  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="icon" type="image/png" href="assets/shortcut.png">
 </head>
 <body>
   <div class="page-loader">
@@ -23,16 +19,16 @@
   <nav class="navbar">
     <div class="container navbar-inner">
       <a href="index.html" class="logo">
-        <img src="assets/images/logo.png" alt="公子鱼科技" onerror="this.src='https://placehold.co/40x40/00BFFF/FFFFFF?text=G'">
+        <img src="assets/shortcut.png" alt="公子鱼科技" onerror="this.src='https://placehold.co/40x40/00BFFF/FFFFFF?text=G'">
         <span class="logo-text">公子鱼<span>科技</span></span>
       </a>
       
       <ul class="nav-menu">
         <li><a href="index.html" class="nav-link">首页</a></li>
         <li><a href="services.html" class="nav-link active">服务</a></li>
-        <li><a href="cases.html" class="nav-link">案例</a></li>
+        <li><a href="projects.html" class="nav-link">案例</a></li>
         <li><a href="about.html" class="nav-link">关于</a></li>
-        <li><a href="contact.html" class="nav-link">联系</a></li>
+        <li><a href="products.html" class="nav-link">产品</a></li>
       </ul>
       
       <button class="menu-toggle" aria-label="菜单">
@@ -388,7 +384,7 @@
         <p style="font-size: var(--text-xl); color: rgba(255,255,255,0.9); margin-bottom: var(--space-10);">
           立即联系我们，获取免费咨询和项目报价
         </p>
-        <a href="contact.html" class="btn btn-lg" style="background: white; color: var(--primary-600);">
+        <a href="mailto:neo@gongziyu.com" class="btn btn-lg" style="background: white; color: var(--primary-600);">
           免费咨询
         </a>
       </div>
@@ -401,7 +397,7 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a href="index.html" class="footer-logo">
-            <img src="assets/images/logo.png" alt="公子鱼科技" onerror="this.src='https://placehold.co/40x40/00BFFF/FFFFFF?text=G'">
+            <img src="assets/shortcut.png" alt="公子鱼科技" onerror="this.src='https://placehold.co/40x40/00BFFF/FFFFFF?text=G'">
             <span class="logo-text">公子鱼<span>科技</span></span>
           </a>
           <p class="footer-desc">
@@ -421,9 +417,9 @@
           <ul class="footer-links">
             <li><a href="index.html" class="footer-link">首页</a></li>
             <li><a href="services.html" class="footer-link">服务</a></li>
-            <li><a href="cases.html" class="footer-link">案例</a></li>
+            <li><a href="projects.html" class="footer-link">案例</a></li>
             <li><a href="about.html" class="footer-link">关于</a></li>
-            <li><a href="contact.html" class="footer-link">联系</a></li>
+            <li><a href="products.html" class="footer-link">产品</a></li>
           </ul>
         </div>
         <div>
@@ -449,8 +445,29 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="assets/script.js"></script>
   <script>
+    // 页面加载器
+    window.addEventListener('load', function() {
+      const loader = document.querySelector('.page-loader');
+      if (loader) {
+        loader.classList.add('hidden');
+        setTimeout(() => (loader.style.display = 'none'), 500);
+      }
+    });
+
+    // Reveal 滚动显示动画
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
     // 手风琴功能
     document.querySelectorAll('.accordion-trigger').forEach(trigger => {
       trigger.addEventListener('click', function() {

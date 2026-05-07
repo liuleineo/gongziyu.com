@@ -28,6 +28,7 @@
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
+  --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
@@ -46,6 +47,23 @@
   --font-4xl: 48px;
   --font-5xl: 64px;
   
+  /* 字重 */
+  --font-bold: 700;
+  --font-semibold: 600;
+  
+  /* 行高 */
+  --leading-relaxed: 1.625;
+  
+  /* fontSize 别名 (兼容 --text-* 命名) */
+  --text-sm: var(--font-sm);
+  --text-base: var(--font-base);
+  --text-lg: var(--font-lg);
+  --text-xl: var(--font-xl);
+  --text-2xl: var(--font-2xl);
+  --text-3xl: var(--font-3xl);
+  --text-4xl: var(--font-4xl);
+  --text-5xl: var(--font-5xl);
+  
   /* 圆角 */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -57,6 +75,21 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.3s ease;
   --transition-slow: 0.5s ease;
+  
+  /* 额外颜色 */
+  --primary-500: #00D4FF;
+  --primary-600: #0099CC;
+  --text-muted: #6B6B7B;
+  --bg-card: #1A1A24;
+  
+  /* 导航栏高度 */
+  --header-height: 72px;
+  
+  /* 大间距 */
+  --space-24: 96px;
+  
+  /* 渐变 */
+  --gradient-primary: linear-gradient(135deg, #00D4FF, #7C3AED);
 }
 
 html {
@@ -1184,6 +1217,251 @@ ul {
   }
   
   .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Service Page Specific Styles ===== */
+
+/* Tag 标签 */
+.tag {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.tag-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-color: transparent;
+  color: white;
+}
+
+/* Reveal 滚动动画容器 */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Page Loader */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+.page-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Grid 背景 */
+.grid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+}
+
+/* Service Card Icon */
+.service-card-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Case Card Tags */
+.case-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Navbar Inner */
+.navbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Footer Grid */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+}
+
+.footer-title {
+  font-size: var(--font-base);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--text-primary);
+}
+
+.footer-link {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  transition: color var(--transition-fast);
+  display: inline-block;
+  padding: var(--space-1) 0;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+
+.footer-contact-item svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--primary);
+  flex-shrink: 0;
+}
+
+.footer-social {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
+}
+
+.social-link:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* Accordion */
+.accordion-trigger {
+  width: 100%;
+  padding: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.accordion-trigger:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.accordion-icon {
+  transition: transform var(--transition-base);
+  flex-shrink: 0;
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(180deg);
+}
+
+/* Stagger children animation */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Button lg */
+.btn-lg {
+  padding: var(--space-5) var(--space-10);
+  font-size: var(--font-lg);
+}
+
+/* ===== Services Responsive ===== */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .process-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 480px) {
+  .process-steps {
     grid-template-columns: 1fr;
   }
 }
