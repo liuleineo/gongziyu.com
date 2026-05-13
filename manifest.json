@@ -3,7 +3,7 @@
   "short_name": "公子鱼AI",
   "description": "公子鱼AI实验室 - 汇集优质AI工具与资源，助力开发与创作",
   "start_url": "/",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#0A0A0F",
   "theme_color": "#00D4FF",
   "orientation": "any",
