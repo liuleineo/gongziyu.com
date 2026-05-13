@@ -1,0 +1,26 @@
+{
+  "name": "公子鱼AI实验室",
+  "short_name": "公子鱼AI",
+  "description": "公子鱼AI实验室 - 汇集优质AI工具与资源，助力开发与创作",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#00D4FF",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/shortcut.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/shortcut.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "education"],
+  "lang": "zh-CN"
+}

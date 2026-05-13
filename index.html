@@ -7,6 +7,14 @@
  
   <link rel="icon" href="assets/logo-big.jpg" type="image/png">
 
+  <!-- PWA 支持 -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00D4FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="公子鱼AI">
+  <link rel="apple-touch-icon" href="/assets/shortcut.png">
+
   <title>公子鱼AI实验室 - 探索AI无限可能</title>
   
   <link rel="stylesheet" href="assets/styles.css">
@@ -358,6 +366,22 @@
   </footer>
 
   <script src="assets/script.js"></script>
+  
+  <!-- Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('[PWA] ServiceWorker 注册成功:', registration.scope);
+          })
+          .catch(error => {
+            console.log('[PWA] ServiceWorker 注册失败:', error);
+          });
+      });
+    }
+  </script>
+
   <script>
     const productCards = document.querySelectorAll('.product-card');
     // 如果有筛选标签，可以添加筛选功能
