@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neo-AI-docs 文档浏览</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入marked.js用于Markdown渲染 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入highlight.js用于代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-slim {
+                scrollbar-width: thin;
+            }
+            .scrollbar-slim::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+            }
+            .scrollbar-slim::-webkit-scrollbar-thumb {
+                background-color: rgba(156, 163, 175, 0.5);
+                border-radius: 2px;
+            }
+        }
+        /* Markdown 内容样式 */
+        #content-container h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        #content-container h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 1.25rem 0 0.75rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        #content-container h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin: 1rem 0 0.5rem;
+        }
+        #content-container h4, #content-container h5, #content-container h6 {
+            font-weight: 600;
+            color: #4b5563;
+            margin: 0.75rem 0 0.5rem;
+        }
+        #content-container p {
+            margin: 0.75rem 0;
+            line-height: 1.75;
+            color: #374151;
+        }
+        #content-container a {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        #content-container a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        #content-container ul, #content-container ol {
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+            color: #374151;
+        }
+        #content-container li {
+            margin: 0.35rem 0;
+            line-height: 1.6;
+        }
+        #content-container ul li {
+            list-style-type: disc;
+        }
+        #content-container ol li {
+            list-style-type: decimal;
+        }
+        #content-container blockquote {
+            margin: 1rem 0;
+            padding: 0.75rem 1rem;
+            border-left: 4px solid #3b82f6;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+        #content-container blockquote p {
+            margin: 0;
+        }
+        #content-container code:not(pre code) {
+            background-color: #f1f5f9;
+            color: #c026d3;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        #content-container pre {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        #content-container pre code {
+            background: none;
+            color: #e2e8f0;
+            padding: 0;
+            font-size: 0.875rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        #content-container table {
+            width: 100%;
+            margin: 1rem 0;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        #content-container th, #content-container td {
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        #content-container th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        #content-container tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        #content-container hr {
+            margin: 1.5rem 0;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+        }
+        #content-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 0.75rem 0;
+        }
+        #content-container strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        #content-container em {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 移动端顶部栏 -->
+    <header class="bg-white shadow-sm py-4 px-4 md:px-6 flex items-center justify-between">
+        <button id="menu-toggle" class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800">neo-AI-docs 文档中心</h1>
+        <div class="w-10 md:hidden"></div>
+    </header>
+    
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- 移动端遮罩层 -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="closeSidebar()"></div>
+        
+        <!-- 左侧目录栏 -->
+        <aside id="sidebar" class="w-64 bg-white shadow-md overflow-y-auto scrollbar-slim border-r border-gray-200 fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <div class="p-4">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="搜索文档..." 
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <svg class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <nav class="px-2 py-2">
+                <ul id="doc-tree" class="space-y-1">
+                    <!-- 目录将通过JS动态生成 -->
+                    <li class="text-gray-500 italic px-4 py-2">加载中...</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <main class="flex-1 overflow-y-auto scrollbar-slim bg-gray-50 p-4 md:p-8">
+            <div id="content-container" class="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-4 md:p-8 min-h-[calc(100vh-120px)]">
+                <div class="text-center text-gray-500 py-10">
+                    <h2 class="text-xl mb-4">请选择左侧文档</h2>
+                    <p>点击左侧目录中的文档，内容将显示在这里</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 移动端菜单切换
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+        
+        function openSidebar() {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+        
+        document.getElementById('menu-toggle').addEventListener('click', openSidebar);
+        document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+    </script>
+
+    <script>
+        // 配置marked.js，启用代码高亮
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true,
+            gfm: true
+        });
+
+        // 存储文档列表
+        let docFiles = [];
+
+        // 从PHP接口获取文档列表（接口和页面同目录）
+        async function fetchDocList() {
+            try {
+                const response = await fetch('doc_api.php?action=scan');
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    docFiles = result.data;
+                    initDocTree();
+                } else {
+                    document.getElementById('doc-tree').innerHTML = `
+                        <li class="text-red-500 px-4 py-2">加载失败: ${result.msg}</li>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('doc-tree').innerHTML = `
+                    <li class="text-red-500 px-4 py-2">网络错误: 无法连接到服务器</li>
+                `;
+                console.error('获取文档列表失败:', error);
+            }
+        }
+
+        // 初始化文档目录
+        function initDocTree() {
+            const docTree = document.getElementById('doc-tree');
+            docTree.innerHTML = '';
+
+            if (docFiles.length === 0) {
+                docTree.innerHTML = `<li class="text-gray-500 px-4 py-2">未找到Markdown文档</li>`;
+                return;
+            }
+
+            // 按分类分组
+            const categories = {};
+            docFiles.forEach(file => {
+                // 处理分类名称（去掉末尾的/）
+                const category = file.category.replace(/\/$/, '') || '根目录';
+                if (!categories[category]) {
+                    categories[category] = [];
+                }
+                categories[category].push(file);
+            });
+
+            // 生成目录HTML
+            Object.keys(categories).forEach(category => {
+                // 分类标题（可折叠）
+                const categoryLi = document.createElement('li');
+                categoryLi.className = 'font-medium text-gray-700 px-4 py-2 mt-4 first:mt-0 cursor-pointer hover:bg-gray-100 rounded-md flex items-center select-none transition-colors';
+                categoryLi.dataset.category = category;
+                categoryLi.innerHTML = `
+                    <svg class="w-4 h-4 mr-2 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    ${category}
+                `;
+                
+                // 点击折叠/展开
+                categoryLi.addEventListener('click', () => {
+                    const isExpanded = categoryLi.dataset.expanded === 'true';
+                    const icon = categoryLi.querySelector('svg');
+                    
+                    if (isExpanded) {
+                        // 折叠
+                        categoryLi.dataset.expanded = 'false';
+                        icon.classList.remove('rotate-90');
+                    } else {
+                        // 展开
+                        categoryLi.dataset.expanded = 'true';
+                        icon.classList.add('rotate-90');
+                    }
+                    
+                    // 切换该分类下所有文件的显示
+                    let nextItem = categoryLi.nextElementSibling;
+                    while (nextItem && nextItem.dataset.path && nextItem.dataset.category === category) {
+                        nextItem.classList.toggle('hidden', isExpanded);
+                        nextItem = nextItem.nextElementSibling;
+                    }
+                });
+                
+                docTree.appendChild(categoryLi);
+
+                // 分类下的文件（默认隐藏）
+                categories[category].forEach(file => {
+                    const fileLi = document.createElement('li');
+                    fileLi.className = 'px-6 py-2 hover:bg-blue-50 rounded-md cursor-pointer text-gray-600 transition-colors hidden';
+                    fileLi.dataset.path = file.path;
+                    fileLi.dataset.category = category;
+                    fileLi.innerHTML = `
+                        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        ${file.name}
+                    `;
+                    
+                    // 点击事件
+                    fileLi.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // 更新URL hash
+                        location.hash = encodeURIComponent(file.path);
+                        // 移动端关闭侧边栏
+                        if (window.innerWidth < 768) {
+                            closeSidebar();
+                        }
+                    });
+
+                    docTree.appendChild(fileLi);
+                });
+            });
+        }
+
+        // 从PHP接口加载Markdown文档内容
+        async function loadDocContent(filePath) {
+            const contentContainer = document.getElementById('content-container');
+            
+            try {
+                // 显示加载状态
+                contentContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-10">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-4"></div>
+                        <p>加载文档中...</p>
+                    </div>
+                `;
+
+                // 发起请求获取Markdown文件内容（接口和页面同目录）
+                const response = await fetch(`doc_api.php?action=read&path=${encodeURIComponent(filePath)}`);
+                const result = await response.json();
+                
+                if (result.code !== 200) {
+                    throw new Error(result.msg || '加载失败');
+                }
+
+                // 将Markdown转换为HTML
+                const htmlContent = marked.parse(result.data.content);
+                
+                // 渲染到页面
+                contentContainer.innerHTML = htmlContent;
+                
+                // 为所有代码块添加高亮
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+            } catch (error) {
+                contentContainer.innerHTML = `
+                    <div class="text-center text-red-500 py-10">
+                        <h2 class="text-xl mb-2">加载失败</h2>
+                        <p class="mb-4">${error.message}</p>
+                        <p class="text-gray-500 text-sm">请检查文件是否存在或权限是否正确</p>
+                    </div>
+                `;
+                console.error('加载文档失败:', error);
+            }
+        }
+
+        // 搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                const docItems = document.querySelectorAll('[data-path]');
+                
+                if (searchTerm === '') {
+                    // 清空搜索时，恢复默认折叠状态
+                    document.querySelectorAll('[data-category]').forEach(categoryLi => {
+                        categoryLi.dataset.expanded = 'false';
+                        categoryLi.querySelector('svg').classList.remove('rotate-90');
+                        categoryLi.classList.remove('hidden');
+                    });
+                    docItems.forEach(item => {
+                        item.classList.add('hidden');
+                    });
+                    return;
+                }
+                
+                // 记录哪些分类需要展开
+                const categoriesToExpand = new Set();
+                
+                docItems.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.classList.remove('hidden');
+                        // 记录需要展开的分类
+                        categoriesToExpand.add(item.dataset.category);
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                // 展开包含匹配项的分类
+                document.querySelectorAll('[data-category]').forEach(categoryLi => {
+                    const category = categoryLi.dataset.category;
+                    if (categoriesToExpand.has(category)) {
+                        categoryLi.dataset.expanded = 'true';
+                        categoryLi.querySelector('svg').classList.add('rotate-90');
+                        categoryLi.classList.remove('hidden');
+                    } else {
+                        categoryLi.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // 根据URL hash加载文档
+        function loadDocFromHash() {
+            const hash = location.hash.slice(1); // 去掉 #
+            if (!hash) return;
+            
+            const filePath = decodeURIComponent(hash);
+            
+            // 检查文件是否在列表中
+            const fileExists = docFiles.some(f => f.path === filePath);
+            if (!fileExists) {
+                console.warn('文档不存在:', filePath);
+                return;
+            }
+            
+            // 展开对应的分类
+            const category = docFiles.find(f => f.path === filePath)?.category.replace(/\/$/, '') || '根目录';
+            const categoryLi = document.querySelector(`[data-category="${category}"]`);
+            if (categoryLi && categoryLi.dataset.expanded !== 'true') {
+                categoryLi.click(); // 触发展开
+            }
+            
+            // 设置选中状态
+            document.querySelectorAll('[data-path]').forEach(item => {
+                item.classList.remove('bg-blue-100', 'text-blue-700', 'font-medium');
+            });
+            const fileLi = document.querySelector(`[data-path="${filePath}"]`);
+            if (fileLi) {
+                fileLi.classList.add('bg-blue-100', 'text-blue-700', 'font-medium');
+            }
+            
+            // 加载文档内容
+            loadDocContent(filePath);
+        }
+
+        // 监听hash变化
+        function initHashListener() {
+            window.addEventListener('hashchange', loadDocFromHash);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDocList(); // 从同目录的PHP接口获取文档列表
+            initSearch();
+            initHashListener();
+            
+            // 延迟处理hash，等待文档列表加载完成
+            setTimeout(() => {
+                loadDocFromHash();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
