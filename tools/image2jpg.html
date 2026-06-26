@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量图片转JPG 自定义宽度&压缩质量</title>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <style>
+        * {box-sizing: border-box;margin:0;padding:0;font-family:system-ui}
+        body{background:#f5f7fa;padding:30px;max-width:1200px;margin:0 auto}
+        .box{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 12px #00000010}
+        h1{font-size:22px;margin-bottom:20px;color:#222}
+        .upload-area{border:2px dashed #409eff;border-radius:8px;padding:40px;text-align:center;cursor:pointer;margin-bottom:20px}
+        .upload-area:hover{background:#ecf5ff}
+        #file-input{display:none}
+        .btn{background:#409eff;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:15px;margin:5px}
+        .btn:disabled{background:#a0cfff;cursor:not-allowed}
+        .info{margin:12px 0;color:#666}
+        .progress{margin:15px 0;font-size:16px;color:#333}
+        #preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:20px 0}
+        .item{border:1px solid #eee;padding:8px;border-radius:6px}
+        .item img{max-width:100%;height:auto}
+        .filename{font-size:12px;margin-top:6px;color:#444;word-break:break-all}
+        .config-row{display:flex;gap:30px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+        .config-item{display:flex;align-items:center;gap:10px}
+        label{font-weight:500;color:#222}
+        input[type="number"]{width:100px;padding:6px;border:1px solid #ccc;border-radius:4px}
+        input[type="range"]{width:160px}
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>批量图片转JPG | 自定义宽度+压缩质量</h1>
+
+    <!-- 参数配置区域 -->
+    <div class="config-row">
+        <div class="config-item">
+            <label>最大宽度：</label>
+            <input type="number" id="maxWidthInput" value="1600" min="100" max="4000">
+            <span>px</span>
+        </div>
+        <div class="config-item">
+            <label>压缩质量：</label>
+            <input type="range" id="qualitySlider" min="0.1" max="1" step="0.05" value="0.95">
+            <span id="qualityText">0.95</span>
+        </div>
+    </div>
+
+    <div class="upload-area" id="uploadBox">
+        <p>点击或拖拽上传 JPG/PNG 图片</p>
+        <input type="file" id="file-input" multiple accept="image/jpeg,image/png">
+    </div>
+    <div class="info">
+        规则：统一输出JPG，超出最大宽度自动等比例缩小，浏览器本地处理，图片不上传外网
+    </div>
+    <div>
+        <button class="btn" id="convertBtn" disabled>开始批量转换</button>
+        <button class="btn" id="downloadZipBtn" disabled>打包全部下载ZIP</button>
+        <button class="btn" id="clearBtn">清空全部</button>
+    </div>
+    <div class="progress" id="progressText"></div>
+    <div id="preview"></div>
+</div>
+
+<script>
+    const uploadBox = document.getElementById('uploadBox');
+    const fileInput = document.getElementById('file-input');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const preview = document.getElementById('preview');
+    const progressText = document.getElementById('progressText');
+    const maxWidthInput = document.getElementById('maxWidthInput');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityText = document.getElementById('qualityText');
+
+    let originFiles = [];
+    let outputBlobList = [];
+
+    // 实时显示质量数值
+    qualitySlider.oninput = () => {
+        qualityText.textContent = qualitySlider.value;
+    }
+
+    // 点击上传
+    uploadBox.onclick = () => fileInput.click();
+    // 拖拽上传
+    uploadBox.ondragover = e => {e.preventDefault();uploadBox.style.background='#e6f1ff'};
+    uploadBox.ondragleave = () => uploadBox.style.background='';
+    uploadBox.ondrop = e => {
+        e.preventDefault();
+        uploadBox.style.background='';
+        const files = Array.from(e.dataTransfer.files).filter(f=>['image/jpeg','image/png'].includes(f.type));
+        addFiles(files);
+    };
+    // 选择文件
+    fileInput.onchange = () => addFiles(Array.from(fileInput.files));
+
+    function addFiles(files){
+        originFiles = [...originFiles, ...files];
+        convertBtn.disabled = false;
+        renderPreview();
+    }
+
+    function renderPreview(){
+        preview.innerHTML = '';
+        originFiles.forEach((f,i)=>{
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `<div class="filename">${f.name}</div>`;
+            preview.appendChild(div);
+        })
+    }
+
+    // 核心转换函数：读取页面自定义参数
+    function compressImage(file){
+        return new Promise(resolve=>{
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = e=>{
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = ()=>{
+                    // 获取用户设置参数
+                    const maxW = Number(maxWidthInput.value) || 1200;
+                    const quality = Number(qualitySlider.value);
+
+                    let w = img.width;
+                    let h = img.height;
+                    if(w > maxW){
+                        const scale = maxW / w;
+                        w = maxW;
+                        h = h * scale;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    // PNG透明填充白色底色
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0,0,w,h);
+                    ctx.drawImage(img,0,0,w,h);
+                    canvas.toBlob(
+                        blob=>resolve({blob,name:file.name.replace(/\.\w+$/,'.jpg')}),
+                        'image/jpeg',
+                        quality
+                    );
+                }
+            }
+        })
+    }
+
+    // 批量转换
+    convertBtn.onclick = async ()=>{
+        // 参数校验
+        const maxW = Number(maxWidthInput.value);
+        if(isNaN(maxW) || maxW < 100 || maxW > 4000){
+            alert('最大宽度请输入100~4000之间的数字');
+            return;
+        }
+        convertBtn.disabled = true;
+        outputBlobList = [];
+        progressText.textContent = '转换中...';
+        for(let i=0;i<originFiles.length;i++){
+            progressText.textContent = `正在处理 ${i+1}/${originFiles.length}`;
+            const res = await compressImage(originFiles[i]);
+            outputBlobList.push(res);
+        }
+        progressText.textContent = `转换完成，共${outputBlobList.length}张图片`;
+        downloadZipBtn.disabled = false;
+    }
+
+    // 打包ZIP下载
+    downloadZipBtn.onclick = async ()=>{
+        const zip = new JSZip();
+        outputBlobList.forEach(item=>zip.file(item.name,item.blob));
+        const zipBlob = await zip.generateAsync({type:'blob'});
+        saveAs(zipBlob,'压缩图片包.zip');
+    }
+
+    // 清空全部
+    clearBtn.onclick = ()=>{
+        originFiles = [];
+        outputBlobList = [];
+        preview.innerHTML = '';
+        progressText.textContent = '';
+        convertBtn.disabled = true;
+        downloadZipBtn.disabled = true;
+        fileInput.value = '';
+    }
+</script>
+</body>
+</html>
