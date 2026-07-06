@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二维码在线生成器 - 公子鱼工具箱</title>
+<style>
+  :root {
+    --bg: #f0f2f5;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --radius: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    width: 100%;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 768px) {
+    .container { grid-template-columns: 1fr; max-width: 440px; }
+  }
+
+  /* 卡片 */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h2 .icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px;
+  }
+
+  /* 输入区 */
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    letter-spacing: .3px;
+  }
+  textarea, input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all .2s;
+    background: #fafbfc;
+    outline: none;
+  }
+  textarea:focus, input[type="text"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    background: #fff;
+  }
+  textarea {
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  /* 颜色选择器行 */
+  .color-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .2s;
+    background: #fafbfc;
+  }
+  .color-picker-wrapper:hover {
+    border-color: #c4b5fd;
+  }
+  .color-picker-wrapper input[type="color"] {
+    -webkit-appearance: none;
+    width: 32px; height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    background: transparent;
+  }
+  .color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+  }
+  .color-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .color-hex {
+    font-size: 12px;
+    color: #9ca3af;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* 样式选择 */
+  .style-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .style-btn {
+    padding: 10px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: #fafbfc;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all .2s;
+    text-align: center;
+    font-family: inherit;
+  }
+  .style-btn:hover {
+    border-color: #c4b5fd;
+    background: var(--primary-light);
+  }
+  .style-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* 尺寸滑块 */
+  .size-slider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .size-slider input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e7eb;
+    outline: none;
+  }
+  .size-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(79,70,229,.3);
+  }
+  .size-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 45px;
+    text-align: right;
+  }
+
+  /* 纠错级别 */
+  .error-level-row {
+    display: flex;
+    gap: 8px;
+  }
+  .level-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fafbfc;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--text-secondary);
+    transition: all .2s;
+    text-align: center;
+    font-family: inherit;
+  }
+  .level-btn:hover {
+    border-color: #c4b5fd;
+  }
+  .level-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* 预览区 */
+  .preview-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    position: relative;
+  }
+  .preview-area .placeholder {
+    text-align: center;
+    color: #d1d5db;
+  }
+  .preview-area .placeholder svg {
+    width: 80px; height: 80px;
+    margin-bottom: 16px;
+    opacity: .4;
+  }
+  .preview-area canvas {
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    transition: transform .2s;
+  }
+  .preview-area canvas:hover {
+    transform: scale(1.02);
+  }
+  .qr-info {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    word-break: break-all;
+    max-width: 100%;
+  }
+
+  /* 按钮 */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(79,70,229,.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79,70,229,.4);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+  }
+  .btn-secondary:hover {
+    background: #e5e7eb;
+  }
+  .btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    background: #1f2937;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transition: transform .3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 左侧：设置面板 -->
+  <div class="card">
+    <h2>
+      <span class="icon">⚡</span>
+      二维码设置
+    </h2>
+
+    <div class="form-group">
+      <label>输入文字或链接</label>
+      <textarea id="inputText" placeholder="请输入要生成二维码的文字或链接…" rows="3">https://gongziyu.com</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>二维码颜色</label>
+      <div class="color-row">
+        <div class="color-picker-wrapper">
+          <input type="color" id="fgColor" value="#000000">
+          <div>
+            <div class="color-label">前景色</div>
+            <div class="color-hex" id="fgHex">#000000</div>
+          </div>
+        </div>
+        <div class="color-picker-wrapper">
+          <input type="color" id="bgColor" value="#ffffff">
+          <div>
+            <div class="color-label">背景色</div>
+            <div class="color-hex" id="bgHex">#FFFFFF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>码点样式</label>
+      <div class="style-options" id="styleOptions">
+        <button class="style-btn active" data-style="squares">▣ 方块</button>
+        <button class="style-btn" data-style="dots">● 圆点</button>
+        <button class="style-btn" data-style="rounded">◉
+
+ 圆角</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>二维码尺寸</label>
+      <div class="size-slider">
+        <input type="range" id="qrSize" min="180" max="400" value="260" step="10">
+        <span class="size-val" id="sizeVal">260px</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>纠错级别</label>
+      <div class="error-level-row" id="errorLevels">
+        <button class="level-btn" data-level="L">L 7%</button>
+        <button class="level-btn active" data-level="M">M 15%</button>
+        <button class="level-btn" data-level="Q">Q 25%</button>
+        <button class="level-btn" data-level="H">H 30%</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnDownload" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载 PNG
+      </button>
+    </div>
+  </div>
+
+  <!-- 右侧：预览面板 -->
+  <div class="card">
+    <h2>
+      <span class="icon">📱</span>
+      实时预览
+    </h2>
+    <div class="preview-area" id="previewArea">
+      <div class="placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <p style="font-size:14px">输入内容后自动生成</p>
+      </div>
+    </div>
+    <div class="qr-info" id="qrInfo"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- qrcode-generator 库 -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+
+<script>
+(function() {
+  // 检查库是否加载成功
+  if (typeof qrcode === 'undefined') {
+    document.getElementById('previewArea').innerHTML =
+      '<p style="color:#ef4444;text-align:center;padding:40px">⚠️ 二维码库加载失败，请检查网络后刷新页面</p>';
+    throw new Error('qrcode-generator not loaded');
+  }
+
+  var inputText   = document.getElementById('inputText');
+  var fgColor     = document.getElementById('fgColor');
+  var bgColor     = document.getElementById('bgColor');
+  var fgHex       = document.getElementById('fgHex');
+  var bgHex       = document.getElementById('bgHex');
+  var qrSize      = document.getElementById('qrSize');
+  var sizeVal     = document.getElementById('sizeVal');
+  var previewArea = document.getElementById('previewArea');
+  var qrInfo      = document.getElementById('qrInfo');
+  var btnDownload = document.getElementById('btnDownload');
+  var toast       = document.getElementById('toast');
+
+  var currentStyle = 'squares';
+  var currentLevel = 'M';
+  var currentCanvas = null;
+  var levelMap = { L: 'L', M: 'M', Q: 'Q', H: 'H' };
+
+  fgColor.addEventListener('input', function() {
+    fgHex.textContent = fgColor.value.toUpperCase();
+    generate();
+  });
+  bgColor.addEventListener('input', function() {
+    bgHex.textContent = bgColor.value.toUpperCase();
+    generate();
+  });
+
+  qrSize.addEventListener('input', function() {
+    sizeVal.textContent = qrSize.value + 'px';
+    generate();
+  });
+
+  document.getElementById('styleOptions').addEventListener('click', function(e) {
+    var btn = e.target.closest('.style-btn');
+    if (!btn) return;
+    var btns = document.querySelectorAll('#styleOptions .style-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    btn.classList.add('active');
+    currentStyle = btn.dataset.style;
+    generate();
+  });
+
+  document.getElementById('errorLevels').addEventListener('click', function(e) {
+    var btn = e.target.closest('.level-btn');
+    if (!btn) return;
+    var btns = document.querySelectorAll('#errorLevels .level-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    btn.classList.add('active');
+    currentLevel = btn.dataset.level;
+    generate();
+  });
+
+  var debounceTimer;
+  inputText.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(generate, 300);
+  });
+
+  btnDownload.addEventListener('click', function() {
+    if (!currentCanvas) return;
+    var link = document.createElement('a');
+    link.download = 'qrcode-' + Date.now() + '.png';
+    link.href = currentCanvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ 二维码已下载');
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2000);
+  }
+
+  function generate() {
+    var text = inputText.value.trim();
+    if (!text) {
+      previewArea.innerHTML =
+        '<div class="placeholder">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+            '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>' +
+            '<rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' +
+          '</svg>' +
+          '<p style="font-size:14px">输入内容后自动生成</p>' +
+        '</div>';
+      qrInfo.textContent = '';
+      btnDownload.disabled = true;
+      currentCanvas = null;
+      return;
+    }
+
+    var size = parseInt(qrSize.value);
+    var fg = fgColor.value;
+    var bg = bgColor.value;
+
+    // 用 qrcode-generator 生成矩阵数据
+    var qr;
+    try {
+      qr = qrcode(0, levelMap[currentLevel]);
+      qr.addData(text);
+      qr.make();
+    } catch (e) {
+      previewArea.innerHTML = '<p style="color:#ef4444;text-align:center;padding:40px">⚠️ 内容过长，请缩短后重试</p>';
+      btnDownload.disabled = true;
+      currentCanvas = null;
+      return;
+    }
+
+    var moduleCount = qr.getModuleCount();
+    var quietZone   = 4;                         // 标准静区 4 模块
+    var totalModules = moduleCount + quietZone * 2;
+    var moduleSize   = size / totalModules;
+    var margin       = quietZone * moduleSize;   // 静区像素偏移
+
+    // 清除旧画布
+    var oldCanvases = previewArea.querySelectorAll('canvas');
+    for (var i = 0; i < oldCanvases.length; i++) oldCanvases[i].remove();
+    var placeholder = previewArea.querySelector('.placeholder');
+    if (placeholder) placeholder.style.display = 'none';
+
+    // 新建画布
+    var canvas = document.createElement('canvas');
+    canvas.width  = size;
+    canvas.height = size;
+    previewArea.appendChild(canvas);
+    currentCanvas = canvas;
+
+    var ctx = canvas.getContext('2d');
+
+    // 背景
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, size, size);
+
+    // 逐模块绘制
+    ctx.fillStyle = fg;
+    for (var row = 0; row < moduleCount; row++) {
+      for (var col = 0; col < moduleCount; col++) {
+        if (qr.isDark(row, col)) {
+          var x  = margin + col * moduleSize;
+          var y  = margin + row * moduleSize;
+          var ms = moduleSize;
+
+          if (currentStyle === 'dots') {
+            ctx.beginPath();
+            ctx.arc(x + ms/2, y + ms/2, ms * 0.42, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (currentStyle === 'rounded') {
+            var pad = ms * 0.08;
+            var rx = x + pad, ry = y + pad, rw = ms - pad*2, rh = ms - pad*2;
+            var r = ms * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(rx + r, ry);
+            ctx.lineTo(rx + rw - r, ry);
+            ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + r);
+            ctx.lineTo(rx + rw, ry + rh - r);
+            ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - r, ry + rh);
+            ctx.lineTo(rx + r, ry + rh);
+            ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - r);
+            ctx.lineTo(rx, ry + r);
+            ctx.quadraticCurveTo(rx, ry, rx + r, ry);
+            ctx.closePath();
+            ctx.fill();
+          } else {
+            // 方块
+            var pad2 = ms * 0.08;
+            ctx.fillRect(x + pad2, y + pad2, ms - pad2*2, ms - pad2*2);
+          }
+        }
+      }
+    }
+
+    btnDownload.disabled = false;
+    qrInfo.textContent = '内容: ' + (text.length > 40 ? text.slice(0, 40) + '\u2026' : text);
+  }
+
+  generate();
+})();
+</script>
+</body>
+</html>
