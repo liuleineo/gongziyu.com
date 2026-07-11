@@ -1,0 +1,20 @@
+# 公子鱼AI实验室 robots.txt
+# https://gongziyu.com
+
+User-agent: *
+Allow: /
+
+# 禁止爬取后台和敏感目录
+Disallow: /admin/
+Disallow: /api/
+Disallow: /tmp/
+Disallow: /private/
+
+# 禁止爬取文档目录下的 PHP 脚本（如有）
+Disallow: /docs/*.php
+
+# Sitemap 位置
+Sitemap: https://gongziyu.com/sitemap.xml
+
+# Crawl-delay（百度/360等搜索引擎建议设置）
+Crawl-delay: 5

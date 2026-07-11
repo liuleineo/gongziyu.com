@@ -2,12 +2,13 @@
 const CACHE_NAME = 'gongziyu-ai-cache-v1';
 const urlsToCache = [
   '/',
-  '/aihub.html',
+  '/index.html',
   '/about.html',
   '/projects.html',
   '/products.html',
-  '/index.html',
+  '/aihub.html',
   '/services.html',
+  '/tools.html',
   '/hack.html',
   '/dianshang.html',
   '/assets/styles.css',
