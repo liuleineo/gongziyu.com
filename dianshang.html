@@ -28,6 +28,76 @@
             padding: 10px;
         }
 
+        /* 海报板块 */
+        .poster-banner {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            padding: 40px 30px;
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #e91e63);
+            box-shadow: 0 8px 32px rgba(233, 30, 99, 0.3);
+        }
+        .poster-bg {
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        .poster-content {
+            position: relative;
+            z-index: 1;
+        }
+        .poster-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            backdrop-filter: blur(4px);
+        }
+        .poster-title {
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            font-weight: 800;
+            margin: 0 0 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: none;
+            padding: 0;
+            color: #fff;
+        }
+        .poster-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 500;
+            margin: 0 0 16px;
+            opacity: 0.95;
+            letter-spacing: 1px;
+        }
+        .poster-contact {
+            font-size: clamp(1.1rem, 4vw, 1.6rem);
+            font-weight: 700;
+            margin: 0;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 10px 28px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .poster-banner {
+                padding: 28px 18px;
+                border-radius: 12px;
+            }
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -102,10 +172,33 @@
 </head>
 
 <body>
+    <!-- 海报板块 -->
+    <div class="poster-banner">
+        <div class="poster-content">
+            <span class="poster-badge">🔥 限时合作</span>
+            <h1 class="poster-title">电商运营合作，只收提点</h1>
+            <p class="poster-subtitle">天猫 / 拼多多 / 抖店 代运营合作</p>
+            <p class="poster-contact">合作电话：18868725001</p>
+        </div>
+        <div class="poster-bg"></div>
+    </div>
+
     <div class="container">
         <h1>做品牌IP最重要的是：价值观+流量+复购</h1>
 
         <div class="grid">
+             <!-- 流量+电商平台 -->
+            <div class="category-card">
+                <h2>电商平台</h2>
+                <ul class="link-list">
+                    <li class="link-item"><a href="https://www.taobao.com/" target="_blank">淘宝</a></li>
+                    <li class="link-item"><a href="https://www.jd.com/" target="_blank">京东</a></li>
+                    <li class="link-item"><a href="https://www.pinduoduo.com/" target="_blank">拼多多</a></li>
+
+
+                </ul>
+            </div>
+            <!-- 流量+电商平台 -->
             <!-- 打爆款 -->
             <div class="category-card">
                 <h2>电商就是持续打爆款</h2>
@@ -128,18 +221,7 @@
 
                 </ul>
             </div>
-            <!-- 流量+电商平台 -->
-            <div class="category-card">
-                <h2>电商平台</h2>
-                <ul class="link-list">
-                    <li class="link-item"><a href="https://www.taobao.com/" target="_blank">淘宝</a></li>
-                    <li class="link-item"><a href="https://www.jd.com/" target="_blank">京东</a></li>
-                    <li class="link-item"><a href="https://www.pinduoduo.com/" target="_blank">拼多多</a></li>
-
-
-                </ul>
-            </div>
-            <!-- 流量+电商平台 -->
+           
             <!-- 创作中心 -->
             <div class="category-card">
                 <h2>短视频创作中心</h2>
@@ -158,37 +240,19 @@
 
                 </ul>
             </div>
-             <!-- 投广告 -->
-            <div class="category-card">
-                <h2>头部品牌</h2>
-                <ul class="link-list">
-                    <li class="link-item"><a href="" target="_blank">类目第一</a></li>
-                    
-                    
-
-
-                </ul>
-            </div>
+           
             <!-- 投广告 -->
             <div class="category-card">
-                <h2>关键词广告</h2>
+                <h2>关键词广告/投流</h2>
                 <ul class="link-list">
                     <li class="link-item"><a href="" target="_blank">直通车</a></li>
+                    <li class="link-item"><a href="" target="_blank">千川</a></li>
                     
-
 
                 </ul>
             </div>
              <!-- 投广告 -->
-            <div class="category-card">
-                <h2>人群标签广告</h2>
-                <ul class="link-list">
-                    <li class="link-item"><a href="" target="_blank">投流</a></li>
-                    
-
-
-                </ul>
-            </div>
+           
             <!-- 佣金带货 -->
             <div class="category-card">
                 <h2>cps佣金带货联盟</h2>
@@ -243,18 +307,6 @@
 
 
 
-            <!-- 设计资源 -->
-            <div class="category-card">
-                <h2>设计资源</h2>
-                <ul class="link-list">
-                    <li class="link-item"><a href="https://www.iconfont.cn/" target="_blank">icon图标资源</a></li>
-                    <li class="link-item"><a href="https://d.design/" target="_blank">阿里巴巴堆友</a></li>
-                    <li class="link-item"><a href="https://ps.gaoding.com/#/" target="_blank">在线ps</a></li>
-
-                    <li class="link-item"><a href="https://undraw.co" target="_blank">unDraw 插图</a></li>
-                </ul>
-            </div>
-            <!-- 设计资源 -->
             <!-- 第三方工具 -->
 
 
