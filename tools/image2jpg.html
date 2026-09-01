@@ -57,6 +57,7 @@
     <div>
         <button class="btn" id="convertBtn" disabled>开始批量转换</button>
         <button class="btn" id="downloadZipBtn" disabled>打包全部下载ZIP</button>
+        <button class="btn" id="downloadAllBtn" disabled>全部下载图片</button>
         <button class="btn" id="clearBtn">清空全部</button>
     </div>
     <div class="progress" id="progressText"></div>
@@ -68,6 +69,7 @@
     const fileInput = document.getElementById('file-input');
     const convertBtn = document.getElementById('convertBtn');
     const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
     const clearBtn = document.getElementById('clearBtn');
     const preview = document.getElementById('preview');
     const progressText = document.getElementById('progressText');
@@ -168,6 +170,7 @@
             outputBlobList.push(res);
         }
         progressText.textContent = `转换完成，共${outputBlobList.length}张图片`;
+        downloadAllBtn.disabled = false;
         downloadZipBtn.disabled = false;
     }
 
@@ -176,10 +179,18 @@
         const zip = new JSZip();
         outputBlobList.forEach(item=>zip.file(item.name,item.blob));
         const zipBlob = await zip.generateAsync({type:'blob'});
-        saveAs(zipBlob,'压缩图片包.zip');
+     
+
+    // 全部直接下载（不打包）
+    downloadAllBtn.onclick = ()=>{
+        outputBlobList.forEach((item,i)=>{
+            setTimeout(()=>saveAs(item.blob,item.name), i*300);
+        });
+    }   saveAs(zipBlob,'压缩图片包.zip');
     }
 
-    // 清空全部
+    // 清downloadAllBtn.disabled = true;
+        空全部
     clearBtn.onclick = ()=>{
         originFiles = [];
         outputBlobList = [];
