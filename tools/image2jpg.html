@@ -179,18 +179,17 @@
         const zip = new JSZip();
         outputBlobList.forEach(item=>zip.file(item.name,item.blob));
         const zipBlob = await zip.generateAsync({type:'blob'});
-     
+        saveAs(zipBlob,'压缩图片包.zip');
+    }
 
     // 全部直接下载（不打包）
     downloadAllBtn.onclick = ()=>{
         outputBlobList.forEach((item,i)=>{
             setTimeout(()=>saveAs(item.blob,item.name), i*300);
         });
-    }   saveAs(zipBlob,'压缩图片包.zip');
     }
 
-    // 清downloadAllBtn.disabled = true;
-        空全部
+    // 清空全部
     clearBtn.onclick = ()=>{
         originFiles = [];
         outputBlobList = [];
@@ -198,6 +197,7 @@
         progressText.textContent = '';
         convertBtn.disabled = true;
         downloadZipBtn.disabled = true;
+        downloadAllBtn.disabled = true;
         fileInput.value = '';
     }
 </script>
