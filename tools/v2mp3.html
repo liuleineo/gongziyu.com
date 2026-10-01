@@ -508,7 +508,8 @@
       return ffmpeg;
     }
     loadingFFmpeg = true;
-    const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd';
+    const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
+    const ffmpegBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd';
     setStatus('正在下载 FFmpeg 内核（约 30MB，仅首次需要）…');
     try {
       const instance = new FFmpeg();
@@ -517,7 +518,11 @@
           setStatus('正在转换音频…', Math.round(progress * 100));
         }
       });
+      // 修复跨域问题：Worker 脚本不能直接引用 CDN 地址，
+      // 需先抓取转为同源 blob URL，再通过 classWorkerURL 传入。
+      const classWorkerURL = await toBlobURL(`${ffmpegBase}/814.ffmpeg.js`, 'text/javascript');
       await instance.load({
+        classWorkerURL,
         coreURL: await toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'),
         wasmURL: await toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm')
       });
