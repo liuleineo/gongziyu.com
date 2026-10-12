@@ -501,6 +501,38 @@
   formatSelect.onchange = updateBitrateVisibility;
   updateBitrateVisibility();
 
+  // 多个 CDN 镜像，自动重试与切换，避免单一源抖动导致加载失败
+  const CDN_MIRRORS = [
+    'https://cdn.jsdelivr.net/npm',
+    'https://unpkg.com',
+    'https://fastly.jsdelivr.net/npm'
+  ];
+
+  async function fetchBlobWithRetry(url, type, retries) {
+    let lastErr;
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await toBlobURL(url, type);
+      } catch (e) {
+        lastErr = e;
+        await new Promise(r => setTimeout(r, 600 * (i + 1)));
+      }
+    }
+    throw lastErr;
+  }
+
+  async function loadAssetBlob(pkgPath, type) {
+    let lastErr;
+    for (const base of CDN_MIRRORS) {
+      try {
+        return await fetchBlobWithRetry(base + pkgPath, type, 2);
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    throw lastErr;
+  }
+
   async function loadFFmpeg() {
     if (ffmpeg) return ffmpeg;
     if (loadingFFmpeg) {
@@ -508,8 +540,9 @@
       return ffmpeg;
     }
     loadingFFmpeg = true;
-    const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
-    const ffmpegBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd';
+    const WORKER_PATH = '/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js';
+    const CORE_PATH   = '/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.js';
+    const WASM_PATH   = '/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.wasm';
     setStatus('正在下载 FFmpeg 内核（约 30MB，仅首次需要）…');
     try {
       const instance = new FFmpeg();
@@ -518,14 +551,12 @@
           setStatus('正在转换音频…', Math.round(progress * 100));
         }
       });
-      // 修复跨域问题：Worker 脚本不能直接引用 CDN 地址，
+      // 修复跨域问题：Worker 脚本不能直接引用 CDN 地址（浏览器禁止跨域构造 Worker），
       // 需先抓取转为同源 blob URL，再通过 classWorkerURL 传入。
-      const classWorkerURL = await toBlobURL(`${ffmpegBase}/814.ffmpeg.js`, 'text/javascript');
-      await instance.load({
-        classWorkerURL,
-        coreURL: await toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm')
-      });
+      const classWorkerURL = await loadAssetBlob(WORKER_PATH, 'text/javascript');
+      const coreURL = await loadAssetBlob(CORE_PATH, 'text/javascript');
+      const wasmURL = await loadAssetBlob(WASM_PATH, 'application/wasm');
+      await instance.load({ classWorkerURL, coreURL, wasmURL });
       ffmpeg = instance;
       return instance;
     } catch (err) {

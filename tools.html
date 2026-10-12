@@ -234,6 +234,42 @@
       margin-top: var(--space-1);
     }
     
+    /* 极致压缩：紧凑头部 */
+    .page-header {
+      padding: 84px 0 var(--space-4);
+      background: none;
+    }
+    .page-header-content { text-align: left; }
+    .tools-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .tools-header-bar .page-title {
+      font-size: var(--font-xl);
+      margin-bottom: 0;
+      line-height: 1.2;
+    }
+    .tools-header-bar .page-subtitle { font-size: var(--font-xs); }
+    .search-box {
+      max-width: 260px;
+      margin: 0;
+    }
+    .search-input {
+      padding: var(--space-2) var(--space-4);
+      padding-left: 36px;
+      font-size: var(--font-sm);
+      border-radius: var(--radius-md);
+    }
+    .search-icon {
+      left: var(--space-3);
+      width: 16px;
+      height: 16px;
+    }
+    .tools-section { padding: var(--space-8) 0; }
+
     @media (max-width: 768px) {
       .nav-grid {
         grid-template-columns: 1fr;
@@ -273,45 +309,30 @@
     </div>
   </nav>
 
-  <!-- 页面头部 -->
+  <!-- 页面头部（紧凑） -->
   <section class="page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1 class="page-title">实用工具箱</h1>
-        <p class="page-subtitle">汇集日常开发与生活实用工具，提升工作效率</p>
+        <div class="tools-header-bar">
+          <div>
+            <h1 class="page-title">实用工具箱</h1>
+            <p class="page-subtitle">日常开发与生活实用工具</p>
+          </div>
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" class="search-input" placeholder="搜索工具..." id="searchInput">
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 搜索与统计 -->
-  <section class="section">
+  <!-- 工具导航 -->
+  <section class="section tools-section">
     <div class="container">
-      <div class="search-section">
-        <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <input type="text" class="search-input" placeholder="搜索工具..." id="searchInput">
-        </div>
-      </div>
-      
-      <div class="stats-row">
-        <div class="stat-item-inline">
-          <div class="stat-number">5</div>
-          <span class="stat-label">工具分类</span>
-        </div>
-        <div class="stat-item-inline">
-          <div class="stat-number">7+</div>
-          <span class="stat-label">实用工具</span>
-        </div>
-        <div class="stat-item-inline">
-          <div class="stat-number">持续</div>
-          <span class="stat-label">更新中</span>
-        </div>
-      </div>
-      
-      <!-- 工具导航网格 -->
       <div class="nav-grid">
         
         <!-- 图片处理 -->
@@ -337,6 +358,33 @@
                 </svg>
                 批量图片转JPG
                 <span class="nav-link-desc">自定义宽度 & 压缩</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- AI 图像创作 -->
+        <div class="nav-card">
+          <div class="nav-card-title">
+            <div class="nav-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3a4 4 0 0 1 4 4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1-4-4 4 4 0 0 1 4-4z"/>
+                <path d="M12 7v10"/>
+                <path d="M7 12h10"/>
+              </svg>
+            </div>
+            AI 图像创作
+          </div>
+          <ul class="nav-link-list">
+            <li class="nav-link-item">
+              <a href="tools/aigiamge.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a4 4 0 0 1 4 4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1-4-4 4 4 0 0 1 4-4z"/>
+                  <path d="M12 7v10"/>
+                  <path d="M7 12h10"/>
+                </svg>
+                服装AI创作画布
+                <span class="nav-link-desc">AI 换装 & 批量生成</span>
               </a>
             </li>
           </ul>

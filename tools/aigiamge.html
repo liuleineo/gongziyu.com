@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>服装AI创作画布</title>
+<style>
+:root {
+  --primary: #4a90d9;
+  --green: #5cb85c;
+  --check: #00b450;
+  --border: #ccc;
+  --bg: #f4f5f7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: #333;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  flex: 0 0 auto;
+}
+#header h1 { font-size: 16px; font-weight: 700; }
+#header .sub { font-size: 12px; color: #999; }
+#header .spacer { flex: 1; }
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+}
+.btn.green { background: var(--green); }
+.btn.ghost { background: #eee; color: #555; }
+.btn:hover { opacity: .9; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+#app {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* ===== 左侧图库 ===== */
+#left {
+  width: 260px;
+  flex: 0 0 auto;
+  background: #fff;
+  border-right: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 6px;
+}
+#left .tip { font-size: 12px; color: #777; text-align: center; }
+#gallery {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  align-content: start;
+}
+.gallery-item {
+  aspect-ratio: 1;
+  border: 1px solid #eee;
+  background: #fafafa;
+  cursor: grab;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item.dragging { opacity: .4; }
+
+/* ===== 右侧 ===== */
+#right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 8px;
+  min-width: 0;
+}
+#grids {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.grid-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.grid-box .g-title { font-weight: 700; font-size: 12px; color: #333; text-align: center; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 74px);
+  gap: 4px;
+}
+.cell {
+  width: 74px;
+  height: 74px;
+  border: 1px dashed #aaa;
+  border-radius: 4px;
+  color: #999;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  background: #fbfbfb;
+}
+.cell img { width: 100%; height: 100%; object-fit: cover; }
+.cell.has { border-style: solid; border-color: #ccc; }
+.cell.selected { border: 2px solid var(--check); }
+.cell.selected::after {
+  content: '✓';
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--check);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cell.drop-hover { border-color: var(--primary); background: #eef4fc; }
+
+#actions { display: flex; gap: 8px; flex: 0 0 auto; }
+
+#results-wrap {
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+}
+#results-head { font-size: 12px; color: #777; padding: 2px 4px 6px; }
+#results {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  align-content: start;
+}
+.result {
+  aspect-ratio: 3 / 4;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.result img { width: 100%; height: 100%; object-fit: cover; }
+.result .dl {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  font-size: 13px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.result:hover .dl { display: flex; }
+.placeholder {
+  aspect-ratio: 3 / 4;
+  border: 1px dashed var(--primary);
+  background: #f0f4fa;
+  color: var(--primary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* ===== 弹窗 ===== */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  width: 440px;
+  max-width: 92vw;
+  box-shadow: 0 12px 40px rgba(0,0,0,.2);
+}
+.modal h2 { font-size: 17px; margin-bottom: 12px; }
+.modal p { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 8px; }
+.modal a { color: var(--primary); }
+.modal ol { padding-left: 20px; margin: 10px 0; font-size: 13px; color: #555; line-height: 1.9; }
+.modal input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.modal .row { display: flex; gap: 8px; justify-content: flex-end; }
+.modal .hint { font-size: 12px; color: #999; }
+
+/* ===== 右键菜单 ===== */
+#ctxmenu {
+  position: fixed;
+  z-index: 1100;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  min-width: 140px;
+  padding: 4px 0;
+  display: none;
+}
+#ctxmenu .mi {
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+#ctxmenu .mi:hover { background: #f0f4fa; }
+
+/* ===== 预览 ===== */
+#preview {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,20,.92);
+  z-index: 1200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+}
+#preview img { max-width: 92vw; max-height: 84vh; object-fit: contain; }
+#preview .bar { display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>服装AI创作画布</h1>
+  <span class="sub">by 公子鱼</span>
+  <span id="batchTitle" class="sub"></span>
+  <span class="spacer"></span>
+  <button class="btn ghost" id="btnKey">设置 Key</button>
+  <button class="btn" id="btnFolder">选择文件夹</button>
+  <button class="btn" id="btnGenerate">立即生成</button>
+  <button class="btn green" id="btnBatch">批量生成</button>
+</div>
+
+<div id="app">
+  <div id="left">
+    <div class="tip">选择文件夹后，将文件夹下所有图片添加到图库中</div>
+    <button class="btn" id="btnFolder2">选择文件夹</button>
+    <input type="file" id="folderInput" webkitdirectory multiple accept="image/*" style="display:none">
+    <input type="file" id="pickInput" accept="image/*" style="display:none">
+    <div id="gallery"></div>
+  </div>
+
+  <div id="right">
+    <div id="grids"></div>
+    <div id="actions">
+      <button class="btn" id="btnGenerate2">立即生成</button>
+      <button class="btn green" id="btnBatch2">批量生成</button>
+    </div>
+    <div id="results-wrap">
+      <div id="results-head">生成结果（点击图片全屏预览，右键图片可后处理，悬停可下载）</div>
+      <div id="results"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ctxmenu"></div>
+
+<div id="preview">
+  <img id="previewImg" alt="">
+  <div class="bar">
+    <a class="btn" id="previewDl" download="gen.png" href="#">下载</a>
+    <button class="btn ghost" id="previewClose">关闭</button>
+  </div>
+</div>
+
+<div id="keyMask" class="modal-mask" style="display:none">
+  <div class="modal">
+    <h2>配置豆包 Seedream API Key</h2>
+    <p>本工具使用火山引擎「豆包 Seedream」大模型生成图片，首次使用需要配置 API Key。</p>
+    <ol>
+      <li>前往 <a href="https://console.volcengine.com/ark" target="_blank" rel="noreferrer">火山引擎方舟控制台</a>（console.volcengine.com/ark）</li>
+      <li>开通「豆包·Seedream」图像生成模型服务</li>
+      <li>创建 API Key（推理接入点），复制形如 <b>ark-xxxx</b> 的 Key</li>
+      <li>将 Key 粘贴到下方输入框并保存</li>
+    </ol>
+    <input id="keyInput" type="password" placeholder="粘贴你的 API Key（ark-...）">
+    <div class="hint">Key 仅保存在本机浏览器 localStorage，不会上传到任何服务器。</div>
+    <div class="row">
+      <button class="btn" id="btnSaveKey">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ===== 常量（与 config.py 保持一致） ===== */
+const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/images/generations';
+const MODEL = 'doubao-seedream-4-5-251128';
+const KEY_STORAGE = 'doubao_seedream_key';
+const QUALITY_SUFFIX = '，商业摄影级别画质，超高清细节，8K分辨率，专业影棚灯光，锐利清晰，服装纹理细节完整保留，肤色自然真实，画面干净通透';
+const Q = '，商业摄影级别画质，超高清细节，8K分辨率，专业灯光，锐利清晰';
+const POST_PROMPTS = {
+  front_view: '根据图1生成模特正面视角的展示图，完美保留服装面料质感和细节，专业模特姿态' + Q,
+  side_view: '根据图1生成模特侧面视角的展示图，完美保留服装面料质感和细节，专业模特姿态' + Q,
+  white_background: '将图1生成白底商品展示图，去除背景保留服装，白色纯净背景，商品细节锐利清晰' + Q,
+  transparent: '将图1生成透明背景的商品图，去除背景只保留服装本身，边缘干净利落，细节锐利' + Q,
+  line_drawing: '根据图1生成服装的铅笔彩绘线稿图，清晰精准的线条勾勒，专业设计稿质量，无填充色，只对人物主体做线稿，不对背景做线稿。' + Q,
+  flat_layout: '根据图1生成服装平铺展示图，服装平整展开铺在平面上，俯视角度，面料纹理清晰可见' + Q,
+  matching: '根据图1中的服装生成搭配推荐图，展示完整专业的穿搭搭配效果，时尚杂志风格' + Q,
+};
+
+/* ===== 状态 ===== */
+let apiKey = localStorage.getItem(KEY_STORAGE) || '';
+let gallery = [];            // {id, file, url}
+let gallerySeq = 0;
+const GRID_NAMES = ['product', 'model', 'pose', 'scene'];
+const GRID_LABELS = { product: '产品图', model: '模特图', pose: '姿势参考图', scene: '场景参考图' };
+const cells = { product: [], model: [], pose: [], scene: [] };   // cell DOM
+const cellFiles = { product: [], model: [], pose: [], scene: [] }; // File
+const results = [];          // {url, dataUri}
+
+/* ===== Key 管理 ===== */
+const keyMask = document.getElementById('keyMask');
+const keyInput = document.getElementById('keyInput');
+const btnSaveKey = document.getElementById('btnSaveKey');
+const btnKey = document.getElementById('btnKey');
+
+function openKeyModal() {
+  keyInput.value = apiKey || '';
+  keyMask.style.display = 'flex';
+  keyInput.focus();
+}
+function closeKeyModal() {
+  if (!apiKey) return; // 首次必须填写
+  keyMask.style.display = 'none';
+}
+function saveKey() {
+  const v = keyInput.value.trim();
+  if (!v) { alert('请先粘贴你的 API Key'); return; }
+  apiKey = v;
+  localStorage.setItem(KEY_STORAGE, v);
+  keyMask.style.display = 'none';
+}
+btnSaveKey.addEventListener('click', saveKey);
+keyInput.addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+btnKey.addEventListener('click', openKeyModal);
+
+/* ===== 图库 ===== */
+const galleryEl = document.getElementById('gallery');
+const folderInput = document.getElementById('folderInput');
+const pickInput = document.getElementById('pickInput');
+
+document.getElementById('btnFolder').addEventListener('click', () => folderInput.click());
+document.getElementById('btnFolder2').addEventListener('click', () => folderInput.click());
+folderInput.addEventListener('change', e => addGalleryFiles(e.target.files));
+
+function addGalleryFiles(fileList) {
+  const imgs = Array.from(fileList).filter(f => /\.(png|jpe?g|bmp|webp)$/i.test(f.name) || f.type.startsWith('image/'));
+  if (!imgs.length) { alert('未找到图片文件'); return; }
+  for (const f of imgs) {
+    const id = 'g' + (gallerySeq++);
+    const item = { id, file: f, url: URL.createObjectURL(f) };
+    gallery.push(item);
+    const el = document.createElement('div');
+    el.className = 'gallery-item';
+    el.draggable = true;
+    el.title = f.name;
+    const img = document.createElement('img');
+    img.src = item.url;
+    el.appendChild(img);
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', 'gallery:' + id);
+      e.dataTransfer.effectAllowed = 'copy';
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    galleryEl.appendChild(el);
+  }
+  folderInput.value = '';
+}
+function galleryById(id) { return gallery.find(g => g.id === id); }
+
+/* ===== 宫格 ===== */
+const gridsEl = document.getElementById('grids');
+for (const g of GRID_NAMES) {
+  const box = document.createElement('div');
+  box.className = 'grid-box';
+  const t = document.createElement('div');
+  t.className = 'g-title';
+  t.textContent = GRID_LABELS[g];
+  box.appendChild(t);
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  box.appendChild(grid);
+  gridsEl.appendChild(box);
+
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.textContent = '拖放';
+    cell.dataset.grid = g;
+    cell.dataset.i = i;
+    grid.appendChild(cell);
+    cells[g].push(cell);
+    cellFiles[g].push(null);
+
+    cell.addEventListener('click', () => {
+      if (cellFiles[g][i]) cell.classList.toggle('selected');
+    });
+    cell.addEventListener('dblclick', () => pickImage(cell, g, i));
+    cell.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (cellFiles[g][i]) showMenu(e.clientX, e.clientY, [
+        { label: '移除图片', fn: () => clearCell(g, i) },
+      ]);
+    });
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drop-hover'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drop-hover'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drop-hover');
+      const files = e.dataTransfer.files;
+      if (files && files.length) { setCellFile(g, i, files[0]); return; }
+      const t = e.dataTransfer.getData('text/plain');
+      if (t.startsWith('gallery:')) {
+        const item = galleryById(t.slice(8));
+        if (item) setCellFile(g, i, item.file);
+      }
+    });
+  }
+}
+
+function pickImage(cell, g, i) {
+  pickInput.onchange = () => {
+    if (pickInput.files.length) setCellFile(g, i, pickInput.files[0]);
+    pickInput.value = '';
+    pickInput.onchange = null;
+  };
+  pickInput.click();
+}
+
+function setCellFile(g, i, file) {
+  if (!file.type.startsWith('image/')) { alert('请选择图片文件'); return; }
+  cellFiles[g][i] = file;
+  const cell = cells[g][i];
+  cell.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(file);
+  cell.appendChild(img);
+  cell.classList.add('has');
+}
+function clearCell(g, i) {
+  cellFiles[g][i] = null;
+  const cell = cells[g][i];
+  cell.innerHTML = '';
+  cell.textContent = '拖放';
+  cell.classList.remove('has', 'selected');
+}
+
+/* ===== 生成逻辑 ===== */
+function getKey() {
+  if (!apiKey) { openKeyModal(); return null; }
+  return apiKey;
+}
+
+function fileToDataUri(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(new Error('读取图片失败'));
+    r.readAsDataURL(file);
+  });
+}
+
+async function callDoubao(images, prompt) {
+  const key = getKey();
+  if (!key) throw new Error('未配置 API Key');
+  const resp = await fetch(API_URL, {
+    method: 'POST',
+    credentials: 'omit',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+    body: JSON.stringify({
+      model: MODEL,
+      prompt: prompt,
+      image: images,
+      sequential_image_generation: 'disabled',
+      response_format: 'b64_json',
+      size: '4K',
+      stream: false,
+      watermark: false,
+    }),
+  });
+  if (!resp.ok) {
+    let msg = 'HTTP ' + resp.status;
+    try {
+      const j = await resp.json();
+      msg = (j.error && (j.error.message || j.error.code)) || j.message || msg;
+    } catch (e) {}
+    throw new Error('生成失败：' + msg);
+  }
+  const data = await resp.json();
+  const out = [];
+  for (const item of (data.data || [])) {
+    if (item.b64_json) out.push('data:image/png;base64,' + item.b64_json);
+  }
+  if (!out.length) throw new Error('API 未返回图片数据');
+  return out;
+}
+
+function collectSelected() {
+  const sel = { product: [], model: [], pose: [], scene: [] };
+  for (const g of GRID_NAMES) {
+    for (let i = 0; i < 9; i++) {
+      if (cells[g][i].classList.contains('selected') && cellFiles[g][i]) {
+        sel[g].push(cellFiles[g][i]);
+      }
+    }
+  }
+  return sel;
+}
+
+function addPlaceholder() {
+  const ph = document.createElement('div');
+  ph.className = 'placeholder';
+  ph.textContent = '正在生成...';
+  resultsEl.prepend(ph);
+  return ph;
+}
+
+function addResult(dataUri) {
+  const url = URL.createObjectURL(base64ToBlob(dataUri));
+  results.push({ url, dataUri });
+  const el = document.createElement('div');
+  el.className = 'result';
+  el.dataset.idx = results.length - 1;
+  const img = document.createElement('img');
+  img.src = url;
+  el.appendChild(img);
+  const a = document.createElement('a');
+  a.className = 'dl';
+  a.title = '下载';
+  a.textContent = '⬇';
+  a.href = url;
+  a.download = 'gen_' + Date.now() + '.png';
+  a.addEventListener('click', e => e.stopPropagation());
+  el.appendChild(a);
+  el.addEventListener('click', () => openPreview(url, a.download));
+  el.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    showResultMenu(e.clientX, e.clientY, results.length - 1);
+  });
+  resultsEl.prepend(el);
+}
+
+function base64ToBlob(dataUri) {
+  const [head, b64] = dataUri.split(',');
+  const mime = (head.match(/data:(.*?);/) || [])[1] || 'image/png';
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
+const resultsEl = document.getElementById('results');
+
+async function generateImage() {
+  const sel = collectSelected();
+  if (!sel.product.length || !sel.model.length) {
+    alert('请至少选择一张产品图和一张模特图');
+    return;
+  }
+  const product = sel.product[0];
+  const model = sel.model[0];
+  const pose = sel.pose[0] || null;
+  const scene = sel.scene[0] || null;
+  await runGeneration(product, model, pose, scene, false);
+}
+
+async function runGeneration(product, model, pose, scene, isBatch) {
+  let prompt = '将图1的服装精准穿在图2的模特身上，完美保留服装的面料质感和纹理细节，保持模特姿态自然、脸部特征和图2一致' + QUALITY_SUFFIX;
+  if (pose) prompt = '将图1的服装精准穿在图2的模特身上，参考图3的姿势但是不要采用参考图3的人脸，完美保留服装面料质感，保持姿势和服装细节高度一致' + QUALITY_SUFFIX;
+  if (scene) prompt += '，背景参考图4的场景';
+
+  const paths = [product, model, pose, scene].filter(Boolean);
+  const images = [];
+  for (const f of paths) images.push(await fileToDataUri(f));
+
+  const ph = addPlaceholder();
+  try {
+    const out = await callDoubao(images, prompt);
+    for (const d of out) addResult(d);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    ph.remove();
+  }
+  if (isBatch) onBatchDone();
+}
+
+/* ===== 批量生成 ===== */
+let batchQueue = [];
+let batchTotal = 0, batchDone = 0, batchActive = 0;
+const MAX_CONCURRENT = 3;
+
+async function batchGenerate() {
+  const sel = collectSelected();
+  if (!sel.product.length || !sel.model.length) {
+    alert('请至少选择一张产品图和一张模特图');
+    return;
+  }
+  const poses = sel.pose.length ? sel.pose : [null];
+  const scenes = sel.scene.length ? sel.scene : [null];
+  const combos = [];
+  for (const p of sel.product)
+    for (const m of sel.model)
+      for (const pose of poses)
+        for (const scene of scenes)
+          combos.push({ product: p, model: m, pose, scene });
+  const total = combos.length;
+  if (!confirm(`共 ${total} 种组合，是否开始批量生成？`)) return;
+
+  batchQueue = combos;
+  batchTotal = total;
+  batchDone = 0;
+  batchActive = 0;
+  processQueue();
+}
+
+function processQueue() {
+  while (batchQueue.length && batchActive < MAX_CONCURRENT) {
+    const c = batchQueue.shift();
+    batchActive++;
+    updateBatchTitle();
+    runGeneration(c.product, c.model, c.pose, c.scene, true);
+  }
+}
+
+function onBatchDone() {
+  batchActive--;
+  batchDone++;
+  updateBatchTitle();
+  if (batchQueue.length) { processQueue(); }
+  else if (batchActive === 0) {
+    document.getElementById('batchTitle').textContent = ' - 批量生成完成，共 ' + batchTotal + ' 组';
+    setTimeout(() => { if (batchActive === 0 && !batchQueue.length) document.getElementById('batchTitle').textContent = ''; }, 4000);
+  }
+}
+
+function updateBatchTitle() {
+  const waiting = batchQueue.length;
+  document.getElementById('batchTitle').textContent =
+    ` - 批量生成 完成${batchDone}/${batchTotal} 执行中${batchActive} 等待${waiting}`;
+}
+
+/* ===== 后处理 ===== */
+function showResultMenu(x, y, idx) {
+  const items = [
+    { label: '微调图片', fn: () => fineTune(idx) },
+    { label: '生成正面图', fn: () => processResult(idx, 'front_view') },
+    { label: '生成侧面图', fn: () => processResult(idx, 'side_view') },
+    { label: '生成白底图', fn: () => processResult(idx, 'white_background') },
+    { label: '生成透明图', fn: () => processResult(idx, 'transparent') },
+    { label: '生成线稿图', fn: () => processResult(idx, 'line_drawing') },
+    { label: '生成平铺图', fn: () => processResult(idx, 'flat_layout') },
+    { label: '生成搭配图', fn: () => processResult(idx, 'matching') },
+  ];
+  showMenu(x, y, items);
+}
+
+function fineTune(idx) {
+  const user = prompt('请输入微调提示词：', '');
+  if (user === null || !user.trim()) return;
+  processResult(idx, 'fine_tune', user.trim());
+}
+
+async function processResult(idx, type, userPrompt) {
+  const r = results[idx];
+  if (!r) { alert('找不到源图片'); return; }
+  let prompt;
+  if (type === 'fine_tune') {
+    prompt = `对图1进行微调：${userPrompt}，保持原图整体构图不变` + Q;
+  } else {
+    prompt = POST_PROMPTS[type] || ('优化图1' + Q);
+  }
+  const ph = addPlaceholder();
+  try {
+    const out = await callDoubao([r.dataUri], prompt);
+    for (const d of out) addResult(d);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    ph.remove();
+  }
+}
+
+/* ===== 右键菜单 ===== */
+const ctxmenu = document.getElementById('ctxmenu');
+function showMenu(x, y, items) {
+  ctxmenu.innerHTML = '';
+  for (const it of items) {
+    const div = document.createElement('div');
+    div.className = 'mi';
+    div.textContent = it.label;
+    div.addEventListener('click', () => { hideMenu(); it.fn(); });
+    ctxmenu.appendChild(div);
+  }
+  ctxmenu.style.display = 'block';
+  ctxmenu.style.left = Math.min(x, window.innerWidth - 160) + 'px';
+  ctxmenu.style.top = Math.min(y, window.innerHeight - items.length * 36 - 12) + 'px';
+}
+function hideMenu() { ctxmenu.style.display = 'none'; }
+document.addEventListener('click', hideMenu);
+document.addEventListener('contextmenu', e => {
+  if (e.target.closest('.cell, .result')) return;
+  hideMenu();
+});
+
+/* ===== 预览 ===== */
+const preview = document.getElementById('preview');
+const previewImg = document.getElementById('previewImg');
+const previewDl = document.getElementById('previewDl');
+function openPreview(url, name) {
+  previewImg.src = url;
+  previewDl.href = url;
+  previewDl.download = name || 'gen.png';
+  preview.style.display = 'flex';
+}
+function closePreview() { preview.style.display = 'none'; }
+preview.addEventListener('click', e => { if (e.target === preview) closePreview(); });
+document.getElementById('previewClose').addEventListener('click', closePreview);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closePreview(); hideMenu(); }
+});
+
+/* ===== 事件绑定 ===== */
+document.getElementById('btnGenerate').addEventListener('click', generateImage);
+document.getElementById('btnGenerate2').addEventListener('click', generateImage);
+document.getElementById('btnBatch').addEventListener('click', batchGenerate);
+document.getElementById('btnBatch2').addEventListener('click', batchGenerate);
+
+/* ===== 初始化 ===== */
+if (!apiKey) {
+  keyMask.style.display = 'flex';
+}
+</script>
+</body>
+</html>
