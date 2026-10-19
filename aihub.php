@@ -43,7 +43,7 @@ ob_start();
     .nav-card:hover {
       border-color: var(--primary);
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.15);
     }
     
     .nav-card:hover::before {
@@ -155,7 +155,7 @@ ob_start();
     
     .search-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
     }
     
     .search-input::placeholder {

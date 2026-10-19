@@ -23,10 +23,10 @@ window.addEventListener('scroll', () => {
   const currentScroll = window.pageYOffset;
   
   if (currentScroll > 50) {
-    navbar.style.background = 'rgba(10, 10, 15, 0.98)';
-    navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+    navbar.style.background = 'rgba(255, 255, 255, 0.96)';
+    navbar.style.boxShadow = '0 8px 24px rgba(15, 23, 42, 0.08)';
   } else {
-    navbar.style.background = 'rgba(10, 10, 15, 0.95)';
+    navbar.style.background = 'rgba(255, 255, 255, 0.82)';
     navbar.style.boxShadow = 'none';
   }
   
@@ -270,6 +270,6 @@ function typeWriter(element, text, speed = 100) {
 }
 
 // ===== 控制台欢迎信息 =====
-console.log('%c公子鱼AI实验室', 'font-size: 24px; font-weight: bold; color: #00D4FF;');
-console.log('%c探索AI无限可能', 'font-size: 14px; color: #A0A0B0;');
+console.log('%c公子鱼AI实验室', 'font-size: 24px; font-weight: bold; color: #0284C7;');
+console.log('%c探索AI无限可能', 'font-size: 14px; color: #475569;');
 console.log('%c欢迎联系我们: neo@gongziyu.com', 'font-size: 12px; color: #7C3AED;');

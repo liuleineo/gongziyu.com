@@ -32,7 +32,7 @@
   }
   </script>
   <style>
-    body { background: #f7f8fb; }
+    body { background: #F7FAFC; }
     
     /* Hero 区域优化 */
     .page-hero { 
@@ -40,7 +40,12 @@
       display: flex; 
       align-items: center; 
       padding: 120px 0 80px;
-      background: linear-gradient(180deg, rgba(4, 8, 28, 0.9) 0%, rgba(4, 8, 28, 0.7) 50%, rgba(4, 8, 28, 0.9) 100%);
+      background:
+        radial-gradient(ellipse at 22% 42%, rgba(2, 132, 199, 0.13) 0%, transparent 55%),
+        radial-gradient(ellipse at 82% 76%, rgba(124, 58, 237, 0.10) 0%, transparent 55%),
+        linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
       position: relative;
       overflow: hidden;
     }
@@ -51,8 +56,8 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: radial-gradient(ellipse at 30% 50%, rgba(124, 93, 255, 0.2) 0%, transparent 50%),
-                  radial-gradient(ellipse at 70% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%);
+      background: radial-gradient(ellipse at 30% 50%, rgba(124, 93, 255, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(2, 132, 199, 0.08) 0%, transparent 50%);
       pointer-events: none;
     }
     .page-hero .container { position: relative; z-index: 1; }
@@ -69,11 +74,11 @@
       font-size: clamp(2.5rem, 5vw, 4rem); 
       line-height: 1.1; 
       margin-bottom: 24px; 
-      color: #ffffff; 
+      color: #0F172A; 
     }
     .page-hero p { 
       max-width: 560px; 
-      color: rgba(255,255,255,0.88); 
+      color: #475569; 
       font-size: 1.15rem; 
       line-height: 1.9; 
       margin-bottom: 32px; 
@@ -84,12 +89,13 @@
       gap: 14px; 
       padding: 14px 20px; 
       border-radius: 999px; 
-      background: rgba(255,255,255,0.12); 
-      color: #ffffff; 
+      background: rgba(255, 255, 255, 0.85); 
+      color: #0F172A; 
       font-weight: 700; 
       margin-bottom: 28px; 
       backdrop-filter: blur(10px); 
-      border: 1px solid rgba(255,255,255,0.2); 
+      border: 1px solid rgba(2, 132, 199, 0.18); 
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }
     .hero-badge img { border-radius: 14px; }
     .hero-meta { 
@@ -102,16 +108,16 @@
       display: inline-flex; 
       align-items: center; 
       gap: 10px; 
-      background: rgba(255,255,255,0.1); 
-      border: 1px solid rgba(255,255,255,0.15); 
+      background: rgba(255, 255, 255, 0.9); 
+      border: 1px solid #E2E8F0; 
       padding: 12px 20px; 
       border-radius: 14px; 
-      color: rgba(255,255,255,0.92); 
+      color: #475569; 
       font-size: 0.95rem; 
     }
     .hero-meta span::before {
       content: '●';
-      color: #7c5dff;
+      color: #0284C7;
       font-size: 0.6rem;
     }
     
@@ -125,8 +131,8 @@
       max-width: 100%;
       max-height: 600px;
       border-radius: 32px;
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
-      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 32px 70px rgba(15, 23, 42, 0.14);
+      border: 2px solid rgba(255, 255, 255, 0.9);
     }
     
     /* 按钮样式 */
@@ -149,9 +155,9 @@
       box-shadow: 0 12px 32px rgba(124, 93, 255, 0.35); 
     }
     .hero-actions a.secondary { 
-      background: rgba(255,255,255,0.12); 
-      color: #fff; 
-      border: 1px solid rgba(255,255,255,0.25); 
+      background: rgba(255, 255, 255, 0.9); 
+      color: #0F172A; 
+      border: 1px solid #CBD5E1; 
       backdrop-filter: blur(10px);
     }
     .hero-actions a:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(124, 93, 255, 0.4); }
@@ -303,7 +309,7 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 48px 40px;
-      background: linear-gradient(135deg, rgba(124, 93, 255, 0.06), rgba(0, 212, 255, 0.06));
+      background: linear-gradient(135deg, rgba(124, 93, 255, 0.06), rgba(2, 132, 199, 0.06));
       border-radius: 32px;
       border: 1px solid rgba(124, 93, 255, 0.12);
     }
@@ -311,7 +317,7 @@
     .stats-bar-number {
       font-size: 2.4rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #7c5dff, #00d4ff);
+      background: linear-gradient(135deg, #7c5dff, #0284C7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -331,12 +337,12 @@
       text-decoration: none;
       transition: all .3s ease;
       background: transparent;
-      color: #fff;
-      border: 2px solid rgba(255,255,255,0.3);
+      color: #0284C7;
+      border: 2px solid rgba(2, 132, 199, 0.35);
     }
     .btn-demo:hover {
       border-color: #7c5dff;
-      background: rgba(124, 93, 255, 0.15);
+      background: rgba(124, 93, 255, 0.08);
       transform: translateY(-3px);
     }
 
@@ -406,9 +412,10 @@
     /* 页脚增强 */
     .page-footer {
       padding: 64px 0 0;
-      background: #151b30;
-      color: #8a93a8;
+      background: #EEF4FA;
+      color: #475569;
       font-size: 0.95rem;
+      border-top: 1px solid #E2E8F0;
     }
     .footer-inner {
       max-width: 1200px;
@@ -419,10 +426,10 @@
       gap: 48px;
       text-align: left;
       padding-bottom: 48px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid #E2E8F0;
     }
     .footer-brand h4 {
-      color: #ffffff;
+      color: #0F172A;
       font-size: 1.2rem;
       margin-bottom: 12px;
     }
@@ -431,13 +438,13 @@
       max-width: 360px;
     }
     .footer-col h5 {
-      color: #ffffff;
+      color: #0F172A;
       font-size: 1rem;
       margin-bottom: 16px;
     }
     .footer-col a {
       display: block;
-      color: #8a93a8;
+      color: #475569;
       text-decoration: none;
       line-height: 2.2;
       transition: color .2s ease;
@@ -446,7 +453,7 @@
     .footer-bottom {
       padding: 24px;
       text-align: center;
-      color: #5f6778;
+      color: #7C8CA3;
       font-size: 0.9rem;
     }
 
@@ -499,10 +506,10 @@
       </a>
       <ul class="nav-menu">
         <li><a href="../../index.php" class="nav-link">首页</a></li>
-        <li><a href="../../about.php" class="nav-link">关于</a></li>
-        <li><a href="../../products.php" class="nav-link active">产品</a></li>
-        <li><a href="../../projects.php" class="nav-link">项目</a></li>
         <li><a href="../../aihub.php" class="nav-link">AIHub</a></li>
+        <li><a href="../../services.php" class="nav-link">AI服务</a></li>
+        <li><a href="../../tools.php" class="nav-link">工具</a></li>
+        <li><a href="../../about.php" class="nav-link">关于</a></li>
       </ul>
       <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
     </div>
@@ -672,7 +679,6 @@
         <h5>产品</h5>
         <a href="#features">核心功能</a>
         <a href="#download">下载APP</a>
-        <a href="../../products.php">更多产品</a>
       </div>
       <div class="footer-col">
         <h5>联系</h5>

@@ -44,11 +44,11 @@ require __DIR__ . '/includes/header.php';
               <circle cx="100" cy="115" r="15" fill="url(#grad2)" fill-opacity="0.8"/>
               <defs>
                 <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#00D4FF"/>
+                  <stop offset="0%" style="stop-color:#0284C7"/>
                   <stop offset="100%" style="stop-color:#7C3AED"/>
                 </linearGradient>
                 <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#00D4FF"/>
+                  <stop offset="0%" style="stop-color:#0284C7"/>
                   <stop offset="100%" style="stop-color:#7C3AED"/>
                 </linearGradient>
               </defs>

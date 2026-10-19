@@ -23,8 +23,6 @@ $pageStyles = $pageStyles ?? '';
 
 $navItems = [
     'home' => ['label' => '首页', 'href' => '/index.php'],
-    'projects' => ['label' => '项目', 'href' => '/projects.php'],
-    'products' => ['label' => '产品', 'href' => '/products.php'],
     'aihub' => ['label' => 'AIHub', 'href' => '/aihub.php'],
     'services' => ['label' => 'AI服务', 'href' => '/services.php'],
     'tools' => ['label' => '工具', 'href' => '/tools.php'],
@@ -66,7 +64,7 @@ $navItems = [
   <!-- Favicon & PWA -->
   <link rel="icon" href="/assets/shortcut.png" type="image/png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#00D4FF">
+  <meta name="theme-color" content="#F7FAFC">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="<?= htmlspecialchars($pwaTitle, ENT_QUOTES, 'UTF-8') ?>">
@@ -96,7 +94,7 @@ $navItems = [
         <?php foreach ($navItems as $key => $item): ?>
           <li><a href="<?= $item['href'] ?>" class="nav-link<?= $key === $activeNav ? ' active' : '' ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>><?= $item['label'] ?></a></li>
         <?php endforeach; ?>
-        <li><a href="/docs/" class="nav-link" target="_blank" rel="noopener">文档</a></li>
+       
       </ul>
 
       <button class="menu-toggle" aria-label="菜单">

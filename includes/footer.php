@@ -18,8 +18,6 @@
             <ul>
               <li><a href="/index.php">首页</a></li>
               <li><a href="/about.php">关于</a></li>
-              <li><a href="/projects.php">项目</a></li>
-              <li><a href="/products.php">产品</a></li>
               <li><a href="/aihub.php">AIHub</a></li>
               <li><a href="/tools.php">工具</a></li>
               <li><a href="/services.php">AI服务</a></li>

@@ -1,7 +1,8 @@
-# 将旧版 .html 地址永久重定向到 .php
+# 已删除页面的旧地址永久重定向到首页
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^(index|about|aihub|products|projects|services|tools|company|dianshang|hack)\.html$ /$1.php [R=301,L]
+  RewriteRule ^(products|projects)\.(html|php)$ / [R=301,L]
+  RewriteRule ^(index|about|aihub|services|tools|company|dianshang|hack)\.html$ /$1.php [R=301,L]
 </IfModule>
 
 DirectoryIndex index.php index.html

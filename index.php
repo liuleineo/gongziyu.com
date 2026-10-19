@@ -52,8 +52,8 @@ ob_start();
     @media (max-width: 800px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 500px) { .products-grid { grid-template-columns: 1fr; } }
     .product-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; transition: all var(--transition-base); display: flex; flex-direction: column; }
-    .product-card:hover { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0, 212, 255, 0.2); }
-    .product-image { aspect-ratio: 1; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1)); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .product-card:hover { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 16px 40px rgba(2, 132, 199, 0.2); }
+    .product-image { aspect-ratio: 1; background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(124, 58, 237, 0.1)); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .product-image a {width:100%;height:100%;display: flex; align-items: center; justify-content: center;  }
     .product-image img { width: 85%; height: 85%;margin:0 auto; object-fit: cover; transition: transform var(--transition-base); }
     .product-card:hover .product-image img { transform: scale(1.05); }
@@ -89,13 +89,13 @@ require __DIR__ . '/includes/header.php';
           用AI技术赋能未来，探索无限可能
         </p>
         <div class="hero-actions">
-          <a href="projects.php" class="btn btn-primary">
-            查看项目
+          <a href="services.php" class="btn btn-primary">
+            查看服务
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </a>
-          <a href="products.php" class="btn btn-secondary">更多产品</a>
+          <a href="tools.php" class="btn btn-secondary">浏览工具</a>
         </div>
       </div>
       
@@ -117,11 +117,11 @@ require __DIR__ . '/includes/header.php';
             <circle cx="100" cy="100" r="15" fill="url(#gradient2)"/>
             <defs>
               <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00D4FF"/>
+                <stop offset="0%" style="stop-color:#0284C7"/>
                 <stop offset="100%" style="stop-color:#7C3AED"/>
               </linearGradient>
               <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00D4FF"/>
+                <stop offset="0%" style="stop-color:#0284C7"/>
                 <stop offset="100%" style="stop-color:#7C3AED"/>
               </linearGradient>
             </defs>
