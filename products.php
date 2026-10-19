@@ -1,31 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>产品中心 - 公子鱼AI实验室 | AI产品与SAAS应用</title>
-  <meta name="description" content="公子鱼AI实验室产品中心。销冠AI助手、全域电商AI中台、房车租售平台、AI电商设计助手、杭房一二三等创新AI产品，助力企业数字化转型。">
-  <meta name="keywords" content="AI产品,销冠AI,电商AI,房车租售,AI设计,SAAS,AI中台,公子鱼产品">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://gongziyu.com/products.html">
-  
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gongziyu.com/products.html">
-  <meta property="og:title" content="产品中心 - 公子鱼AI实验室">
-  <meta property="og:description" content="销冠AI助手、电商AI中台、房车租售等创新AI产品，助力企业数字化转型。">
-  <meta property="og:image" content="https://gongziyu.com/assets/shortcut.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:site_name" content="公子鱼AI实验室">
-  <meta property="og:locale" content="zh_CN">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="产品中心 - 公子鱼AI实验室">
-  <meta name="twitter:description" content="销冠AI助手、电商AI中台等创新AI产品。">
-  <meta name="twitter:image" content="https://gongziyu.com/assets/shortcut.png">
-  
-  <link rel="stylesheet" href="assets/styles.css">
-  <style>
+<?php
+$pageTitle = '产品中心 - 公子鱼AI实验室 | AI产品与SAAS应用';
+$pageDescription = '公子鱼AI实验室产品中心。销冠AI助手、全域电商AI中台、房车租售平台、AI电商设计助手、杭房一二三等创新AI产品，助力企业数字化转型。';
+$pageKeywords = 'AI产品,销冠AI,电商AI,房车租售,AI设计,SAAS,AI中台,公子鱼产品';
+$canonical = 'https://gongziyu.com/products.php';
+$ogTitle = '产品中心 - 公子鱼AI实验室';
+$ogDescription = '销冠AI助手、电商AI中台、房车租售等创新AI产品，助力企业数字化转型。';
+$activeNav = 'products';
+$pwaTitle = '公子鱼AI';
+
+ob_start();
+?>
+<style>
     .products-hero { padding: 160px 0 80px; background: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.15) 0%, transparent 60%); text-align: center; }
     .products-hero h1 { font-size: var(--font-5xl); font-weight: 700; margin-bottom: var(--space-4); }
     .products-hero p { font-size: var(--font-xl); color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
@@ -57,28 +42,11 @@
     .filter-tab:hover { border-color: var(--primary); color: var(--text-primary); }
     .filter-tab.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-color: transparent; color: white; }
   </style>
-</head>
-<body>
-  <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-        <span class="logo-text">公子鱼<span>AI实验室</span></span>
-      </a>
-       <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active">首页</a></li>
-        <li><a href="about.html" class="nav-link">关于</a></li>
-        <li><a href="projects.html" class="nav-link">项目</a></li>
-        <li><a href="products.html" class="nav-link">产品</a></li>
-        <li><a href="aihub.html" class="nav-link">AIHub</a></li>
-        <li><a href="services.html" class="nav-link">AI服务</a></li>
-        <li><a href="/docs/" class="nav-link" target="_blank">文档</a></li>
-        <li><a href="tools.html" class="nav-link">工具</a></li>
-      </ul>
-      <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
+<?php
+$pageStyles = ob_get_clean();
 
+require __DIR__ . '/includes/header.php';
+?>
   <section class="products-hero">
     <div class="container">
       <h1>产品中心</h1>
@@ -196,24 +164,10 @@
     </div>
   </section>
 
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo"><img src="assets/shortcut.png" alt="公子鱼AI实验室"><span class="logo-text">公子鱼<span>AI实验室</span></span></a>
-          <p class="footer-desc">探索人工智能边界，打造创新AI应用</p>
-        </div>
-        <div class="footer-links">
-          <div><h4>快速导航</h4><ul><li><a href="index.html">首页</a></li><li><a href="about.html">关于</a></li><li><a href="projects.html">项目</a></li><li><a href="products.html">产品</a></li><li><a href="aihub.html">AIHub</a></li><li><a href="https://docs.gongziyu.com/" target="_blank">文档</a></li></ul></div>
-          <div><h4>联系方式</h4><ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>neo@gongziyu.com</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>杭州市</li></ul></div>
-        </div>
-      </div>
-      <div class="footer-bottom"><p>© 2026 杭州公子鱼科技有限公司 版权所有 | 浙ICP备2021037366号-1</p></div>
-    </div>
-  </footer>
-
-  <script src="assets/script.js"></script>
-  <script>
+<?php
+ob_start();
+?>
+<script>
     const filterTabs = document.querySelectorAll('.filter-tab');
     const productCards = document.querySelectorAll('.product-card');
     filterTabs.forEach(tab => {
@@ -235,5 +189,8 @@
       });
     });
   </script>
-</body>
-</html>
+<?php
+$pageScripts = ob_get_clean();
+
+require __DIR__ . '/includes/footer.php';
+?>

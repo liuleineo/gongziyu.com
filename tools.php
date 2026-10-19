@@ -1,40 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>实用工具 - 公子鱼工具箱 | 在线工具集合</title>
-  <meta name="description" content="公子鱼在线工具箱提供实用在线工具：图片格式转换、二维码生成、在线白板、待办清单等免费工具，提升工作效率。">
-  <meta name="keywords" content="在线工具,工具箱,图片转换,二维码生成,在线白板,待办清单,免费工具">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://gongziyu.com/tools.html">
-  
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gongziyu.com/tools.html">
-  <meta property="og:title" content="实用工具 - 公子鱼工具箱">
-  <meta property="og:description" content="图片格式转换、二维码生成、在线白板等免费实用工具。">
-  <meta property="og:image" content="https://gongziyu.com/assets/shortcut.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:site_name" content="公子鱼AI实验室">
-  <meta property="og:locale" content="zh_CN">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="实用工具 - 公子鱼工具箱">
-  <meta name="twitter:description" content="图片格式转换、二维码生成等免费实用工具。">
-  <meta name="twitter:image" content="https://gongziyu.com/assets/shortcut.png">
+<?php
+$pageTitle = '实用工具 - 公子鱼工具箱 | 在线工具集合';
+$pageDescription = '公子鱼在线工具箱提供实用在线工具：图片格式转换、二维码生成、在线白板、待办清单等免费工具，提升工作效率。';
+$pageKeywords = '在线工具,工具箱,图片转换,二维码生成,在线白板,待办清单,免费工具';
+$canonical = 'https://gongziyu.com/tools.php';
+$ogTitle = '实用工具 - 公子鱼工具箱';
+$ogDescription = '图片格式转换、二维码生成、在线白板等免费实用工具。';
+$activeNav = 'tools';
+$pwaTitle = '公子鱼工具';
 
-  <!-- PWA 支持 -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#00D4FF">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="公子鱼工具">
-  <link rel="apple-touch-icon" href="/assets/shortcut.png">
-  
-  <link rel="stylesheet" href="assets/styles.css">
-  
-  <style>
+ob_start();
+?>
+<style>
     /* 工具页面专属样式 */
     .nav-grid {
       display: grid;
@@ -281,34 +257,11 @@
       }
     }
   </style>
-</head>
-<body>
-  <!-- 导航栏 -->
-  <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-        <span class="logo-text">公子鱼<span>AI实验室</span></span>
-      </a>
-      
-       <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active">首页</a></li>
-        <li><a href="about.html" class="nav-link">关于</a></li>
-        <li><a href="projects.html" class="nav-link">项目</a></li>
-        <li><a href="products.html" class="nav-link">产品</a></li>
-        <li><a href="aihub.html" class="nav-link">AIHub</a></li>
-        <li><a href="services.html" class="nav-link">AI服务</a></li>
-        <li><a href="/docs/" class="nav-link" target="_blank">文档</a></li>
-        <li><a href="tools.html" class="nav-link">工具</a></li>
-      </ul>
-      <button class="menu-toggle" aria-label="菜单">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
+<?php
+$pageStyles = ob_get_clean();
 
+require __DIR__ . '/includes/header.php';
+?>
   <!-- 页面头部（紧凑） -->
   <section class="page-header">
     <div class="container">
@@ -546,80 +499,10 @@
     </div>
   </section>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo">
-            <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-            <span class="logo-text">公子鱼<span>AI实验室</span></span>
-          </a>
-          <p class="footer-desc">
-            探索人工智能边界，打造创新AI应用
-          </p>
-        </div>
-        
-        <div class="footer-links">
-          <div>
-            <h4>快速导航</h4>
-            <ul>
-              <li><a href="index.html">首页</a></li>
-              <li><a href="about.html">关于</a></li>
-              <li><a href="projects.html">项目</a></li>
-              <li><a href="products.html">产品</a></li>
-              <li><a href="aihub.html">AIHub</a></li>
-              <li><a href="tools.html">工具</a></li>
-              <li><a href="https://docs.gongziyu.com/" target="_blank">文档</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4>联系方式</h4>
-            <ul>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                neo@gongziyu.com
-              </li>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                杭州市
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <div class="footer-bottom">
-        <p>© 2026 杭州公子鱼科技有限公司 版权所有 | 浙ICP备2021037366号-1</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="assets/script.js"></script>
-  
-  <!-- Service Worker 注册 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('[PWA] ServiceWorker 注册成功:', registration.scope);
-          })
-          .catch(error => {
-            console.log('[PWA] ServiceWorker 注册失败:', error);
-          });
-      });
-    }
-  </script>
-
-  <script>
+<?php
+ob_start();
+?>
+<script>
     // 搜索功能
     const searchInput = document.getElementById('searchInput');
     const navCards = document.querySelectorAll('.nav-card');
@@ -644,5 +527,8 @@
       });
     });
   </script>
-</body>
-</html>
+<?php
+$pageScripts = ob_get_clean();
+
+require __DIR__ . '/includes/footer.php';
+?>

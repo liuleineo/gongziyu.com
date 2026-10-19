@@ -1,55 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- SEO 核心 -->
-  <title>公子鱼AI实验室 - 探索AI无限可能 | 人工智能研发与应用</title>
-  <meta name="description" content="公子鱼AI实验室专注于大语言模型、计算机视觉、AI应用开发。提供销冠AI助手、电商AI中台、房车租售平台等创新产品。探索人工智能前沿技术，打造实用AI解决方案。">
-  <meta name="keywords" content="AI实验室,人工智能,大语言模型,LLM,AI应用,电商AI,销冠AI,杭州公子鱼科技,AI工具,AI产品">
-  <meta name="robots" content="index, follow">
-  <meta name="author" content="杭州公子鱼科技有限公司">
-  <link rel="canonical" href="https://gongziyu.com/">
-  
-  <!-- Open Graph / 社交媒体 -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gongziyu.com/">
-  <meta property="og:title" content="公子鱼AI实验室 - 探索AI无限可能">
-  <meta property="og:description" content="专注于大语言模型、计算机视觉、AI应用开发。打造实用AI解决方案，赋能未来智能生活。">
-  <meta property="og:image" content="https://gongziyu.com/assets/shortcut.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:site_name" content="公子鱼AI实验室">
-  <meta property="og:locale" content="zh_CN">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://gongziyu.com/">
-  <meta name="twitter:title" content="公子鱼AI实验室 - 探索AI无限可能">
-  <meta name="twitter:description" content="专注于大语言模型、计算机视觉、AI应用开发。打造实用AI解决方案。">
-  <meta name="twitter:image" content="https://gongziyu.com/assets/shortcut.png">
+<?php
+$pageTitle = '公子鱼AI实验室 - 探索AI无限可能 | 人工智能研发与应用';
+$pageDescription = '公子鱼AI实验室专注于大语言模型、计算机视觉、AI应用开发。提供销冠AI助手、电商AI中台、房车租售平台等创新产品。探索人工智能前沿技术，打造实用AI解决方案。';
+$pageKeywords = 'AI实验室,人工智能,大语言模型,LLM,AI应用,电商AI,销冠AI,杭州公子鱼科技,AI工具,AI产品';
+$canonical = 'https://gongziyu.com/';
+$ogTitle = '公子鱼AI实验室 - 探索AI无限可能';
+$ogDescription = '专注于大语言模型、计算机视觉、AI应用开发。打造实用AI解决方案，赋能未来智能生活。';
+$activeNav = 'home';
+$pwaTitle = '公子鱼AI';
 
-  <!-- Favicon & PWA -->
-  <link rel="icon" href="assets/logo-big.jpg" type="image/png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#00D4FF">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="公子鱼AI">
-  <link rel="apple-touch-icon" href="/assets/shortcut.png">
-
-  <!-- 性能优化：DNS预解析 -->
-  <link rel="dns-prefetch" href="//fangche.niurouzhou.com">
-  <link rel="dns-prefetch" href="//neogood.coze.site">
-  <link rel="dns-prefetch" href="//ai.gongziyu.com">
-  <link rel="dns-prefetch" href="//hangfang123.com">
-  <link rel="dns-prefetch" href="//niurouzhou.com">
-  
-  <link rel="stylesheet" href="assets/styles.css">
-  
-  <!-- 结构化数据：Organization + WebSite -->
-  <script type="application/ld+json">
+ob_start();
+?>
+<script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -69,7 +30,7 @@
     ]
   }
   </script>
-  <script type="application/ld+json">
+<script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -79,7 +40,12 @@
     "inLanguage": "zh-CN"
   }
   </script>
-  <style>
+<?php
+$pageHead = ob_get_clean();
+
+ob_start();
+?>
+<style>
     .products-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-6); }
     @media (max-width: 1400px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
     @media (max-width: 1100px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -102,36 +68,11 @@
     .product-name { padding-left:5%; font-size: var(--font-lg); font-weight: 600; margin-bottom: var(--space-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .product-desc {padding-left:5%; font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-4); flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   </style>
-</head>
-<body>
-  <!-- 导航栏 -->
-  <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-        <span class="logo-text">公子鱼<span>AI实验室</span></span>
-      </a>
-      
-      <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active">首页</a></li>
-       
-        <li><a href="projects.html" class="nav-link">项目</a></li>
-        <li><a href="products.html" class="nav-link">产品</a></li>
-        <li><a href="aihub.html" class="nav-link">AIHub</a></li>
-        <li><a href="services.html" class="nav-link">AI服务</a></li>
-        <li><a href="/docs/" class="nav-link" target="_blank">文档</a></li>
-        <li><a href="tools.html" class="nav-link">工具</a></li>
-        <li><a href="about.html" class="nav-link">关于</a></li>
-      </ul>
-      
-      <button class="menu-toggle" aria-label="菜单">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
+<?php
+$pageStyles = ob_get_clean();
 
+require __DIR__ . '/includes/header.php';
+?>
   <!-- Hero 区域 -->
   <section class="hero">
     <div class="hero-bg"></div>
@@ -148,13 +89,13 @@
           用AI技术赋能未来，探索无限可能
         </p>
         <div class="hero-actions">
-          <a href="projects.html" class="btn btn-primary">
+          <a href="projects.php" class="btn btn-primary">
             查看项目
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </a>
-          <a href="products.html" class="btn btn-secondary">更多产品</a>
+          <a href="products.php" class="btn btn-secondary">更多产品</a>
         </div>
       </div>
       
@@ -269,7 +210,7 @@
 
         <div class="product-card" data-category="app">
           <div class="product-image">
-            <a href="https://gongziyu.com/dianshang.html" target="_blank"><img src="assets/dianshangai.png" alt="电商AI中台"></a>
+            <a href="https://gongziyu.com/dianshang.php" target="_blank"><img src="assets/dianshangai.png" alt="电商AI中台"></a>
             <span class="product-badge hot">热门</span>
           </div>
           <div class="product-content">
@@ -360,82 +301,16 @@
     </div>
   </section>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo">
-            <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-            <span class="logo-text">公子鱼<span>AI实验室</span></span>
-          </a>
-          <p class="footer-desc">
-            探索人工智能边界，打造创新AI应用
-          </p>
-        </div>
-        
-        <div class="footer-links">
-          <div>
-            <h4>快速导航</h4>
-            <ul>
-              <li><a href="index.html">首页</a></li>
-              <li><a href="about.html">关于</a></li>
-              <li><a href="projects.html">项目</a></li>
-              <li><a href="products.html">产品</a></li>
-              <li><a href="aihub.html">AIHub</a></li>
-              <li><a href="https://docs.gongziyu.com/" target="_blank">文档</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4>联系方式</h4>
-            <ul>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                neo@gongziyu.com
-              </li>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                杭州市
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <div class="footer-bottom">
-        <p>© 2026 杭州公子鱼科技有限公司 版权所有 | 浙ICP备2021037366号-3</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="assets/script.js"></script>
-  
-  <!-- Service Worker 注册 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('[PWA] ServiceWorker 注册成功:', registration.scope);
-          })
-          .catch(error => {
-            console.log('[PWA] ServiceWorker 注册失败:', error);
-          });
-      });
-    }
-  </script>
-
-  <script>
+<?php
+ob_start();
+?>
+<script>
     const productCards = document.querySelectorAll('.product-card');
     // 如果有筛选标签，可以添加筛选功能
     // 这里暂时只保留产品卡片选择器以备将来扩展
   </script>
-</body>
-</html>
+<?php
+$pageScripts = ob_get_clean();
+
+require __DIR__ . '/includes/footer.php';
+?>

@@ -1,16 +1,16 @@
 // 公子鱼AI实验室 - Service Worker
-const CACHE_NAME = 'gongziyu-ai-cache-v1';
+const CACHE_NAME = 'gongziyu-ai-cache-v2';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/about.html',
-  '/projects.html',
-  '/products.html',
-  '/aihub.html',
-  '/services.html',
-  '/tools.html',
-  '/hack.html',
-  '/dianshang.html',
+  '/index.php',
+  '/about.php',
+  '/projects.php',
+  '/products.php',
+  '/aihub.php',
+  '/services.php',
+  '/tools.php',
+  '/hack.php',
+  '/dianshang.php',
   '/assets/styles.css',
   '/assets/script.js',
   '/assets/shortcut.png',

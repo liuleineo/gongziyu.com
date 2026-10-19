@@ -8,7 +8,7 @@
     <meta name="description" content="Neo电商工具集，提供电商运营辅助功能，帮助电商从业者提升工作效率。">
     <meta name="keywords" content="电商工具,电商运营,电商辅助">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://gongziyu.com/dianshang.html">
+    <link rel="canonical" href="https://gongziyu.com/dianshang.php">
     <style>
         :root {
             --primary-color: #2563eb;

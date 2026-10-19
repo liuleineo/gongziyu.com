@@ -1,59 +1,15 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>关于我们 - 公子鱼AI实验室 | 使命愿景与团队</title>
-  <meta name="description" content="了解公子鱼AI实验室的使命、愿景和核心价值观。我们专注大语言模型、计算机视觉、时间序列预测等AI核心技术研发，致力于打造实用高效的AI产品。">
-  <meta name="keywords" content="公子鱼AI,关于我们,AI实验室,人工智能公司,杭州AI公司,AI使命愿景">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://gongziyu.com/about.html">
-  
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gongziyu.com/about.html">
-  <meta property="og:title" content="关于我们 - 公子鱼AI实验室">
-  <meta property="og:description" content="了解公子鱼AI实验室的使命愿景。专注AI核心技术研发，打造实用高效的AI产品。">
-  <meta property="og:image" content="https://gongziyu.com/assets/shortcut.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:site_name" content="公子鱼AI实验室">
-  <meta property="og:locale" content="zh_CN">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="关于我们 - 公子鱼AI实验室">
-  <meta name="twitter:description" content="专注AI核心技术研发，打造实用高效的AI产品。">
-  <meta name="twitter:image" content="https://gongziyu.com/assets/shortcut.png">
-  
-  <link rel="stylesheet" href="assets/styles.css">
-</head>
-<body>
-  <!-- 导航栏 -->
-  <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-        <span class="logo-text">公子鱼<span>AI实验室</span></span>
-      </a>
-      
-       <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active">首页</a></li>
-        <li><a href="about.html" class="nav-link">关于</a></li>
-        <li><a href="projects.html" class="nav-link">项目</a></li>
-        <li><a href="products.html" class="nav-link">产品</a></li>
-        <li><a href="aihub.html" class="nav-link">AIHub</a></li>
-        <li><a href="services.html" class="nav-link">AI服务</a></li>
-        <li><a href="/docs/" class="nav-link" target="_blank">文档</a></li>
-        <li><a href="tools.html" class="nav-link">工具</a></li>
-      </ul>
-      
-      <button class="menu-toggle" aria-label="菜单">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
+<?php
+$pageTitle = '关于我们 - 公子鱼AI实验室 | 使命愿景与团队';
+$pageDescription = '了解公子鱼AI实验室的使命、愿景和核心价值观。我们专注大语言模型、计算机视觉、时间序列预测等AI核心技术研发，致力于打造实用高效的AI产品。';
+$pageKeywords = '公子鱼AI,关于我们,AI实验室,人工智能公司,杭州AI公司,AI使命愿景';
+$canonical = 'https://gongziyu.com/about.php';
+$ogTitle = '关于我们 - 公子鱼AI实验室';
+$ogDescription = '了解公子鱼AI实验室的使命愿景。专注AI核心技术研发，打造实用高效的AI产品。';
+$activeNav = 'about';
+$pwaTitle = '公子鱼AI';
 
+require __DIR__ . '/includes/header.php';
+?>
   <!-- 页面头部 -->
   <section class="page-header">
     <div class="container">
@@ -292,61 +248,6 @@
     </div>
   </section>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo">
-            <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-            <span class="logo-text">公子鱼<span>AI实验室</span></span>
-          </a>
-          <p class="footer-desc">
-            探索人工智能边界，打造创新AI应用
-          </p>
-        </div>
-        
-        <div class="footer-links">
-          <div>
-            <h4>快速导航</h4>
-            <ul>
-              <li><a href="index.html">首页</a></li>
-              <li><a href="about.html">关于</a></li>
-              <li><a href="projects.html">项目</a></li>
-              <li><a href="products.html">产品</a></li>
-              <li><a href="aihub.html">AIHub</a></li>
-              <li><a href="https://docs.gongziyu.com/" target="_blank">文档</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4>联系方式</h4>
-            <ul>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                neo@gongziyu.com
-              </li>
-              <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                杭州市
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <div class="footer-bottom">
-        <p>© 2026 杭州公子鱼科技有限公司 版权所有 | 浙ICP备2021037366号-1</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="assets/script.js"></script>
-</body>
-</html>
+<?php
+require __DIR__ . '/includes/footer.php';
+?>

@@ -146,14 +146,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 function setActiveNavLink() {
   const currentPath = window.location.pathname;
   // 从路径中提取文件名（兼容 file:// 和 http://）
-  const currentFile = currentPath.split('/').pop() || 'index.html';
+  const currentFile = currentPath.split('/').pop() || 'index.php';
   const navLinks = document.querySelectorAll('.nav-link');
   
   navLinks.forEach(link => {
     const linkPath = link.getAttribute('href');
     const linkFile = linkPath.split('/').pop();
     const isActive = currentFile === linkFile || 
-                     (currentFile === '' && linkFile === 'index.html');
+                     (currentFile === '' && linkFile === 'index.php');
     
     if (isActive) {
       link.classList.add('active');

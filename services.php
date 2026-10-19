@@ -1,64 +1,19 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI服务 - 杭州公子鱼科技有限公司 | 软件开发与AI解决方案</title>
-  <meta name="description" content="杭州公子鱼科技有限公司提供网站开发、小程序开发、企业软件定制、AI解决方案等专业技术服务。涵盖Web应用、微信小程序、电商系统、AI集成开发。">
-  <meta name="keywords" content="软件开发,网站开发,小程序开发,AI解决方案,企业软件定制,杭州软件开发,公子鱼科技">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://gongziyu.com/services.html">
-  
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gongziyu.com/services.html">
-  <meta property="og:title" content="AI服务 - 杭州公子鱼科技有限公司">
-  <meta property="og:description" content="网站开发、小程序开发、企业软件定制、AI解决方案等专业服务。">
-  <meta property="og:image" content="https://gongziyu.com/assets/shortcut.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:site_name" content="公子鱼AI实验室">
-  <meta property="og:locale" content="zh_CN">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AI服务 - 杭州公子鱼科技有限公司">
-  <meta name="twitter:description" content="网站开发、小程序开发、AI解决方案等专业服务。">
-  <meta name="twitter:image" content="https://gongziyu.com/assets/shortcut.png">
-  
-  <link rel="stylesheet" href="assets/styles.css">
-  
-  <link rel="icon" type="image/png" href="assets/shortcut.png">
-</head>
-<body>
+<?php
+$pageTitle = 'AI服务 - 杭州公子鱼科技有限公司 | 软件开发与AI解决方案';
+$pageDescription = '杭州公子鱼科技有限公司提供网站开发、小程序开发、企业软件定制、AI解决方案等专业技术服务。涵盖Web应用、微信小程序、电商系统、AI集成开发。';
+$pageKeywords = '软件开发,网站开发,小程序开发,AI解决方案,企业软件定制,杭州软件开发,公子鱼科技';
+$canonical = 'https://gongziyu.com/services.php';
+$ogTitle = 'AI服务 - 杭州公子鱼科技有限公司';
+$ogDescription = '网站开发、小程序开发、企业软件定制、AI解决方案等专业服务。';
+$activeNav = 'services';
+$pwaTitle = '公子鱼AI';
+
+require __DIR__ . '/includes/header.php';
+?>
   <div class="page-loader">
     <div class="loader-spinner"></div>
   </div>
 
-  <!-- 导航栏 -->
-  <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="assets/shortcut.png" alt="公子鱼AI实验室">
-        <span class="logo-text">公子鱼<span>AI实验室</span></span>
-      </a>
-      
-       <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link active">首页</a></li>
-        <li><a href="about.html" class="nav-link">关于</a></li>
-        <li><a href="projects.html" class="nav-link">项目</a></li>
-        <li><a href="products.html" class="nav-link">产品</a></li>
-        <li><a href="aihub.html" class="nav-link">AIHub</a></li>
-        <li><a href="services.html" class="nav-link">AI服务</a></li>
-        <li><a href="/docs/" class="nav-link" target="_blank">文档</a></li>
-        <li><a href="tools.html" class="nav-link">工具</a></li>
-      </ul>
-      
-      <button class="menu-toggle" aria-label="菜单">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
 
   <!-- 页面标题 -->
   <section style="padding-top: calc(var(--header-height) + var(--space-20)); padding-bottom: var(--space-16); text-align: center; position: relative;">
@@ -412,62 +367,10 @@
     </div>
   </section>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo">
-            <img src="assets/shortcut.png" alt="公子鱼科技" onerror="this.src='https://placehold.co/40x40/00BFFF/FFFFFF?text=G'">
-            <span class="logo-text">公子鱼<span>科技</span></span>
-          </a>
-          <p class="footer-desc">
-            杭州公子鱼科技有限公司，专注于为企业提供高品质的软件开发服务，助力企业实现数字化转型。
-          </p>
-          <div class="footer-social">
-            <a href="#" class="social-link" aria-label="微信">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.269-.03-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/></svg>
-            </a>
-            <a href="mailto:neo@gongziyu.com" class="social-link" aria-label="邮箱">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </a>
-          </div>
-        </div>
-        <div>
-          <h4 class="footer-title">快速链接</h4>
-          <ul class="footer-links">
-            <li><a href="index.html" class="footer-link">首页</a></li>
-            <li><a href="services.html" class="footer-link">服务</a></li>
-            <li><a href="projects.html" class="footer-link">案例</a></li>
-            <li><a href="about.html" class="footer-link">关于</a></li>
-            <li><a href="products.html" class="footer-link">产品</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="footer-title">服务项目</h4>
-          <ul class="footer-links">
-            <li><a href="services.html" class="footer-link">网站开发</a></li>
-            <li><a href="services.html" class="footer-link">小程序开发</a></li>
-            <li><a href="services.html" class="footer-link">企业软件</a></li>
-            <li><a href="services.html" class="footer-link">AI解决方案</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="footer-title">联系我们</h4>
-          <div class="footer-contact-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span>neo@gongziyu.com 18868725001</span>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="footer-copyright">© 2025 杭州公子鱼科技有限公司 版权所有</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="assets/script.js"></script>
-  <script>
+<?php
+ob_start();
+?>
+<script>
     // 页面加载器
     window.addEventListener('load', function() {
       const loader = document.querySelector('.page-loader');
@@ -510,5 +413,8 @@
       });
     });
   </script>
-</body>
-</html>
+<?php
+$pageScripts = ob_get_clean();
+
+require __DIR__ . '/includes/footer.php';
+?>
