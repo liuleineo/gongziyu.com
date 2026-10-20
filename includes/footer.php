@@ -19,8 +19,22 @@
               <li><a href="/index.php">首页</a></li>
               <li><a href="/about.php">关于</a></li>
               <li><a href="/aihub.php">AIHub</a></li>
-              <li><a href="/tools.php">工具</a></li>
               <li><a href="/services.php">AI服务</a></li>
+              
+
+              <li><a href="https://docs.gongziyu.com/" target="_blank" rel="noopener">文档</a></li>
+            </ul>
+          </div>
+           <div>
+            <h4>工具</h4>
+            <ul>
+            
+              <li><a href="/tools.php">工具</a></li>
+              <li><a href="/hack.php">安全测试</a></li>
+              <li><a href="/dianshng.php">电商工具</a></li>
+              <li><a href="/taiji.php">太极</a></li>
+              <li><a href="/products/kingsystem/index.html">金手指</a></li>
+
               <li><a href="https://docs.gongziyu.com/" target="_blank" rel="noopener">文档</a></li>
             </ul>
           </div>

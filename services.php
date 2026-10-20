@@ -299,7 +299,7 @@ require __DIR__ . '/includes/header.php';
             </button>
             <div class="accordion-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
               <div style="padding: 0 var(--space-6) var(--space-6); color: var(--text-tertiary);">
-                项目周期取决于功能复杂度和需求范围。一般来说，简单的企业官网需要2-4周，小程序需要4-8周，复杂的企业系统可能需要2-6个月。我们会在需求沟通阶段提供准确的时间评估。
+                项目周期取决于功能复杂度和需求范围。一般来说，简单的企业官网需要1-2周，小程序需要2-4周，复杂的企业系统可能需要2-6个月。我们会在需求沟通阶段提供准确的时间评估。
               </div>
             </div>
           </div>

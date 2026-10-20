@@ -7,7 +7,7 @@
 var JsonData;
 var AllRules = [];
 var htmltext = '';//声明htmltext
-fetch("http://gongziyu.com/neo/RulesOfLife/RulesOfLife.json").then(function (response) {
+fetch("http://gongziyu.com/tools/RulesOfLife/RulesOfLife.json").then(function (response) {
     return response.json();
 }).then(function (data) {
     JsonData = data;
@@ -35,7 +35,7 @@ fetch("http://gongziyu.com/neo/RulesOfLife/RulesOfLife.json").then(function (res
 
     var RandomRule = AllRules[Math.round(Math.random() * AllRules.length)];
     console.log(RandomRule);
-    htmltext = '<a href="http://gongziyu.com/neo/RulesOfLife/RulesOfLife.php" target="blank">' + RandomRule + '</a>';
+    htmltext = '<a href="http://gongziyu.com/tools/RulesOfLife/RulesOfLife.php" target="blank">' + RandomRule + '</a>';
     document.getElementById("RandomRule").innerHTML = htmltext;
 
 

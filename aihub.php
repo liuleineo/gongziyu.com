@@ -136,7 +136,7 @@ ob_start();
     
     /* 搜索框（紧凑） */
     .search-section {
-      margin-bottom: var(--space-3);
+      margin-bottom: var(--space-1);
     }
     
     .search-box {
@@ -211,6 +211,24 @@ ob_start();
       color: var(--text-secondary);
     }
     
+    /* 页面头部：压缩垂直占位 */
+    .page-header {
+      padding: 96px 0 var(--space-8);
+    }
+    
+    .page-title {
+      font-size: var(--font-3xl);
+      margin-bottom: var(--space-2);
+    }
+    
+    .page-subtitle {
+      font-size: var(--font-lg);
+    }
+    
+    .page-header + .section {
+      padding-top: var(--space-8);
+    }
+    
     @media (max-width: 768px) {
       .nav-grid {
         grid-template-columns: 1fr;
@@ -218,6 +236,22 @@ ob_start();
       
       .stats-row {
         gap: var(--space-3);
+      }
+      
+      .page-header {
+        padding: 88px 0 var(--space-6);
+      }
+      
+      .page-title {
+        font-size: var(--font-2xl);
+      }
+      
+      .page-subtitle {
+        font-size: var(--font-base);
+      }
+      
+      .page-header + .section {
+        padding-top: var(--space-6);
       }
     }
   </style>

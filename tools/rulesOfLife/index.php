@@ -37,7 +37,7 @@
 
             var JsonData;
             var htmltext ='';//声明htmltext
-            fetch("http://gongziyu.com/neo/RulesOfLife/RulesOfLife.json").then(function (response) {
+            fetch("http://gongziyu.com/tools/RulesOfLife/RulesOfLife.json").then(function (response) {
                 return response.json();
             }).then(function (data) {
                 JsonData = data;
