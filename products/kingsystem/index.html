@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>金手指系统 · LIFE CHEAT SYSTEM</title>
+  <meta name="description" content="把人生调成游戏模式：AI 生成主线、支线与每日健身任务，完成目标，领取荒诞又有趣的奖励。">
+  <meta name="theme-color" content="#F7FAFC">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="金手指系统">
+  <link rel="icon" href="../../assets/shortcut.png" type="image/png">
+  <link rel="apple-touch-icon" href="../../assets/shortcut.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+    <span class="grid"></span>
+  </div>
+
+  <div class="app-shell" id="appShell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🕹️</span>
+        <div class="brand-text">
+          <strong>金手指系统</strong>
+          <small>LIFE CHEAT SYSTEM</small>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" id="headerSettingsBtn" aria-label="打开设置">⚙️</button>
+      </div>
+    </header>
+
+    <main class="app-main" id="dashboard">
+      <section class="player-card card" aria-label="玩家状态">
+        <div class="player-top">
+          <div class="avatar" id="playerAvatar" data-gender="保密" aria-hidden="true">🕶️</div>
+          <div class="player-meta">
+            <h1 id="playerName">命运玩家</h1>
+            <p id="playerTag">Lv.1 · 新手冒险者</p>
+          </div>
+          <div class="level-ring" id="levelRing" title="经验进度">
+            <span id="levelNumber">1</span>
+            <small>LV</small>
+          </div>
+        </div>
+        <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+        <div class="player-stats">
+          <div><strong id="statXp">0</strong><span>XP</span></div>
+          <div><strong id="statCoins">0</strong><span>金币</span></div>
+          <div><strong id="statStreak">0</strong><span>连续健身</span></div>
+        </div>
+        <div class="goal-line" id="goalLine">还没有绑定人生目标。点击右下角设置，或者重新进入新手引导。</div>
+      </section>
+
+      <div class="quick-actions">
+        <button class="quick-btn" type="button" id="dashboardRegenerateBtn">✨ AI 重铸任务</button>
+        <button class="quick-btn" type="button" id="dashboardRewardsBtn">🎁 奖励仓库</button>
+      </div>
+
+      <section class="section" aria-labelledby="mainSectionTitle">
+        <div class="section-head">
+          <h2 id="mainSectionTitle">🧭 主线任务</h2>
+          <span id="mainCount">0 个</span>
+        </div>
+        <div class="task-list" id="mainList"></div>
+      </section>
+
+      <section class="section" aria-labelledby="dailySectionTitle">
+        <div class="section-head">
+          <h2 id="dailySectionTitle">💪 每日健身</h2>
+          <span class="badge badge-red">强制</span>
+        </div>
+        <div id="dailyList"></div>
+      </section>
+
+      <section class="section" aria-labelledby="sideSectionTitle">
+        <div class="section-head">
+          <h2 id="sideSectionTitle">🎲 支线任务</h2>
+          <span class="badge badge-purple">含荒诞任务</span>
+        </div>
+        <div class="task-list" id="sideList"></div>
+      </section>
+
+      <section class="section" id="historySection" aria-labelledby="historySectionTitle">
+        <div class="section-head">
+          <h2 id="historySectionTitle">📜 最近战报</h2>
+          <span id="historyCount"></span>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </main>
+
+    <nav class="tabbar" id="tabbar" aria-label="主导航">
+      <button class="tab active" type="button" data-tab="dashboard">🏠<span>任务</span></button>
+      <button class="tab" type="button" data-tab="rewards">🎁<span>奖励</span></button>
+      <button class="tab" type="button" data-tab="stats">📊<span>数据</span></button>
+      <button class="tab" type="button" data-tab="settings">⚙️<span>设置</span></button>
+    </nav>
+  </div>
+
+  <!-- ===== 新手引导 ===== -->
+  <section class="screen" id="setupScreen" aria-hidden="true">
+    <div class="screen-inner setup-inner">
+      <header class="screen-top">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">🕹️</span>
+          <div class="brand-text">
+            <strong>金手指系统</strong>
+            <small>LIFE CHEAT SYSTEM</small>
+          </div>
+        </div>
+        <button class="icon-btn" type="button" id="setupCloseBtn" aria-label="关闭新手引导" hidden>✕</button>
+      </header>
+
+      <div class="step-dots" id="stepDots" aria-hidden="true">
+        <span class="active"></span><span></span><span></span>
+      </div>
+
+      <form id="setupForm" class="setup-form" novalidate>
+        <div class="setup-step active" data-step="0">
+          <div class="setup-hero">
+            <span class="eyebrow">STEP 01 · 角色创建</span>
+            <h1>先给命运<br><em>起个名字</em></h1>
+            <p>金手指只绑定真实玩家。留下你的代号和性别，系统会按你的设定生成专属任务。</p>
+          </div>
+
+          <label class="field">
+            <span>玩家代号</span>
+            <input class="input" id="inputName" type="text" maxlength="20" placeholder="例如：凌晨四点的阿鱼" autocomplete="nickname">
+          </label>
+
+          <div class="field">
+            <span>性别</span>
+            <div class="segmented" id="genderGroup" role="group" aria-label="选择性别">
+              <button type="button" data-gender="男">♂ 男</button>
+              <button type="button" data-gender="女">♀ 女</button>
+              <button type="button" data-gender="其他">⚧ 其他</button>
+              <button type="button" data-gender="保密">🕶️ 保密</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-step" data-step="1">
+          <span class="eyebrow">STEP 02 · 目标解析</span>
+          <h2>你想把人生<br>玩成什么样子？</h2>
+          <p>写得越具体，AI 越能拆出靠谱的主线；写得越离谱，支线越有节目效果。</p>
+
+          <label class="field">
+            <span>人生目标</span>
+            <textarea id="inputLifeGoal" maxlength="300" placeholder="例如：成为能独立做产品的 AI 开发者，同时拥有六块腹肌和说走就走的自由。"></textarea>
+          </label>
+          <div class="chip-row" id="lifeChips">
+            <button class="chip-btn" type="button" data-target="life" data-value="财务自由，不再为钱做不想做的事">财务自由</button>
+            <button class="chip-btn" type="button" data-target="life" data-value="成为能独立做产品的 AI 开发者">AI 独立开发者</button>
+            <button class="chip-btn" type="button" data-target="life" data-value="拥有六块腹肌和爆发力身材">六块腹肌</button>
+            <button class="chip-btn" type="button" data-target="life" data-value="做出一个有一万人使用的产品">一万人产品</button>
+            <button class="chip-btn" type="button" data-target="life" data-value="环游世界，边工作边生活">环游世界</button>
+          </div>
+
+          <label class="field">
+            <span>短期目标（3-6 个月）</span>
+            <textarea id="inputShortGoals" maxlength="300" placeholder="例如：3 个月减脂 10 斤；发布一个个人项目；每周读一本书；戒掉熬夜。"></textarea>
+          </label>
+          <div class="chip-row" id="shortChips">
+            <button class="chip-btn" type="button" data-target="short" data-value="3 个月减脂 10 斤">减脂 10 斤</button>
+            <button class="chip-btn" type="button" data-target="short" data-value="发布一个个人项目">发布个人项目</button>
+            <button class="chip-btn" type="button" data-target="short" data-value="每周读一本书">每周一本书</button>
+            <button class="chip-btn" type="button" data-target="short" data-value="涨薪 30%">涨薪 30%</button>
+            <button class="chip-btn" type="button" data-target="short" data-value="戒掉熬夜，12 点前睡觉">戒掉熬夜</button>
+          </div>
+        </div>
+
+        <div class="setup-step" data-step="2">
+          <span class="eyebrow">STEP 03 · 接入金手指</span>
+          <h2>连接 DeepSeek AI</h2>
+          <p>AI 会根据你的信息和目标推演主线、支线与每日健身任务。Key 只保存在本机浏览器。</p>
+
+          <label class="field">
+            <span>DeepSeek API Key</span>
+            <div class="input-with-action">
+              <input class="input" id="inputApiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false">
+              <button class="ghost-mini" type="button" id="toggleSetupKeyBtn">显示</button>
+            </div>
+          </label>
+          <p class="hint">没有 Key 也能先用离线模板开局，之后在设置里补上。 <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">获取 Key ↗</a></p>
+
+          <div class="mode-card">
+            <div>
+              <strong>AI 模式</strong>
+              <p>更懂你的目标，任务和奖励也会更离谱。</p>
+            </div>
+            <span class="mode-badge">推荐</span>
+          </div>
+        </div>
+
+        <div class="setup-actions">
+          <button class="btn btn-ghost" type="button" id="setupBackBtn" disabled>上一步</button>
+          <button class="btn btn-primary" type="submit" id="setupNextBtn">下一步</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== 加载页 ===== -->
+  <section class="screen screen-center" id="loadingScreen" aria-hidden="true">
+    <div class="loading-wrap">
+      <div class="loading-orb" aria-hidden="true"><span></span></div>
+      <span class="eyebrow">SYSTEM BOOTING</span>
+      <h2 id="loadingTitle">正在扫描命运线…</h2>
+      <p id="loadingMessage">金手指正在拆解你的人生目标</p>
+      <div class="loading-track" aria-hidden="true"><div class="loading-fill"></div></div>
+      <div class="loading-tips">任务生成后会自动保存在本机</div>
+    </div>
+  </section>
+
+  <!-- ===== 错误页 ===== -->
+  <section class="screen screen-center" id="errorScreen" aria-hidden="true">
+    <div class="state-card">
+      <div class="state-emoji" aria-hidden="true">🧯</div>
+      <h2>推演失败</h2>
+      <p id="errorMessage">AI 暂时没有回应。</p>
+      <div class="state-actions">
+        <button class="btn btn-primary" type="button" id="errorRetryBtn">重试 AI 推演</button>
+        <button class="btn btn-ghost" type="button" id="errorOfflineBtn">使用离线任务</button>
+        <button class="btn btn-text" type="button" id="errorSettingsBtn">检查 API 设置</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 生成结果 ===== -->
+  <section class="screen screen-center" id="resultScreen" aria-hidden="true">
+    <div class="screen-inner result-inner">
+      <div class="result-hero">
+        <span class="eyebrow">SYSTEM ONLINE</span>
+        <div class="result-emoji" aria-hidden="true">🖐️</div>
+        <h2>金手指已绑定</h2>
+        <p>主线负责远方，支线负责乐趣，健身负责让你有命享受。</p>
+      </div>
+      <div class="result-stats" id="resultStats"></div>
+      <div class="result-goal" id="resultGoal"></div>
+      <button class="btn btn-primary btn-block btn-lg" type="button" id="resultEnterBtn">进入系统 →</button>
+    </div>
+  </section>
+
+  <!-- ===== 任务详情 ===== -->
+  <section class="screen" id="taskScreen" aria-hidden="true">
+    <div class="screen-inner">
+      <header class="screen-top">
+        <button class="icon-btn" type="button" id="taskBackBtn" aria-label="返回">←</button>
+        <span class="screen-title" id="taskScreenTag">任务详情</span>
+        <button class="icon-btn" type="button" id="taskCloseBtn" aria-label="关闭">✕</button>
+      </header>
+      <div class="screen-body" id="taskBody"></div>
+      <footer class="screen-footer" id="taskFooter"></footer>
+    </div>
+  </section>
+
+  <!-- ===== 奖励仓库 ===== -->
+  <section class="screen" id="rewardsScreen" aria-hidden="true">
+    <div class="screen-inner">
+      <header class="screen-top">
+        <button class="icon-btn" type="button" id="rewardsBackBtn" aria-label="返回">←</button>
+        <span class="screen-title">奖励仓库</span>
+        <span class="icon-btn ghost" aria-hidden="true">🎁</span>
+      </header>
+      <div class="screen-body" id="rewardsBody"></div>
+    </div>
+  </section>
+
+  <!-- ===== 数据面板 ===== -->
+  <section class="screen" id="statsScreen" aria-hidden="true">
+    <div class="screen-inner">
+      <header class="screen-top">
+        <button class="icon-btn" type="button" id="statsBackBtn" aria-label="返回">←</button>
+        <span class="screen-title">命运数据</span>
+        <span class="icon-btn ghost" aria-hidden="true">📊</span>
+      </header>
+      <div class="screen-body" id="statsBody"></div>
+    </div>
+  </section>
+
+  <!-- ===== 设置 ===== -->
+  <section class="screen" id="settingsScreen" aria-hidden="true">
+    <div class="screen-inner">
+      <header class="screen-top">
+        <button class="icon-btn" type="button" id="settingsBackBtn" aria-label="返回">←</button>
+        <span class="screen-title">系统设置</span>
+        <span class="icon-btn ghost" aria-hidden="true">⚙️</span>
+      </header>
+      <div class="screen-body">
+        <div class="settings-group">
+          <h3>👤 玩家信息</h3>
+          <label class="field">
+            <span>玩家代号</span>
+            <input class="input" id="settingsName" type="text" maxlength="20">
+          </label>
+          <label class="field">
+            <span>性别</span>
+            <select class="input" id="settingsGender">
+              <option value="男">男</option>
+              <option value="女">女</option>
+              <option value="其他">其他</option>
+              <option value="保密">保密</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>人生目标</span>
+            <textarea id="settingsLifeGoal" maxlength="300"></textarea>
+          </label>
+          <label class="field">
+            <span>短期目标</span>
+            <textarea id="settingsShortGoals" maxlength="300"></textarea>
+          </label>
+          <button class="btn btn-primary btn-block" type="button" id="saveProfileBtn">保存玩家信息</button>
+          <button class="btn btn-ghost btn-block" type="button" id="editSetupBtn">重新进入新手引导</button>
+        </div>
+
+        <div class="settings-group">
+          <h3>🤖 AI 连接</h3>
+          <label class="field">
+            <span>DeepSeek API Key</span>
+            <div class="input-with-action">
+              <input class="input" id="settingsApiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false">
+              <button class="ghost-mini" type="button" id="toggleSettingsKeyBtn">显示</button>
+            </div>
+          </label>
+          <label class="field">
+            <span>模型</span>
+            <input class="input" id="settingsModel" type="text" placeholder="deepseek-chat">
+          </label>
+          <p class="hint" id="settingsKeyStatus">Key 只保存在本机浏览器，只会发送到 api.deepseek.com。</p>
+          <button class="btn btn-primary btn-block" type="button" id="saveAiBtn">保存 AI 设置</button>
+          <button class="btn btn-ghost btn-block" type="button" id="regenerateBtn">✨ 用当前目标重铸任务</button>
+        </div>
+
+        <div class="settings-group">
+          <h3>💾 本地存档</h3>
+          <button class="btn btn-ghost btn-block" type="button" id="exportBtn">导出存档 JSON</button>
+          <button class="btn btn-ghost btn-block" type="button" id="importBtn">导入存档 JSON</button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+          <button class="btn btn-danger btn-block" type="button" id="resetBtn">清空所有数据</button>
+          <p class="hint">任务、进度和奖励都保存在本机 localStorage，不会上传到服务器。</p>
+        </div>
+
+        <div class="settings-group">
+          <h3>ℹ️ 关于</h3>
+          <p class="hint">金手指系统 · 把人生调成游戏模式。<br>任务由 DeepSeek AI 生成，请量力而行；健身动作注意安全，身体不适立即停止。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 确认弹窗 ===== -->
+  <section class="screen screen-center" id="confirmScreen" aria-hidden="true">
+    <div class="state-card">
+      <div class="state-emoji" id="confirmEmoji" aria-hidden="true">⚠️</div>
+      <h2 id="confirmTitle">确认操作</h2>
+      <p id="confirmMessage"></p>
+      <div class="state-actions">
+        <button class="btn btn-primary" type="button" id="confirmOkBtn">确定</button>
+        <button class="btn btn-ghost" type="button" id="confirmCancelBtn">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 奖励领取 ===== -->
+  <section class="screen screen-center" id="claimScreen" aria-hidden="true">
+    <div class="claim-card">
+      <span class="eyebrow">REWARD UNLOCKED</span>
+      <div class="claim-emoji" id="claimEmoji" aria-hidden="true">🎁</div>
+      <div id="claimLevelUp"></div>
+      <h2 id="claimTitle">任务完成</h2>
+      <p class="claim-reward" id="claimReward"></p>
+      <p class="claim-detail" id="claimDetail"></p>
+      <div class="claim-stats" id="claimStats"></div>
+      <button class="btn btn-primary btn-block btn-lg" type="button" id="claimCloseBtn">收下奖励</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
