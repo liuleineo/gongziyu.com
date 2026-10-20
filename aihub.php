@@ -129,9 +129,14 @@ ob_start();
       transform: translateX(2px);
     }
     
-    /* 搜索框 */
+    /* 本页搜索区上方留白压缩 */
+    .section {
+      padding-top: var(--space-6);
+    }
+    
+    /* 搜索框（紧凑） */
     .search-section {
-      margin-bottom: var(--space-12);
+      margin-bottom: var(--space-3);
     }
     
     .search-box {
@@ -142,13 +147,13 @@ ob_start();
     
     .search-input {
       width: 100%;
-      padding: var(--space-4) var(--space-6);
-      padding-left: 50px;
+      padding: var(--space-2) var(--space-4);
+      padding-left: 40px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
+      border-radius: var(--radius-lg);
       color: var(--text-primary);
-      font-size: var(--font-base);
+      font-size: var(--font-sm);
       outline: none;
       transition: all var(--transition-fast);
     }
@@ -164,32 +169,36 @@ ob_start();
     
     .search-icon {
       position: absolute;
-      left: var(--space-5);
+      left: var(--space-3);
       top: 50%;
       transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       stroke: var(--text-tertiary);
     }
     
-    /* 统计信息 */
+    /* 统计信息（紧凑单行） */
     .stats-row {
       display: flex;
       justify-content: center;
-      gap: var(--space-12);
-      margin-bottom: var(--space-12);
-      padding: var(--space-6);
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-5);
+      margin-bottom: var(--space-6);
+      padding: var(--space-2) var(--space-4);
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
     }
     
     .stat-item-inline {
-      text-align: center;
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-1);
     }
     
     .stat-item-inline .stat-number {
-      font-size: var(--font-3xl);
+      font-size: var(--font-base);
       font-weight: 700;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
@@ -198,10 +207,8 @@ ob_start();
     }
     
     .stat-item-inline .stat-label {
-      display: block;
       font-size: var(--font-sm);
       color: var(--text-secondary);
-      margin-top: var(--space-1);
     }
     
     @media (max-width: 768px) {
@@ -210,8 +217,7 @@ ob_start();
       }
       
       .stats-row {
-        flex-direction: column;
-        gap: var(--space-4);
+        gap: var(--space-3);
       }
     }
   </style>
