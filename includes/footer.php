@@ -31,7 +31,7 @@
             
               <li><a href="/tools.php">工具</a></li>
               <li><a href="/hack.php">安全测试</a></li>
-              <li><a href="/dianshng.php">电商工具</a></li>
+              <li><a href="/dianshang.php">电商工具</a></li>
               <li><a href="/taiji.php">太极</a></li>
               <li><a href="/products/kingsystem/index.html">金手指</a></li>
 
