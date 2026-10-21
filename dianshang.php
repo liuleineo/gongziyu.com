@@ -175,9 +175,9 @@
     <!-- 海报板块 -->
     <div class="poster-banner">
         <div class="poster-content">
-            <span class="poster-badge">🔥 限时合作</span>
-            <h1 class="poster-title">电商运营合作，只收提点</h1>
-            <p class="poster-subtitle">天猫 / 拼多多 / 抖店 代运营合作</p>
+            <span class="poster-badge">🔥打爆款</span>
+            <h1 class="poster-title">复购=品控+品牌理念</h1>
+            <p class="poster-subtitle">运营效率+抗风险能力</p>
             <p class="poster-contact">合作电话：18868725001</p>
         </div>
         <div class="poster-bg"></div>
