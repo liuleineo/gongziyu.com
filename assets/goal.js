@@ -1,5 +1,5 @@
 /**
- * 金手指 · 目标拆解与执行
+ * 金手指 · 目标 / 任务 / 奖励
  *
  * 依赖服务端接口 /api/goal.php（DeepSeek Key 保存在服务器，前端拿不到）。
  * 进度保存在浏览器 localStorage，按目标分别记录。
@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var STORE_KEY = 'gongziyu_goal_v1';
+  var STORE_KEY = 'gongziyu_goal_v2';
   var API_URL = '/api/goal.php';
   var RING_R = 54;
   var RING_C = 2 * Math.PI * RING_R;
@@ -48,11 +48,19 @@
       if (raw) {
         var data = JSON.parse(raw);
         if (data && data.plans) {
+          // 清理旧结构（含资源/长短期目标）的记录
+          Object.keys(data.plans).forEach(function (key) {
+            var rec = data.plans[key];
+            if (!rec || !rec.plan || !Array.isArray(rec.plan.goals)) {
+              delete data.plans[key];
+              if (data.active === key) data.active = '';
+            }
+          });
           return data;
         }
       }
     } catch (e) { /* 忽略损坏数据 */ }
-    return { version: 1, active: '', plans: {} };
+    return { version: 2, active: '', plans: {} };
   }
 
   function saveStore() {
@@ -67,11 +75,9 @@
 
   function ensurePlan(record) {
     var plan = record.plan;
+    if (!Array.isArray(plan.goals)) plan.goals = [];
     if (!Array.isArray(plan.tasks)) plan.tasks = [];
-    if (!Array.isArray(plan.resources)) plan.resources = [];
-    if (!Array.isArray(plan.longTermGoals)) plan.longTermGoals = [];
-    if (!Array.isArray(plan.shortTermGoals)) plan.shortTermGoals = [];
-    if (!Array.isArray(plan.risks)) plan.risks = [];
+    if (!Array.isArray(plan.rewards)) plan.rewards = [];
     plan.tasks.forEach(function (task, i) { task.id = 't' + i; });
     if (!Array.isArray(record.done)) record.done = [];
     return plan;
@@ -126,23 +132,8 @@
     }).join('');
   }
 
-  function renderResources(plan) {
-    if (!plan.resources.length) {
-      el.resourceList.innerHTML = '<p class="resource-desc">暂无资源建议。</p>';
-      return;
-    }
-    el.resourceList.innerHTML = plan.resources.map(function (r) {
-      return '<div class="resource-item">' +
-        '<div class="resource-head"><span class="resource-type">' + escapeHtml(r.type || '资源') + '</span>' +
-        '<span>' + escapeHtml(r.name) + '</span></div>' +
-        (r.desc ? '<p class="resource-desc">' + escapeHtml(r.desc) + '</p>' : '') +
-        (r.how ? '<p class="resource-how">获取方式：' + escapeHtml(r.how) + '</p>' : '') +
-        '</div>';
-    }).join('');
-  }
-
-  function renderLongTerm(plan) {
-    el.longTermList.innerHTML = plan.longTermGoals.map(function (g, i) {
+  function renderGoals(plan) {
+    el.goalList.innerHTML = plan.goals.map(function (g, i) {
       return '<div class="goal-node">' +
         '<div class="goal-node-head">' +
         '<span class="goal-node-index">' + (i + 1) + '</span>' +
@@ -151,50 +142,35 @@
         (g.measure ? '<p class="goal-node-measure">衡量标准：' + escapeHtml(g.measure) + '</p>' : '') +
         (g.deadline ? '<p class="goal-node-measure">节点：' + escapeHtml(g.deadline) + '</p>' : '') +
         '</div>' +
-        '<span class="goal-node-pct" id="lt-pct-' + i + '">0%</span>' +
+        '<span class="goal-node-pct" id="g-pct-' + i + '">0%</span>' +
         '</div>' +
-        '<div class="goal-node-bar"><span id="lt-bar-' + i + '"></span></div>' +
+        '<div class="goal-node-bar"><span id="g-bar-' + i + '"></span></div>' +
         '</div>';
-    }).join('') || '<p class="resource-desc">暂无长期目标。</p>';
-  }
-
-  function renderShortTerm(plan) {
-    el.shortTermList.innerHTML = plan.shortTermGoals.map(function (g, i) {
-      return '<div class="goal-node">' +
-        '<div class="goal-node-head">' +
-        '<span class="goal-node-index">' + (i + 1) + '</span>' +
-        '<div><div class="goal-node-title">' + escapeHtml(g.title) + '</div>' +
-        (g.desc ? '<p class="goal-node-desc">' + escapeHtml(g.desc) + '</p>' : '') +
-        (g.measure ? '<p class="goal-node-measure">衡量标准：' + escapeHtml(g.measure) + '</p>' : '') +
-        '</div>' +
-        '<span class="goal-node-pct" id="st-pct-' + i + '">0%</span>' +
-        '</div>' +
-        '<div class="goal-node-bar"><span id="st-bar-' + i + '"></span></div>' +
-        '</div>';
-    }).join('') || '<p class="resource-desc">暂无短期目标。</p>';
+    }).join('') || '<p class="goal-node-desc">暂无目标拆解。</p>';
   }
 
   function renderTasks(plan, done) {
-    var stages = [];
-    var stageMap = {};
+    var groups = [];
+    var map = {};
     plan.tasks.forEach(function (task) {
-      var name = task.stage || '执行阶段';
-      if (!stageMap[name]) {
-        stageMap[name] = [];
-        stages.push(name);
+      var gi = Number(task.goalIndex) || 0;
+      if (!map[gi]) {
+        map[gi] = [];
+        groups.push(gi);
       }
-      stageMap[name].push(task);
+      map[gi].push(task);
     });
 
-    el.taskGroups.innerHTML = stages.map(function (stage) {
-      var list = stageMap[stage];
+    el.taskGroups.innerHTML = groups.map(function (gi) {
+      var list = map[gi];
+      var goal = plan.goals[gi];
       var doneCount = list.filter(function (t) { return done.indexOf(t.id) !== -1; }).length;
+      var title = goal ? ('目标' + (gi + 1) + ' · ' + goal.title) : ('目标' + (gi + 1));
       return '<div class="task-stage">' +
-        '<div class="task-stage-title">' + escapeHtml(stage) +
-        '<em>' + doneCount + '/' + list.length + ' 已完成</em></div>' +
+        '<div class="task-stage-title">' + escapeHtml(title) +
+        '<em>' + doneCount + '/' + list.length + '</em></div>' +
         list.map(function (task) {
           var isDone = done.indexOf(task.id) !== -1;
-          var st = plan.shortTermGoals[task.shortTermIndex];
           var priorityText = { high: '高优先', medium: '中优先', low: '低优先' }[task.priority] || '中优先';
           return '<label class="task-item' + (isDone ? ' is-done' : '') + '" data-id="' + task.id + '">' +
             '<input type="checkbox" ' + (isDone ? 'checked' : '') + '>' +
@@ -206,25 +182,32 @@
             '<span class="task-meta">' +
             (task.estimate ? '<span class="task-tag">' + escapeHtml(task.estimate) + '</span>' : '') +
             '<span class="task-tag ' + (task.priority || 'medium') + '">' + priorityText + '</span>' +
-            (st ? '<span class="task-tag">' + escapeHtml(st.title) + '</span>' : '') +
             '</span></span></label>';
         }).join('') +
         '</div>';
     }).join('');
   }
 
-  function renderRisks(plan) {
-    if (!plan.risks.length) {
-      el.riskCard.hidden = true;
+  function renderRewards(plan) {
+    if (!plan.rewards.length) {
+      el.rewardCard.hidden = true;
       return;
     }
-    el.riskCard.hidden = false;
-    el.riskList.innerHTML = plan.risks.map(function (r) {
-      return '<div class="risk-item"><b>' + escapeHtml(r.risk) + '</b>' +
-        (r.mitigation ? '<br>应对：' + escapeHtml(r.mitigation) : '') + '</div>';
+    el.rewardCard.hidden = false;
+    el.rewardList.innerHTML = plan.rewards.map(function (r, i) {
+      return '<div class="reward-item" id="rw-' + i + '" data-at="' + (Number(r.unlockAt) || 0) + '">' +
+        '<span class="reward-badge">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+        '<path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 21V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>' +
+        '<path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>' +
+        '</span>' +
+        '<div><div class="reward-title">' + escapeHtml(r.title) + '</div>' +
+        (r.condition ? '<p class="reward-cond">解锁条件：' + escapeHtml(r.condition) + '</p>' : '') +
+        (r.desc ? '<p class="reward-desc">' + escapeHtml(r.desc) + '</p>' : '') +
+        '</div>' +
+        '<span class="reward-state" id="rw-state-' + i + '">待解锁</span>' +
+        '</div>';
     }).join('');
-    el.adviceBox.textContent = plan.advice || '';
-    el.adviceCard.hidden = !plan.advice;
   }
 
   function updateProgress() {
@@ -251,33 +234,31 @@
       el.ringLabel.textContent = '完成进度';
     }
 
-    // 短期目标进度
-    plan.shortTermGoals.forEach(function (g, i) {
-      var list = plan.tasks.filter(function (t) { return t.shortTermIndex === i; });
+    // 目标阶梯进度
+    plan.goals.forEach(function (g, i) {
+      var list = plan.tasks.filter(function (t) { return (Number(t.goalIndex) || 0) === i; });
       var d = list.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
       var p = pct(d, list.length);
-      var bar = $('st-bar-' + i);
-      var txt = $('st-pct-' + i);
+      var bar = $('g-bar-' + i);
+      var txt = $('g-pct-' + i);
       if (bar) bar.style.width = p + '%';
       if (txt) txt.textContent = p + '%';
     });
 
-    // 长期目标进度
-    plan.longTermGoals.forEach(function (g, i) {
-      var idx = [];
-      plan.shortTermGoals.forEach(function (sg, si) {
-        if (Number(sg.longTermIndex) === i) idx.push(si);
-      });
-      var list = plan.tasks.filter(function (t) { return idx.indexOf(Number(t.shortTermIndex)) !== -1; });
-      var d = list.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
-      var p = pct(d, list.length);
-      var bar = $('lt-bar-' + i);
-      var txt = $('lt-pct-' + i);
-      if (bar) bar.style.width = p + '%';
-      if (txt) txt.textContent = p + '%';
+    // 奖励解锁
+    var unlocked = 0;
+    plan.rewards.forEach(function (r, i) {
+      var at = Number(r.unlockAt) || 0;
+      var node = $('rw-' + i);
+      var state = $('rw-state-' + i);
+      var ok = value >= at;
+      if (ok) unlocked++;
+      if (node) node.classList.toggle('is-unlocked', ok);
+      if (state) state.textContent = ok ? '已解锁' : (at + '% 解锁');
     });
+    el.statReward.textContent = unlocked;
 
-    // 阶段标题上的计数
+    // 分组计数
     var groups = el.taskGroups.querySelectorAll('.task-stage');
     for (var gi = 0; gi < groups.length; gi++) {
       var items = groups[gi].querySelectorAll('.task-item');
@@ -286,7 +267,7 @@
         if (items[ii].classList.contains('is-done')) dc++;
       }
       var em = groups[gi].querySelector('em');
-      if (em) em.textContent = dc + '/' + items.length + ' 已完成';
+      if (em) em.textContent = dc + '/' + items.length;
     }
 
     renderSavedGoals();
@@ -302,12 +283,9 @@
     el.planDuration.textContent = plan.duration ? ('预计周期：' + plan.duration) : '';
     el.planDuration.hidden = !plan.duration;
     el.goalInput.value = rec.goal;
-    el.goalExtra.value = rec.extra || '';
-    renderResources(plan);
-    renderLongTerm(plan);
-    renderShortTerm(plan);
+    renderGoals(plan);
     renderTasks(plan, rec.done);
-    renderRisks(plan);
+    renderRewards(plan);
     updateProgress();
   }
 
@@ -363,16 +341,14 @@
       .then(function (res) {
         return res.json().catch(function () {
           return { ok: false, error: '服务端返回异常' };
-        }).then(function (data) {
-          return { status: res.status, data: data };
         });
       })
-      .then(function (result) {
+      .then(function (data) {
         setLoading(false);
         showSkeleton(false);
-        if (!result.data.ok) {
+        if (!data.ok) {
           showStatus(
-            '拆解失败：' + escapeHtml(result.data.error || '请稍后重试') +
+            '拆解失败：' + escapeHtml(data.error || '请稍后重试') +
             '<div class="goal-status-actions">' +
             '<button type="button" class="goal-mini-btn" id="btnRetry">重试</button>' +
             '<button type="button" class="goal-mini-btn" id="btnOffline">使用示例方案</button>' +
@@ -389,14 +365,13 @@
           }
           return false;
         }
-        upsertRecord(goal, extra, result.data.plan, !!options.keepProgress);
+        upsertRecord(goal, extra, data.plan, !!options.keepProgress);
         hideStatus();
         renderAll();
         saveStore();
         try {
           history.replaceState(null, '', '?goal=' + encodeURIComponent(goal));
         } catch (e) { /* ignore */ }
-        el.planWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return true;
       })
       .catch(function () {
@@ -410,61 +385,42 @@
   /* -------------------------- 离线示例方案 -------------------------- */
 
   function buildOfflinePlan(goal) {
-    var stages = ['第1阶段·明确目标', '第2阶段·准备资源', '第3阶段·执行推进', '第4阶段·复盘优化'];
-    var shortTitles = [
-      '把目标写成可衡量的指标',
-      '备齐实现目标所需的资源',
-      '按计划每天推进',
-      '每周复盘并调整计划'
+    var goals = [
+      { title: '把目标写成可衡量的指标', desc: '把「' + goal + '」拆成数字与时间点。', measure: '写清衡量标准与截止日期', deadline: '第1周' },
+      { title: '备齐实现目标所需的条件', desc: '', measure: '清单上的条件全部就位', deadline: '第2周' },
+      { title: '按计划持续推进', desc: '每天推进一个关键动作。', measure: '连续 4 周按计划执行', deadline: '第6周' },
+      { title: '验收并固化成果', desc: '对照衡量标准验收，沉淀流程。', measure: '达成最初设定的指标', deadline: '第8周' }
     ];
     var taskTpl = [
-      ['写下目标的具体衡量标准', '把"' + goal + '"拆解成可量化的数字与时间点。'],
-      ['列出当前差距', '对比现状与目标，找出 3 个最关键的差距。'],
-      ['收集 3 个可参考的案例', '找到已经做到的人或团队，总结他们的路径。'],
-      ['准备必备工具与资料', '把需要用到的工具、课程、资料列成清单并备齐。'],
-      ['制定每周执行计划', '把目标拆到每一周，明确每周要交付什么。'],
-      ['搭建最小可行版本', '先用最小成本跑通一遍完整流程。'],
-      ['每天推进一个关键动作', '每天只挑一件最重要的事，做完再扩展。'],
-      ['记录过程数据', '用表格记录每天的关键数据，便于复盘。'],
-      ['寻求一次外部反馈', '把阶段成果给懂行的人看，收集改进意见。'],
-      ['优化最薄弱的环节', '针对反馈中最突出的问题做一次专项改进。'],
-      ['做一次阶段性验收', '对照衡量标准检查完成度，补齐缺口。'],
-      ['固化成习惯或流程', '把验证有效的做法沉淀下来，长期执行。']
+      ['写下目标的衡量标准', '把目标写成可量化的数字与日期。', 0, 'high'],
+      ['列出当前与目标的差距', '找出 3 个最关键的差距。', 0, 'high'],
+      ['收集 3 个可参考的案例', '总结别人做到的路径与方法。', 0, 'medium'],
+      ['备齐工具与资料', '把需要的工具、课程、资料列成清单。', 1, 'medium'],
+      ['制定每周执行计划', '把目标拆到每一周。', 1, 'medium'],
+      ['搭建最小可行版本', '先用最小成本跑通完整流程。', 1, 'high'],
+      ['每天推进一个关键动作', '每天只挑一件最重要的事。', 2, 'high'],
+      ['记录过程数据', '用表格记录每天的关键数据。', 2, 'medium'],
+      ['寻求一次外部反馈', '把阶段成果给懂行的人看。', 2, 'medium'],
+      ['优化最薄弱的环节', '针对反馈做一次专项改进。', 2, 'medium'],
+      ['做一次阶段性验收', '对照衡量标准补齐缺口。', 3, 'medium'],
+      ['固化成习惯或流程', '把有效做法沉淀下来长期执行。', 3, 'low']
     ];
-    var tasks = taskTpl.map(function (item, i) {
-      return {
-        title: item[0],
-        desc: item[1],
-        estimate: '1-2 小时',
-        stage: stages[Math.min(Math.floor(i / 3), stages.length - 1)],
-        shortTermIndex: Math.min(Math.floor(i / 3), 3),
-        priority: i < 3 ? 'high' : (i < 8 ? 'medium' : 'low')
-      };
-    });
+
     return {
       goal: goal,
       restatedGoal: goal,
       summary: '这是未连接 AI 时生成的通用示例方案，配置服务端 DeepSeek Key 后可获得针对该目标的专属拆解。',
-      duration: '8-12 周',
-      resources: [
-        { name: '目标拆解表', type: '工具', desc: '用于记录目标、衡量标准与每周进度', how: '用表格或在线文档自建一份' },
-        { name: '同领域案例', type: '资料', desc: '参考已达成同类目标的路径与方法', how: '在社区、视频站或行业报告中检索' },
-        { name: '每日执行清单', type: '工具', desc: '保证每天推进一个关键动作', how: '使用本站工具或任意待办应用' }
-      ],
-      longTermGoals: [
-        { title: '彻底掌握实现该目标所需的核心能力', desc: '', measure: '能独立完成完整流程', deadline: '第12周' },
-        { title: '形成稳定可复用的执行流程', desc: '', measure: '连续 4 周按计划执行', deadline: '第10周' },
-        { title: '达成目标设定的衡量标准', desc: '', measure: '对照最初指标验收', deadline: '第12周' }
-      ],
-      shortTermGoals: shortTitles.map(function (t, i) {
-        return { title: t, desc: '', measure: '完成本阶段全部任务', longTermIndex: Math.min(i, 2) };
+      duration: '8 周',
+      goals: goals,
+      tasks: taskTpl.map(function (t) {
+        return { title: t[0], desc: t[1], estimate: '1-2 小时', goalIndex: t[2], priority: t[3] };
       }),
-      tasks: tasks,
-      risks: [
-        { risk: '目标太模糊导致执行漂移', mitigation: '先把衡量标准写成数字和日期' },
-        { risk: '中途断档', mitigation: '每天只做一件关键小事，降低启动成本' }
-      ],
-      advice: '1. 先把目标写成可衡量的数字与日期。\n2. 每天只推进一个关键动作。\n3. 每周复盘一次，及时调整计划。'
+      rewards: [
+        { title: '一杯喜欢的咖啡', condition: '完成前 3 个任务', desc: '给自己一个即时的小正向反馈。', unlockAt: 25 },
+        { title: '看一场电影或半天休息', condition: '进度过半', desc: '犒劳坚持到一半的自己。', unlockAt: 50 },
+        { title: '买一件想要的小物件', condition: '进度达到 75%', desc: '提前预支一点成就感。', unlockAt: 75 },
+        { title: '一次短途旅行或大餐', condition: '全部任务完成', desc: '为完整走完全程庆祝一次。', unlockAt: 100 }
+      ]
     };
   }
 
@@ -473,14 +429,14 @@
   function bindEvents() {
     el.form.addEventListener('submit', function (e) {
       e.preventDefault();
-      generate(el.goalInput.value, el.goalExtra.value, { keepProgress: true });
+      generate(el.goalInput.value, '', { keepProgress: true });
     });
 
     el.chips.addEventListener('click', function (e) {
       var chip = e.target.closest('.goal-chip');
       if (!chip) return;
       el.goalInput.value = chip.getAttribute('data-goal') || '';
-      generate(el.goalInput.value, el.goalExtra.value, { keepProgress: true });
+      generate(el.goalInput.value, '', { keepProgress: true });
     });
 
     el.taskGroups.addEventListener('change', function (e) {
@@ -519,7 +475,7 @@
       generate(rec.goal, rec.extra, { keepProgress: true });
     });
 
-    el.btnDelete && el.btnDelete.addEventListener('click', function () {
+    el.btnDelete.addEventListener('click', function () {
       var rec = current();
       if (!rec) return;
       if (!window.confirm('删除当前目标及其全部进度？')) return;
@@ -550,7 +506,6 @@
   function init() {
     el.form = $('goalForm');
     el.goalInput = $('goalInput');
-    el.goalExtra = $('goalExtra');
     el.chips = $('goalChips');
     el.submit = $('goalSubmit');
     el.submitText = $('goalSubmitText');
@@ -567,15 +522,12 @@
     el.statDone = $('statDone');
     el.statTotal = $('statTotal');
     el.statLeft = $('statLeft');
+    el.statReward = $('statReward');
     el.planBar = $('planBar');
-    el.resourceList = $('resourceList');
-    el.longTermList = $('longTermList');
-    el.shortTermList = $('shortTermList');
+    el.goalList = $('goalList');
     el.taskGroups = $('taskGroups');
-    el.riskCard = $('riskCard');
-    el.riskList = $('riskList');
-    el.adviceCard = $('adviceCard');
-    el.adviceBox = $('adviceBox');
+    el.rewardCard = $('rewardCard');
+    el.rewardList = $('rewardList');
     el.btnReset = $('btnReset');
     el.btnRegen = $('btnRegen');
     el.btnDelete = $('btnDelete');

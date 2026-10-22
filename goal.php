@@ -1,14 +1,14 @@
 <?php
 /**
- * 金手指 · 目标拆解与执行
- * 前端输入目标 → 服务端调用 DeepSeek 拆解 → 勾选任务实时显示进度
+ * 金手指 · 目标 → 任务 → 奖励
+ * 输入目标 → 服务端调用 DeepSeek 拆解 → 勾选任务实时显示进度与奖励解锁
  */
 $pageTitle = '金手指 - AI目标拆解与执行 | 公子鱼AI实验室';
-$pageDescription = '输入一个目标，AI 自动拆解成资源清单、长期目标、短期目标与任务清单，完成一项勾选一项，进度实时可见，让目标一步一步实现。';
-$pageKeywords = '金手指,目标拆解,AI目标规划,任务清单,目标进度管理,DeepSeek,公子鱼AI实验室';
+$pageDescription = '输入一个目标，AI 自动拆成目标阶梯、可执行任务与阶段性奖励。完成一项勾选一项，进度与奖励实时更新。';
+$pageKeywords = '金手指,目标拆解,AI目标规划,任务清单,目标进度,奖励机制,DeepSeek,公子鱼AI实验室';
 $canonical = 'https://gongziyu.com/goal.php';
 $ogTitle = '金手指 - AI目标拆解与执行';
-$ogDescription = '输入目标，AI 拆解资源、长期目标、短期目标与任务清单，一步一步完成。';
+$ogDescription = '输入目标，AI 拆成目标阶梯、任务清单与阶段性奖励，一步一步完成。';
 $activeNav = 'goal';
 $pwaTitle = '金手指';
 
@@ -25,8 +25,8 @@ require __DIR__ . '/includes/header.php';
         <span class="goal-kicker">金手指 · AI 目标拆解引擎</span>
         <h1 class="goal-title">把目标交给 AI，剩下的<span class="highlight">一步一步做完</span></h1>
         <p class="goal-desc">
-          输入一个目标，DeepSeek 会为你规划所需资源、长期目标、短期目标与可执行任务清单。<br>
-          完成一项就勾选一项，完成进度实时更新。
+          输入一个目标，AI 帮你拆成目标阶梯、任务清单和阶段性奖励。<br>
+          完成一项勾选一项，进度与奖励实时更新。
         </p>
       </div>
 
@@ -50,22 +50,12 @@ require __DIR__ . '/includes/header.php';
           </button>
         </div>
 
-        <div class="goal-form-row goal-form-extra">
-          <div class="goal-input-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 6h16M4 12h16M4 18h10"/>
-            </svg>
-            <input type="text" id="goalExtra" maxlength="200" placeholder="补充信息（选填）：现状、可用时间、预算、约束条件…">
-          </div>
-        </div>
-
         <div class="goal-chips" id="goalChips">
-          <span class="goal-chips-label">试试这些目标：</span>
           <button type="button" class="goal-chip" data-goal="3个月内上线一个AI工具站">3个月内上线一个AI工具站</button>
           <button type="button" class="goal-chip" data-goal="3个月减脂10斤">3个月减脂10斤</button>
-          <button type="button" class="goal-chip" data-goal="从零学会Python并做出一个项目">从零学会Python并做出一个项目</button>
-          <button type="button" class="goal-chip" data-goal="半年内把副业做到月入1万">半年内把副业做到月入1万</button>
-          <button type="button" class="goal-chip" data-goal="一年内读完24本书并输出读书笔记">一年内读完24本书</button>
+          <button type="button" class="goal-chip" data-goal="从零学会Python并做出一个项目">从零学会Python</button>
+          <button type="button" class="goal-chip" data-goal="半年内把副业做到月入1万">副业月入1万</button>
+          <button type="button" class="goal-chip" data-goal="一年内读完24本书并输出读书笔记">一年读24本书</button>
         </div>
       </form>
 
@@ -80,17 +70,15 @@ require __DIR__ . '/includes/header.php';
       </div>
 
       <div class="saved-goals" id="savedGoals" hidden>
-        <div class="goal-chips">
-          <span class="goal-chips-label">我的目标：</span>
-          <div class="saved-goals-list" id="savedGoalsList"></div>
-        </div>
+        <span class="goal-chips-label">我的目标</span>
+        <div class="saved-goals-list" id="savedGoalsList"></div>
       </div>
 
       <div class="goal-plan" id="goalPlan" hidden>
 
         <div class="plan-progress-card">
           <div class="plan-progress-head">
-            <div>
+            <div class="plan-progress-info">
               <h2 id="planGoalTitle"></h2>
               <p class="plan-summary" id="planSummary"></p>
               <span class="plan-duration" id="planDuration" hidden></span>
@@ -114,10 +102,10 @@ require __DIR__ . '/includes/header.php';
           </div>
 
           <div class="plan-stats">
-            <div class="plan-stat"><b id="statDone">0</b><span>已完成任务</span></div>
+            <div class="plan-stat"><b id="statDone">0</b><span>已完成</span></div>
             <div class="plan-stat"><b id="statTotal">0</b><span>任务总数</span></div>
             <div class="plan-stat"><b id="statLeft">0</b><span>剩余任务</span></div>
-            <div class="plan-stat"><b id="statStage">阶段推进</b><span>执行方式</span></div>
+            <div class="plan-stat"><b id="statReward">0</b><span>已解锁奖励</span></div>
           </div>
 
           <div class="plan-bar"><div class="plan-bar-fill" id="planBar"></div></div>
@@ -129,41 +117,20 @@ require __DIR__ . '/includes/header.php';
           </div>
         </div>
 
-        <div class="plan-columns">
-          <div class="plan-col">
-            <section class="plan-card">
-              <h3>资源清单</h3>
-              <div id="resourceList"></div>
-            </section>
+        <section class="plan-card">
+          <h3>目标阶梯</h3>
+          <div id="goalList"></div>
+        </section>
 
-            <section class="plan-card">
-              <h3>长期目标</h3>
-              <div id="longTermList"></div>
-            </section>
+        <section class="plan-card">
+          <h3>任务清单</h3>
+          <div id="taskGroups"></div>
+        </section>
 
-            <section class="plan-card" id="riskCard" hidden>
-              <h3>风险与应对</h3>
-              <div id="riskList"></div>
-            </section>
-
-            <section class="plan-card" id="adviceCard" hidden>
-              <h3>执行建议</h3>
-              <p class="plan-advice" id="adviceBox"></p>
-            </section>
-          </div>
-
-          <div class="plan-col">
-            <section class="plan-card">
-              <h3>短期目标</h3>
-              <div id="shortTermList"></div>
-            </section>
-
-            <section class="plan-card">
-              <h3>任务清单</h3>
-              <div id="taskGroups"></div>
-            </section>
-          </div>
-        </div>
+        <section class="plan-card" id="rewardCard">
+          <h3>奖励清单</h3>
+          <div id="rewardList"></div>
+        </section>
 
       </div>
     </div>

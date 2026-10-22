@@ -1,63 +1,61 @@
-/* ===== 金手指 · 目标拆解页面 ===== */
+/* ===== 金手指 · 目标 / 任务 / 奖励（移动端优先） ===== */
 .goal-page {
-  padding: 120px 0 var(--space-20);
+  padding: 112px 0 var(--space-16);
 }
 
 .goal-hero {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto var(--space-10);
+  max-width: 720px;
+  margin: 0 auto var(--space-8);
 }
 
 .goal-kicker {
   display: inline-block;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-1) var(--space-3);
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   font-size: var(--font-sm);
   color: var(--text-secondary);
-  margin-bottom: var(--space-5);
-}
-
-.goal-title {
-  font-size: var(--font-4xl);
-  font-weight: 700;
-  line-height: 1.25;
   margin-bottom: var(--space-4);
 }
 
+.goal-title {
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: var(--space-3);
+}
+
 .goal-desc {
-  font-size: var(--font-lg);
+  font-size: var(--font-base);
   color: var(--text-secondary);
   line-height: 1.8;
 }
 
-/* 输入区 */
+.goal-desc br {
+  display: none;
+}
+
+/* ---------- 输入区 ---------- */
 .goal-form {
-  max-width: 860px;
-  margin: 0 auto var(--space-10);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-6);
+  max-width: 720px;
+  margin: 0 auto var(--space-8);
 }
 
 .goal-form-row {
   display: flex;
+  flex-direction: column;
   gap: var(--space-3);
-  align-items: stretch;
 }
 
 .goal-input-wrap {
-  flex: 1;
-  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: 0 var(--space-4);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
@@ -81,7 +79,7 @@
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: var(--font-lg);
+  font-size: var(--font-base);
   color: var(--text-primary);
   padding: var(--space-4) 0;
 }
@@ -91,8 +89,9 @@
 }
 
 .goal-submit {
-  flex-shrink: 0;
-  padding: var(--space-4) var(--space-8);
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-4) var(--space-6);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -126,37 +125,31 @@
   to { transform: rotate(360deg); }
 }
 
-.goal-form-extra {
-  margin-top: var(--space-3);
-}
-
-.goal-form-extra .goal-input-wrap input {
-  font-size: var(--font-base);
-  padding: var(--space-3) 0;
-}
-
 .goal-chips {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   gap: var(--space-2);
   margin-top: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 
-.goal-chips-label {
-  font-size: var(--font-sm);
-  color: var(--text-tertiary);
+.goal-chips::-webkit-scrollbar {
+  display: none;
 }
 
 .goal-chip {
-  padding: var(--space-1) var(--space-3);
+  flex-shrink: 0;
+  padding: var(--space-2) var(--space-4);
   font-size: var(--font-sm);
   font-family: inherit;
   color: var(--text-secondary);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   cursor: pointer;
+  white-space: nowrap;
   transition: all var(--transition-fast);
 }
 
@@ -165,9 +158,9 @@
   border-color: var(--primary);
 }
 
-/* 状态提示 */
+/* ---------- 状态 / 骨架屏 ---------- */
 .goal-status {
-  max-width: 860px;
+  max-width: 720px;
   margin: 0 auto var(--space-8);
   padding: var(--space-5);
   border-radius: var(--radius-lg);
@@ -185,7 +178,7 @@
   color: #B91C1C;
 }
 
-.goal-status .goal-status-actions {
+.goal-status-actions {
   margin-top: var(--space-4);
   display: flex;
   gap: var(--space-3);
@@ -216,36 +209,121 @@
   color: #EF4444;
 }
 
-/* 方案主体 */
-.goal-plan {
+.plan-skeleton {
+  max-width: 720px;
+  margin: 0 auto var(--space-8);
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 37%, var(--bg-tertiary) 63%);
+  background-size: 400% 100%;
+  animation: goal-shimmer 1.4s ease infinite;
+  margin-bottom: var(--space-3);
+}
+
+@keyframes goal-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ---------- 我的目标 ---------- */
+.saved-goals {
+  max-width: 720px;
+  margin: 0 auto var(--space-8);
+}
+
+.goal-chips-label {
   display: block;
+  font-size: var(--font-sm);
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.saved-goals-list {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.saved-goals-list::-webkit-scrollbar {
+  display: none;
+}
+
+.saved-goal {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 220px;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-sm);
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-goal:hover,
+.saved-goal.is-active {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.saved-goal.is-active {
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.saved-goal span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-goal .saved-pct {
+  flex-shrink: 0;
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+/* ---------- 进度卡 ---------- */
+.goal-plan {
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .plan-progress-card {
-  max-width: 860px;
-  margin: 0 auto var(--space-8);
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
-  padding: var(--space-8);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .plan-progress-head {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-8);
-  justify-content: space-between;
+  gap: var(--space-4);
+  text-align: center;
 }
 
-.plan-progress-head h2 {
-  font-size: var(--font-2xl);
+.plan-progress-info h2 {
+  font-size: var(--font-xl);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.45;
   margin-bottom: var(--space-2);
 }
 
 .plan-summary {
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
   color: var(--text-secondary);
   line-height: 1.7;
 }
@@ -254,7 +332,7 @@
   display: inline-block;
   margin-top: var(--space-2);
   padding: var(--space-1) var(--space-3);
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--primary);
   background: rgba(2, 132, 199, 0.1);
   border-radius: var(--radius-md);
@@ -262,8 +340,8 @@
 
 .plan-ring {
   position: relative;
-  width: 132px;
-  height: 132px;
+  width: 120px;
+  height: 120px;
   flex-shrink: 0;
 }
 
@@ -297,7 +375,7 @@
 }
 
 .plan-ring-num {
-  font-size: var(--font-2xl);
+  font-size: var(--font-xl);
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
@@ -312,28 +390,27 @@
 
 .plan-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
-  margin: var(--space-8) 0 var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin: var(--space-5) 0 var(--space-4);
 }
 
 .plan-stat {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-4);
+  padding: var(--space-3);
   text-align: center;
 }
 
 .plan-stat b {
   display: block;
-  font-size: var(--font-xl);
+  font-size: var(--font-lg);
   font-weight: 700;
-  color: var(--text-primary);
 }
 
 .plan-stat span {
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--text-tertiary);
 }
 
@@ -355,91 +432,34 @@
 
 .plan-actions {
   display: flex;
-  gap: var(--space-3);
-  justify-content: flex-end;
-  margin-top: var(--space-5);
-  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
-.plan-columns {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: var(--space-6);
-  align-items: start;
+.plan-actions .goal-mini-btn {
+  flex: 1;
+  text-align: center;
+  padding: var(--space-3) var(--space-2);
 }
 
-.plan-col {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
+/* ---------- 卡片 ---------- */
 .plan-card {
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
 }
 
 .plan-card h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
   font-size: var(--font-lg);
   font-weight: 600;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--border);
 }
 
-.plan-card h3 .plan-count {
-  margin-left: auto;
-  font-size: var(--font-sm);
-  font-weight: 500;
-  color: var(--text-tertiary);
-}
-
-/* 资源 */
-.resource-item {
-  padding: var(--space-3) 0;
-  border-bottom: 1px dashed var(--border);
-}
-
-.resource-item:last-child {
-  border-bottom: 0;
-}
-
-.resource-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: 600;
-  font-size: var(--font-base);
-}
-
-.resource-type {
-  padding: 2px var(--space-2);
-  font-size: var(--font-xs);
-  font-weight: 500;
-  color: var(--primary);
-  background: rgba(2, 132, 199, 0.1);
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
-
-.resource-desc,
-.resource-how {
-  font-size: var(--font-sm);
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-top: var(--space-1);
-}
-
-.resource-how {
-  color: var(--text-tertiary);
-}
-
-/* 长期 / 短期目标 */
+/* ---------- 目标阶梯 ---------- */
 .goal-node {
   padding: var(--space-4);
   border: 1px solid var(--border);
@@ -459,8 +479,8 @@
 }
 
 .goal-node-index {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -515,9 +535,9 @@
   transition: width 0.4s ease;
 }
 
-/* 任务清单 */
+/* ---------- 任务清单 ---------- */
 .task-stage {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .task-stage:last-child {
@@ -528,15 +548,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--primary);
   margin-bottom: var(--space-3);
 }
 
 .task-stage-title em {
   font-style: normal;
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   font-weight: 500;
   color: var(--text-tertiary);
 }
@@ -546,7 +566,8 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-4);
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--bg-secondary);
@@ -555,7 +576,7 @@
   transition: all var(--transition-fast);
 }
 
-.task-item:hover {
+.task-item:active {
   border-color: var(--primary);
 }
 
@@ -649,155 +670,169 @@
   border-color: rgba(2, 132, 199, 0.25);
 }
 
-/* 风险 */
-.risk-item {
+/* ---------- 奖励 ---------- */
+.reward-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  margin-bottom: var(--space-3);
+  opacity: 0.6;
+  transition: all var(--transition-base);
+}
+
+.reward-item:last-child {
+  margin-bottom: 0;
+}
+
+.reward-item.is-unlocked {
+  opacity: 1;
+  border-style: solid;
+  border-color: var(--primary);
+  background: rgba(2, 132, 199, 0.06);
+}
+
+.reward-badge {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-tertiary);
+}
+
+.reward-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+.reward-item.is-unlocked .reward-badge {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+}
+
+.reward-title {
+  font-size: var(--font-base);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.reward-cond,
+.reward-desc {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   line-height: 1.7;
-  padding: var(--space-3) 0;
-  border-bottom: 1px dashed var(--border);
+  margin-top: var(--space-1);
 }
 
-.risk-item:last-child {
-  border-bottom: 0;
+.reward-desc {
+  color: var(--text-tertiary);
 }
 
-.risk-item b {
-  color: var(--text-primary);
-}
-
-.plan-advice {
-  font-size: var(--font-sm);
-  color: var(--text-secondary);
-  line-height: 1.8;
-  white-space: pre-line;
-}
-
-/* 我的目标 */
-.saved-goals {
-  max-width: 860px;
-  margin: 0 auto var(--space-10);
-}
-
-.saved-goals-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.saved-goal {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-sm);
-  font-family: inherit;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  max-width: 260px;
-}
-
-.saved-goal:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.saved-goal.is-active {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: rgba(2, 132, 199, 0.08);
-}
-
-.saved-goal span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.saved-goal .saved-pct {
+.reward-state {
+  margin-left: auto;
   flex-shrink: 0;
+  padding: 2px var(--space-2);
   font-size: var(--font-xs);
   font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-tertiary);
 }
 
-/* 骨架屏 */
-.plan-skeleton {
-  max-width: 860px;
-  margin: 0 auto var(--space-8);
+.reward-item.is-unlocked .reward-state {
+  color: #B45309;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
 }
 
-.skeleton-line {
-  height: 14px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 37%, var(--bg-tertiary) 63%);
-  background-size: 400% 100%;
-  animation: goal-shimmer 1.4s ease infinite;
-  margin-bottom: var(--space-3);
-}
-
-@keyframes goal-shimmer {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
-}
-
-/* 响应式 */
-@media (max-width: 1024px) {
-  .plan-columns {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
+/* ---------- 大屏适配 ---------- */
+@media (min-width: 768px) {
   .goal-page {
-    padding: 104px 0 var(--space-16);
+    padding: 132px 0 var(--space-20);
   }
 
   .goal-title {
-    font-size: var(--font-3xl);
+    font-size: var(--font-4xl);
   }
 
   .goal-desc {
-    font-size: var(--font-base);
+    font-size: var(--font-lg);
+  }
+
+  .goal-desc br {
+    display: block;
   }
 
   .goal-form-row {
-    flex-direction: column;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .goal-input-wrap {
+    flex: 1;
+    border-radius: var(--radius-xl);
+  }
+
+  .goal-input-wrap input {
+    font-size: var(--font-lg);
   }
 
   .goal-submit {
-    justify-content: center;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .goal-chips,
+  .saved-goals-list {
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
 
   .plan-progress-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-5);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    gap: var(--space-6);
+  }
+
+  .plan-progress-info h2 {
+    font-size: var(--font-2xl);
   }
 
   .plan-ring {
-    align-self: center;
+    width: 132px;
+    height: 132px;
   }
 
   .plan-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
-  .plan-progress-card {
-    padding: var(--space-5);
+  .plan-actions {
+    justify-content: flex-end;
   }
-}
 
-@media (max-width: 480px) {
-  .goal-title {
-    font-size: var(--font-2xl);
+  .plan-actions .goal-mini-btn {
+    flex: 0 0 auto;
   }
 
   .plan-progress-card,
   .plan-card {
-    padding: var(--space-4);
+    padding: var(--space-6);
+  }
+
+  .task-item:hover {
+    border-color: var(--primary);
   }
 }

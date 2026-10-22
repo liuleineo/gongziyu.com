@@ -161,30 +161,22 @@ function goal_system_prompt(): string
   "restatedGoal": "把用户的目标改写为清晰、可衡量、有期限的表述",
   "summary": "总体策略，不超过 80 字",
   "duration": "预计完成周期，如 12周",
-  "resources": [
-    {"name": "资源名称", "type": "工具|课程|人脉|资料|资金|环境", "desc": "这个资源用来做什么", "how": "如何获取或准备", "link": ""}
-  ],
-  "longTermGoals": [
-    {"title": "长期目标", "desc": "说明", "measure": "可量化的衡量标准", "deadline": "如 第12周"}
-  ],
-  "shortTermGoals": [
-    {"title": "短期目标", "desc": "说明", "measure": "可量化的衡量标准", "longTermIndex": 0}
+  "goals": [
+    {"title": "阶梯目标", "desc": "说明", "measure": "可量化的衡量标准", "deadline": "如 第2周"}
   ],
   "tasks": [
-    {"title": "任务标题", "desc": "具体动作说明", "estimate": "预计耗时", "stage": "第1阶段·启动", "shortTermIndex": 0, "priority": "high|medium|low"}
+    {"title": "任务标题", "desc": "具体动作说明", "estimate": "预计耗时", "goalIndex": 0, "priority": "high|medium|low"}
   ],
-  "risks": [
-    {"risk": "可能的阻碍", "mitigation": "应对办法"}
-  ],
-  "advice": "3 条以内的执行建议"
+  "rewards": [
+    {"title": "奖励名称", "condition": "解锁条件描述", "desc": "为什么值得奖励自己", "unlockAt": 25}
+  ]
 }
 
 硬性约束：
-1. resources 4-6 条，longTermGoals 3-5 条，shortTermGoals 4-8 条，tasks 12-24 条，risks 2-4 条。
-2. shortTermGoals 的 longTermIndex 必须是 longTermGoals 中存在的下标（从 0 开始）。
-3. tasks 的 shortTermIndex 必须是 shortTermGoals 中存在的下标（从 0 开始），每个短期目标至少挂 2 个任务。
-4. tasks 必须按执行先后顺序排列，越靠前越先做；stage 用"第N阶段·阶段名"格式，相同阶段的任务连续排列。
-5. 全部使用简体中文，内容具体可执行，避免空话套话。
+1. goals 3-6 条，是通往最终目标的阶梯，按由易到难、由近到远的顺序排列，每条都要有可量化的 measure。
+2. tasks 12-24 条，按执行先后顺序排列，越靠前越先做；goalIndex 必须是 goals 中存在的下标（从 0 开始），每个 goal 至少挂 2 个任务。
+3. rewards 3-5 条，unlockAt 是 0-100 的整数百分比（如 25、50、75、100），按进度递增；奖励要具体、可执行、成本可控，用来给自己正向反馈。
+4. 全部使用简体中文，内容具体可执行，避免空话套话。
 PROMPT;
 }
 
@@ -275,29 +267,17 @@ function goal_int($value, int $default, int $max): int
  */
 function goal_normalize_plan(array $raw, string $goal): array
 {
-    $resources = [];
-    foreach ((is_array($raw['resources'] ?? null) ? $raw['resources'] : []) as $item) {
-        if (!is_array($item)) {
-            continue;
-        }
-        $name = goal_str($item['name'] ?? ($item['title'] ?? ''));
-        if ($name === '') {
-            continue;
-        }
-        $resources[] = [
-            'name' => $name,
-            'type' => goal_str($item['type'] ?? '', '其他'),
-            'desc' => goal_str($item['desc'] ?? ($item['description'] ?? '')),
-            'how'  => goal_str($item['how'] ?? ''),
-            'link' => goal_str($item['link'] ?? ''),
-        ];
-        if (count($resources) >= 8) {
-            break;
-        }
+    // 目标阶梯：优先读 goals，兼容旧的 longTermGoals / shortTermGoals（近期在前，远期在后）
+    $rawGoals = is_array($raw['goals'] ?? null) ? $raw['goals'] : null;
+    if ($rawGoals === null) {
+        $rawGoals = array_merge(
+            is_array($raw['shortTermGoals'] ?? null) ? $raw['shortTermGoals'] : [],
+            is_array($raw['longTermGoals'] ?? null) ? $raw['longTermGoals'] : []
+        );
     }
 
-    $longTerm = [];
-    foreach ((is_array($raw['longTermGoals'] ?? null) ? $raw['longTermGoals'] : []) as $item) {
+    $goals = [];
+    foreach ($rawGoals as $item) {
         if (!is_array($item)) {
             continue;
         }
@@ -305,43 +285,18 @@ function goal_normalize_plan(array $raw, string $goal): array
         if ($title === '') {
             continue;
         }
-        $longTerm[] = [
+        $goals[] = [
             'title'    => $title,
             'desc'     => goal_str($item['desc'] ?? ($item['description'] ?? '')),
             'measure'  => goal_str($item['measure'] ?? ''),
             'deadline' => goal_str($item['deadline'] ?? ''),
         ];
-        if (count($longTerm) >= 6) {
+        if (count($goals) >= 8) {
             break;
         }
     }
 
-    $shortTerm = [];
-    $longCount = max(count($longTerm), 1);
-    foreach ((is_array($raw['shortTermGoals'] ?? null) ? $raw['shortTermGoals'] : []) as $item) {
-        if (!is_array($item)) {
-            continue;
-        }
-        $title = goal_str($item['title'] ?? ($item['name'] ?? ''));
-        if ($title === '') {
-            continue;
-        }
-        $idx = $item['longTermIndex'] ?? null;
-        if (!is_numeric($idx) && isset($item['related']) && is_array($item['related']) && isset($item['related'][0])) {
-            $idx = $item['related'][0];
-        }
-        $shortTerm[] = [
-            'title'         => $title,
-            'desc'          => goal_str($item['desc'] ?? ($item['description'] ?? '')),
-            'measure'       => goal_str($item['measure'] ?? ''),
-            'longTermIndex' => goal_int($idx, 0, $longCount - 1),
-        ];
-        if (count($shortTerm) >= 10) {
-            break;
-        }
-    }
-
-    $shortCount = count($shortTerm);
+    $goalCount = max(count($goals), 1);
     $tasks = [];
     foreach ((is_array($raw['tasks'] ?? null) ? $raw['tasks'] : []) as $item) {
         if (!is_array($item)) {
@@ -351,75 +306,72 @@ function goal_normalize_plan(array $raw, string $goal): array
         if ($title === '') {
             continue;
         }
-        $stage = goal_str($item['stage'] ?? '');
-        if ($stage === '') {
-            $stage = '第1阶段·启动';
-        }
         $priority = strtolower(goal_str($item['priority'] ?? 'medium', 'medium'));
         if (!in_array($priority, ['high', 'medium', 'low'], true)) {
             $priority = 'medium';
         }
+        $idx = $item['goalIndex'] ?? ($item['shortTermIndex'] ?? null);
         $tasks[] = [
-            'title'          => $title,
-            'desc'           => goal_str($item['desc'] ?? ($item['description'] ?? '')),
-            'estimate'       => goal_str($item['estimate'] ?? ''),
-            'stage'          => $stage,
-            'shortTermIndex' => $shortCount > 0 ? goal_int($item['shortTermIndex'] ?? 0, 0, $shortCount - 1) : 0,
-            'priority'       => $priority,
+            'title'     => $title,
+            'desc'      => goal_str($item['desc'] ?? ($item['description'] ?? '')),
+            'estimate'  => goal_str($item['estimate'] ?? ''),
+            'goalIndex' => goal_int($idx, 0, $goalCount - 1),
+            'priority'  => $priority,
         ];
         if (count($tasks) >= 30) {
             break;
         }
     }
 
-    // 兜底：模型没有给任务时，按短期目标生成占位任务
+    // 兜底：模型没有给任务时，按目标阶梯生成占位任务
     if (count($tasks) === 0) {
-        if ($shortCount === 0) {
-            $shortTerm[] = ['title' => '完成目标的第一步', 'desc' => '', 'measure' => '', 'longTermIndex' => 0];
-            $shortCount = 1;
+        if (count($goals) === 0) {
+            $goals[] = ['title' => '完成目标的第一步', 'desc' => '', 'measure' => '', 'deadline' => ''];
         }
-        foreach ($shortTerm as $i => $st) {
+        foreach ($goals as $i => $g) {
             $tasks[] = [
-                'title'          => '推进：' . $st['title'],
-                'desc'           => '把这一项拆成今天就能开始的具体动作。',
-                'estimate'       => '1-2 小时',
-                'stage'          => '第1阶段·启动',
-                'shortTermIndex' => $i,
-                'priority'       => 'medium',
+                'title'     => '推进：' . $g['title'],
+                'desc'      => '把这一项拆成今天就能开始的具体动作。',
+                'estimate'  => '1-2 小时',
+                'goalIndex' => $i,
+                'priority'  => 'medium',
             ];
         }
     }
 
-    $risks = [];
-    foreach ((is_array($raw['risks'] ?? null) ? $raw['risks'] : []) as $item) {
+    $rewards = [];
+    foreach ((is_array($raw['rewards'] ?? null) ? $raw['rewards'] : []) as $item) {
         if (!is_array($item)) {
             continue;
         }
-        $risk = goal_str($item['risk'] ?? ($item['title'] ?? ''));
-        if ($risk === '') {
+        $title = goal_str($item['title'] ?? ($item['name'] ?? ''));
+        if ($title === '') {
             continue;
         }
-        $risks[] = [
-            'risk'       => $risk,
-            'mitigation' => goal_str($item['mitigation'] ?? ''),
+        $rewards[] = [
+            'title'     => $title,
+            'condition' => goal_str($item['condition'] ?? ''),
+            'desc'      => goal_str($item['desc'] ?? ($item['description'] ?? '')),
+            'unlockAt'  => goal_int($item['unlockAt'] ?? 25, 25, 100),
         ];
-        if (count($risks) >= 6) {
+        if (count($rewards) >= 6) {
             break;
         }
     }
+    // 按解锁进度排序
+    usort($rewards, static function (array $a, array $b) {
+        return $a['unlockAt'] <=> $b['unlockAt'];
+    });
 
     return [
-        'goal'          => $goal,
-        'restatedGoal'  => goal_str($raw['restatedGoal'] ?? '', $goal),
-        'summary'       => goal_str($raw['summary'] ?? ''),
-        'duration'      => goal_str($raw['duration'] ?? ''),
-        'resources'     => $resources,
-        'longTermGoals' => $longTerm,
-        'shortTermGoals' => $shortTerm,
-        'tasks'         => $tasks,
-        'risks'         => $risks,
-        'advice'        => goal_str($raw['advice'] ?? ''),
-        'createdAt'     => date('c'),
+        'goal'         => $goal,
+        'restatedGoal' => goal_str($raw['restatedGoal'] ?? '', $goal),
+        'summary'      => goal_str($raw['summary'] ?? ''),
+        'duration'     => goal_str($raw['duration'] ?? ''),
+        'goals'        => $goals,
+        'tasks'        => $tasks,
+        'rewards'      => $rewards,
+        'createdAt'    => date('c'),
     ];
 }
 
