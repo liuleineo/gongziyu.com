@@ -82,7 +82,7 @@ require __DIR__ . '/includes/header.php';
           <span>AI 目标拆解 · 一步一步实现</span>
         </div>
         <h1 class="hero-title">
-          公子鱼<span class="highlight">金手指</span>
+          开启你的<span class="highlight">金手指</span>
         </h1>
         <p class="hero-subtitle">
           写下你想实现的目标，AI 自动拆解资源、长期目标、短期目标与任务清单<br>
