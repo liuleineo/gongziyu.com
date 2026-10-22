@@ -492,6 +492,24 @@ body.is-modal-open {
   opacity: 0.92;
 }
 
+.goal-modal-speak {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-2);
+  font-family: inherit;
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 0;
+  border-top: 1px dashed var(--border);
+  cursor: pointer;
+}
+
+.goal-modal-speak:hover {
+  color: var(--primary);
+}
+
 /* ---------- 奖励解锁弹窗 ---------- */
 .reward-modal .goal-modal-card {
   border-color: rgba(245, 158, 11, 0.45);

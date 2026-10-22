@@ -162,6 +162,7 @@ require __DIR__ . '/includes/header.php';
         <div class="goal-modal-actions">
           <button type="button" class="goal-modal-btn primary" id="rewardOk">收下奖励</button>
         </div>
+        <button type="button" class="goal-modal-speak" id="rewardSpeak">播报：开</button>
       </div>
     </div>
 
@@ -178,6 +179,7 @@ require __DIR__ . '/includes/header.php';
           <button type="button" class="goal-modal-btn" id="remindLater">稍后安排</button>
           <button type="button" class="goal-modal-btn primary" id="remindDone">已完成</button>
         </div>
+        <button type="button" class="goal-modal-speak" id="remindSpeak">播报：开</button>
       </div>
     </div>
   </section>

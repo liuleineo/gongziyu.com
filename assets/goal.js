@@ -428,6 +428,86 @@
       : '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   }
 
+  /* --------------------------- 语音播报 --------------------------- */
+
+  var SPEAK_KEY = 'gongziyu_goal_speak';
+  var pendingSpeak = '';
+
+  function speakSupported() {
+    return typeof window.speechSynthesis !== 'undefined' &&
+      typeof window.SpeechSynthesisUtterance !== 'undefined';
+  }
+
+  function speakOn() {
+    try {
+      return localStorage.getItem(SPEAK_KEY) !== '0';
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function pickZhVoice() {
+    var voices = window.speechSynthesis.getVoices() || [];
+    for (var i = 0; i < voices.length; i++) {
+      if (/^zh/i.test(voices[i].lang) || /Chinese|中文/i.test(voices[i].name)) {
+        return voices[i];
+      }
+    }
+    return null;
+  }
+
+  function speak(text) {
+    if (!speakSupported() || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new window.SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN';
+      u.rate = 1.05;
+      var voice = pickZhVoice();
+      if (voice) {
+        try { u.voice = voice; } catch (e) { /* 音色设置失败仍继续播报 */ }
+      }
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* 浏览器不支持时静默忽略 */ }
+  }
+
+  function stopSpeak() {
+    if (!speakSupported()) return;
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) { /* ignore */ }
+  }
+
+  /**
+   * 播报弹窗内容；iOS Safari 等要求用户交互后才能发声，
+   * 因此先尝试播报，失败/无声时存为 pending，等首次交互再补播。
+   */
+  function speakModal(text) {
+    pendingSpeak = text;
+    if (speakOn()) {
+      speak(text);
+    }
+  }
+
+  function toggleSpeak() {
+    var next = !speakOn();
+    try {
+      localStorage.setItem(SPEAK_KEY, next ? '1' : '0');
+    } catch (e) { /* ignore */ }
+    updateSpeakLabels();
+    if (next) {
+      speak(pendingSpeak || (el.remindTitle ? el.remindTitle.textContent : ''));
+    } else {
+      stopSpeak();
+    }
+  }
+
+  function updateSpeakLabels() {
+    var label = speakOn() ? '播报：开' : '播报：关';
+    if (el.remindSpeak) el.remindSpeak.textContent = label;
+    if (el.rewardSpeak) el.rewardSpeak.textContent = label;
+  }
+
   /* --------------------------- 任务提醒弹窗 --------------------------- */
 
   function openReminder(data) {
@@ -449,12 +529,14 @@
     el.reminder.setAttribute('data-task-id', task.id);
     el.reminder.hidden = false;
     document.body.classList.add('is-modal-open');
+    speakModal('接下来要完成，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
   }
 
   function closeReminder() {
     if (!el.reminder) return;
     el.reminder.hidden = true;
     document.body.classList.remove('is-modal-open');
+    stopSpeak();
   }
 
   function showReminder() {
@@ -480,6 +562,7 @@
     if (!el.rewardModal) return;
     el.rewardModal.hidden = true;
     document.body.classList.remove('is-modal-open');
+    stopSpeak();
   }
 
   function showRewardQueue() {
@@ -502,6 +585,7 @@
     el.rewardDesc.hidden = !reward.desc;
     el.rewardModal.hidden = false;
     document.body.classList.add('is-modal-open');
+    speakModal('奖励已解锁，' + reward.title + '。' + (reward.desc || ''));
   }
 
   function advanceReminder() {
@@ -736,6 +820,24 @@
     if (el.rewardMask) {
       el.rewardMask.addEventListener('click', showRewardQueue);
     }
+    if (el.remindSpeak) {
+      el.remindSpeak.addEventListener('click', toggleSpeak);
+    }
+    if (el.rewardSpeak) {
+      el.rewardSpeak.addEventListener('click', toggleSpeak);
+    }
+    // iOS/部分浏览器要求用户交互后才能发声：首次交互时补播
+    document.addEventListener('click', function flush() {
+      document.removeEventListener('click', flush);
+      if (!pendingSpeak) return;
+      if (speakOn()) {
+        speak(pendingSpeak);
+      }
+      pendingSpeak = '';
+    });
+    if (speakSupported()) {
+      window.speechSynthesis.addEventListener('voiceschanged', updateSpeakLabels);
+    }
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       if (el.rewardModal && !el.rewardModal.hidden) {
@@ -805,6 +907,9 @@
     el.rewardCond = $('rewardCond');
     el.rewardDesc = $('rewardDesc');
     el.rewardOk = $('rewardOk');
+    el.remindSpeak = $('remindSpeak');
+    el.rewardSpeak = $('rewardSpeak');
+    updateSpeakLabels();
     el.savedList = $('savedGoalsList');
 
     if (!el.form) return;
