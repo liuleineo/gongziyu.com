@@ -479,8 +479,8 @@
     el.chips.addEventListener('click', function (e) {
       var chip = e.target.closest('.goal-chip');
       if (!chip) return;
-      el.goalInput.value = chip.getAttribute('data-goal');
-      el.goalInput.focus();
+      el.goalInput.value = chip.getAttribute('data-goal') || '';
+      generate(el.goalInput.value, el.goalExtra.value, { keepProgress: true });
     });
 
     el.taskGroups.addEventListener('change', function (e) {

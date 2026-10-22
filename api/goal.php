@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 require __DIR__ . '/config.php';
 
+// 接口只返回 JSON，避免任何警告/弃用信息混入响应
+ini_set('display_errors', '0');
+
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
@@ -46,9 +49,9 @@ function goal_check_origin(): bool
     if ($origin === '') {
         return true;
     }
-    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $host = preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? ''));
     $originHost = parse_url($origin, PHP_URL_HOST);
-    return $originHost !== false && $originHost !== null && $host !== '' && strtolower($originHost) === strtolower($host);
+    return $originHost !== false && $originHost !== null && $host !== '' && strtolower((string) $originHost) === strtolower($host);
 }
 
 /**
@@ -240,6 +243,19 @@ function goal_str($value, string $default = ''): string
         return (string) $value;
     }
     return $default;
+}
+
+function goal_len(string $text): int
+{
+    return function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : strlen($text);
+}
+
+function goal_cut(string $text, int $len): string
+{
+    if (goal_len($text) <= $len) {
+        return $text;
+    }
+    return function_exists('mb_substr') ? mb_substr($text, 0, $len, 'UTF-8') : substr($text, 0, $len);
 }
 
 function goal_int($value, int $default, int $max): int
@@ -453,7 +469,7 @@ function goal_request_deepseek(string $goal, string $extra): array
     $response = curl_exec($ch);
     $curlErr = $response === false ? curl_error($ch) : '';
     $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    unset($ch);
 
     if ($response === false) {
         return ['ok' => false, 'error' => '调用 AI 接口失败：' . ($curlErr ?: '网络异常'), 'status' => 502];
@@ -461,7 +477,10 @@ function goal_request_deepseek(string $goal, string $extra): array
 
     $data = json_decode($response, true);
     if ($httpCode >= 400 || !is_array($data)) {
-        $message = is_array($data) ? goal_str($data['error']['message'] ?? '') : '';
+        $message = '';
+        if (is_array($data) && isset($data['error']['message']) && is_string($data['error']['message'])) {
+            $message = trim($data['error']['message']);
+        }
         if ($message === '') {
             $message = 'AI 接口返回异常（HTTP ' . $httpCode . '）';
         }
@@ -526,11 +545,11 @@ $extra = goal_str($body['extra'] ?? '', '');
 if ($goal === '') {
     goal_respond(['ok' => false, 'error' => '请先输入你的目标'], 400);
 }
-if (mb_strlen($goal, 'UTF-8') > GOAL_MAX_LEN) {
-    $goal = mb_substr($goal, 0, GOAL_MAX_LEN, 'UTF-8');
+if (goal_len($goal) > GOAL_MAX_LEN) {
+    $goal = goal_cut($goal, GOAL_MAX_LEN);
 }
-if (mb_strlen($extra, 'UTF-8') > 1000) {
-    $extra = mb_substr($extra, 0, 1000, 'UTF-8');
+if (goal_len($extra) > 1000) {
+    $extra = goal_cut($extra, 1000);
 }
 
 if (!goal_rate_limit()) {

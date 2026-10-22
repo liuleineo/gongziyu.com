@@ -270,14 +270,18 @@ ul {
 
 .hero .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
-  align-items: center;
+  grid-template-columns: 1fr;
+  width: 100%;
+  min-width: 0;
   position: relative;
   z-index: 1;
 }
 
 .hero-content {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
   animation: fadeInUp 1s ease;
 }
 
@@ -328,16 +332,21 @@ ul {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  background: var(--bg-tertiary);
+  background: var(--bg-primary);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   padding: var(--space-2);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .hero-goal-box:focus-within {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12), 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.hero-goal-box:focus-within .hero-goal-icon {
+  color: var(--primary);
 }
 
 .hero-goal-icon {
@@ -346,6 +355,7 @@ ul {
   flex-shrink: 0;
   margin-left: var(--space-3);
   color: var(--text-tertiary);
+  transition: color var(--transition-base);
 }
 
 .hero-goal-input {
@@ -357,7 +367,7 @@ ul {
   font-family: inherit;
   font-size: var(--font-lg);
   color: var(--text-primary);
-  padding: var(--space-3) var(--space-1);
+  padding: var(--space-3) var(--space-2);
 }
 
 .hero-goal-input::placeholder {
@@ -367,6 +377,7 @@ ul {
 .hero-goal-btn {
   flex-shrink: 0;
   padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-xl);
   font-family: inherit;
   cursor: pointer;
 }
@@ -374,6 +385,7 @@ ul {
 .hero-goal-hints {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-top: var(--space-4);
@@ -403,6 +415,7 @@ ul {
 
 .hero-actions-sub {
   margin-top: var(--space-2);
+  justify-content: center;
 }
 
 @media (max-width: 480px) {

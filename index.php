@@ -85,8 +85,7 @@ require __DIR__ . '/includes/header.php';
           开启你的<span class="highlight">金手指</span>
         </h1>
         <p class="hero-subtitle">
-          写下你想实现的目标，AI 自动拆解资源、长期目标、短期目标与任务清单<br>
-          完成一项勾选一项，进度实时可见
+          写下你想实现的目标，AI帮你拆解规划实现目标
         </p>
 
         <form class="hero-goal" id="heroGoalForm" autocomplete="off">
@@ -97,7 +96,7 @@ require __DIR__ . '/includes/header.php';
               <circle cx="12" cy="12" r="2"/>
             </svg>
             <input type="text" id="heroGoalInput" class="hero-goal-input" maxlength="300"
-                   placeholder="输入你想实现的目标，例如：3个月内上线一个AI工具站">
+                   placeholder="输入你想实现的目标">
             <button type="submit" class="btn btn-primary hero-goal-btn" id="heroGoalSubmit">
               实现目标
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -107,46 +106,16 @@ require __DIR__ . '/includes/header.php';
           </div>
           <div class="hero-goal-hints">
             <span class="hero-goal-hint-label">试试：</span>
-            <button type="button" class="hero-goal-chip" data-goal="3个月减脂10斤">3个月减脂10斤</button>
-            <button type="button" class="hero-goal-chip" data-goal="从零学会Python并做出一个项目">从零学会Python</button>
-            <button type="button" class="hero-goal-chip" data-goal="半年内把副业做到月入1万">副业月入1万</button>
-            <button type="button" class="hero-goal-chip" data-goal="一年内读完24本书并输出读书笔记">一年读24本书</button>
+            <button type="button" class="hero-goal-chip" data-goal="3个月练出6块腹肌">3个月练出6块腹肌</button>
+            <button type="button" class="hero-goal-chip" data-goal="年入百万销冠">年入百万销冠</button>
+            <button type="button" class="hero-goal-chip" data-goal="0-1操盘亿级电商项目">0-1操盘亿级电商项目</button>
+            <button type="button" class="hero-goal-chip" data-goal="1年开发12个app">1年开发12个app</button>
           </div>
         </form>
 
         <div class="hero-actions hero-actions-sub">
           <a href="services.php" class="btn btn-outline">查看服务</a>
           <a href="tools.php" class="btn btn-outline">浏览工具</a>
-        </div>
-      </div>
-      
-      <div class="hero-visual">
-        <div class="ai-particles">
-          <div class="particle particle-1"></div>
-          <div class="particle particle-2"></div>
-          <div class="particle particle-3"></div>
-          <div class="particle particle-4"></div>
-          <div class="particle particle-5"></div>
-        </div>
-        <div class="ai-brain">
-          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="100" cy="100" r="80" stroke="url(#gradient1)" stroke-width="2" fill="none"/>
-            <circle cx="100" cy="100" r="60" stroke="url(#gradient1)" stroke-width="2" fill="none"/>
-            <circle cx="100" cy="100" r="40" stroke="url(#gradient1)" stroke-width="2" fill="none"/>
-            <path d="M100 20 L100 180" stroke="url(#gradient1)" stroke-width="1" stroke-dasharray="5,5"/>
-            <path d="M20 100 L180 100" stroke="url(#gradient1)" stroke-width="1" stroke-dasharray="5,5"/>
-            <circle cx="100" cy="100" r="15" fill="url(#gradient2)"/>
-            <defs>
-              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#0284C7"/>
-                <stop offset="100%" style="stop-color:#7C3AED"/>
-              </linearGradient>
-              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#0284C7"/>
-                <stop offset="100%" style="stop-color:#7C3AED"/>
-              </linearGradient>
-            </defs>
-          </svg>
         </div>
       </div>
     </div>
