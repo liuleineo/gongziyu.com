@@ -1,4 +1,10 @@
 /* ===== 金手指 · 目标 / 任务 / 奖励（移动端优先） ===== */
+
+/* 页面里有 display:flex/grid 的块级元素，会覆盖浏览器默认的 [hidden]{display:none}，这里强制兜底 */
+[hidden] {
+  display: none !important;
+}
+
 .goal-page {
   padding: 112px 0 var(--space-16);
 }
@@ -299,12 +305,21 @@
   margin: 0 auto;
 }
 
+.goal-progress {
+  max-width: 720px;
+  margin: 0 auto var(--space-6);
+}
+
 .plan-progress-card {
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
   padding: var(--space-5);
   margin-bottom: var(--space-6);
+}
+
+.goal-progress .plan-progress-card {
+  margin-bottom: 0;
 }
 
 .plan-progress-head {
@@ -336,6 +351,265 @@
   color: var(--primary);
   background: rgba(2, 132, 199, 0.1);
   border-radius: var(--radius-md);
+}
+
+/* ---------- 任务提醒弹窗 ---------- */
+body.is-modal-open {
+  overflow: hidden;
+}
+
+.goal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.goal-modal-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.goal-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+  animation: modalPop 0.22s ease;
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.goal-modal-kicker {
+  display: inline-block;
+  padding: 2px var(--space-3);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  border-radius: var(--radius-xl);
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.goal-modal-stage {
+  margin-top: var(--space-3);
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+}
+
+.goal-modal-title {
+  margin-top: var(--space-2);
+  font-size: var(--font-xl);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.goal-modal-desc {
+  margin-top: var(--space-3);
+  font-size: var(--font-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.goal-modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.goal-modal-tag {
+  padding: 2px var(--space-2);
+  font-size: var(--font-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+}
+
+.goal-modal-tag.high {
+  color: #B91C1C;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.goal-modal-tag.medium {
+  color: #B45309;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.goal-modal-tag.low {
+  color: var(--text-secondary);
+}
+
+.goal-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.goal-modal-btn {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: inherit;
+  font-size: var(--font-base);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.goal-modal-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.goal-modal-btn.primary {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.goal-modal-btn.primary:hover {
+  color: #fff;
+  opacity: 0.92;
+}
+
+/* ---------- 奖励解锁弹窗 ---------- */
+.reward-modal .goal-modal-card {
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 24px 60px rgba(245, 158, 11, 0.18), 0 24px 60px rgba(15, 23, 42, 0.24);
+}
+
+.reward-modal .goal-modal-kicker {
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+}
+
+.reward-modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-top: var(--space-4);
+  border-radius: 50%;
+  color: #B45309;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.reward-modal-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ---------- 阶段横轴（所有阶段 + 当前阶段进度条） ---------- */
+.stage-axis {
+  position: relative;
+  margin-top: var(--space-6);
+  padding-bottom: var(--space-1);
+}
+
+.stage-axis-line {
+  position: absolute;
+  top: 11px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.stage-axis-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width var(--transition-base);
+}
+
+.stage-axis-nodes {
+  position: relative;
+  display: flex;
+}
+
+.stage-node {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.stage-dot {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: var(--bg-primary);
+  border: 2px solid var(--border);
+  transition: all var(--transition-base);
+}
+
+.stage-name {
+  max-width: 100%;
+  font-size: var(--font-xs);
+  line-height: 1.3;
+  color: var(--text-tertiary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stage-node.is-done .stage-dot {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.stage-node.is-done .stage-name {
+  color: var(--text-secondary);
+}
+
+.stage-node.is-current .stage-dot {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.18);
+}
+
+.stage-node.is-current .stage-name {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.stage-node.is-locked {
+  opacity: 0.6;
 }
 
 .plan-ring {
@@ -452,6 +726,10 @@
 }
 
 .plan-card h3 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
   font-size: var(--font-lg);
   font-weight: 600;
   margin-bottom: var(--space-4);
@@ -459,23 +737,121 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* ---------- 目标阶梯 ---------- */
+.plan-card-note {
+  font-size: var(--font-xs);
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+/* ---------- 阶段阶梯 ---------- */
+.goal-list {
+  position: relative;
+}
+
 .goal-node {
+  position: relative;
   padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--bg-secondary);
   margin-bottom: var(--space-3);
+  transition: all var(--transition-base);
+}
+
+/* 阶梯连接线 */
+.goal-node:not(.is-last)::after {
+  content: '';
+  position: absolute;
+  left: 23px;
+  bottom: calc(-1 * var(--space-3));
+  width: 2px;
+  height: var(--space-3);
+  background: var(--border);
+}
+
+.goal-node:not(.is-last).is-done::after {
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
 }
 
 .goal-node:last-child {
   margin-bottom: 0;
 }
 
+.goal-node.is-locked {
+  opacity: 0.6;
+}
+
+.goal-node.is-current {
+  border-color: var(--primary);
+  background: rgba(2, 132, 199, 0.06);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+}
+
+.goal-node.is-done {
+  border-color: rgba(2, 132, 199, 0.4);
+}
+
+.goal-node.is-done .goal-node-title {
+  color: var(--text-secondary);
+}
+
 .goal-node-head {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
+}
+
+.goal-node-head > div {
+  min-width: 0;
+}
+
+.goal-node-stage {
+  display: inline-block;
+  margin-bottom: var(--space-1);
+  padding: 1px var(--space-2);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+}
+
+.goal-node.is-current .goal-node-stage {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.goal-node.is-done .goal-node-stage {
+  color: var(--primary);
+  border-color: rgba(2, 132, 199, 0.35);
+  background: rgba(2, 132, 199, 0.1);
+}
+
+.goal-node-state {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: 1px var(--space-2);
+  font-size: var(--font-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border: 1px dashed var(--border-light);
+}
+
+.goal-node.is-current .goal-node-state {
+  color: var(--primary);
+  border-style: solid;
+  border-color: rgba(2, 132, 199, 0.35);
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.goal-node.is-done .goal-node-state {
+  color: #047857;
+  border-style: solid;
+  border-color: rgba(5, 150, 105, 0.35);
+  background: rgba(5, 150, 105, 0.1);
 }
 
 .goal-node-index {
@@ -488,7 +864,15 @@
   border-radius: 50%;
   font-size: var(--font-xs);
   font-weight: 700;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+}
+
+.goal-node.is-current .goal-node-index,
+.goal-node.is-done .goal-node-index {
   color: #fff;
+  border-color: transparent;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
 }
 
@@ -810,6 +1194,23 @@
     font-size: var(--font-2xl);
   }
 
+  .goal-modal-actions {
+    flex-direction: row;
+  }
+
+  .goal-modal-btn {
+    flex: 1;
+  }
+
+  .stage-dot {
+    width: 30px;
+    height: 30px;
+  }
+
+  .stage-axis-line {
+    top: 13px;
+  }
+
   .plan-ring {
     width: 132px;
     height: 132px;
@@ -834,5 +1235,56 @@
 
   .task-item:hover {
     border-color: var(--primary);
+  }
+}
+
+/* ---------- PC 端：阶段目标 / 任务清单 / 奖励清单 三列并排 ---------- */
+@media (min-width: 1024px) {
+  /* 我的目标 + 进度面板 与三列方案区同宽，左右边缘对齐 */
+  .saved-goals,
+  .goal-progress,
+  .goal-plan {
+    max-width: 1440px;
+  }
+
+  .goal-plan {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .goal-progress .plan-progress-card {
+    padding: var(--space-6) var(--space-8);
+  }
+
+  .goal-plan .plan-card {
+    margin-bottom: 0;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* 列内滚动时标题吸顶 */
+  .goal-plan .plan-card h3 {
+    position: sticky;
+    top: calc(-1 * var(--space-6));
+    margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4);
+    padding: var(--space-6) var(--space-6) var(--space-3);
+    background: var(--bg-tertiary);
+    z-index: 2;
+  }
+
+  .goal-plan .plan-card::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .goal-plan .plan-card::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 3px;
+  }
+
+  .goal-plan .plan-card::-webkit-scrollbar-track {
+    background: transparent;
   }
 }

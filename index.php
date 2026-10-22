@@ -106,10 +106,10 @@ require __DIR__ . '/includes/header.php';
           </div>
           <div class="hero-goal-hints">
             <span class="hero-goal-hint-label">试试：</span>
-            <button type="button" class="hero-goal-chip" data-goal="3个月练出6块腹肌">3个月练出6块腹肌</button>
-            <button type="button" class="hero-goal-chip" data-goal="年入百万销冠">年入百万销冠</button>
-            <button type="button" class="hero-goal-chip" data-goal="0-1操盘亿级电商项目">0-1操盘亿级电商项目</button>
-            <button type="button" class="hero-goal-chip" data-goal="1年开发12个app">1年开发12个app</button>
+           <button type="button" class="hero-goal-chip" data-goal="百万房产销冠">百万房产销冠</button>
+          <button type="button" class="hero-goal-chip" data-goal="0-1操盘亿级服装电商">0-1操盘亿级服装电商</button>
+          <button type="button" class="hero-goal-chip" data-goal="一年开发12个app">一年开发12个app</button>
+          <button type="button" class="hero-goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
           </div>
         </form>
 

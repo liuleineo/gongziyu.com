@@ -154,7 +154,7 @@ function goal_cache_set(string $key, array $plan): void
 function goal_system_prompt(): string
 {
     return <<<'PROMPT'
-你是"金手指"目标达成教练，擅长把任何一个模糊目标拆解成可执行、可勾选、可量化进度的行动方案。
+你是"金手指"目标达成教练。任何大目标都要拆成一条"阶段阶梯"：把最终目标切成 4-6 个逐级递进的阶段，每一阶段都比上一阶段更接近终点，前一阶段完成才能进入下一阶段。
 
 你只能输出一个严格合法的 JSON 对象，不要输出 Markdown 代码块、不要输出任何解释文字。JSON 结构如下：
 {
@@ -162,7 +162,7 @@ function goal_system_prompt(): string
   "summary": "总体策略，不超过 80 字",
   "duration": "预计完成周期，如 12周",
   "goals": [
-    {"title": "阶梯目标", "desc": "说明", "measure": "可量化的衡量标准", "deadline": "如 第2周"}
+    {"stage": "第1阶段·启动", "title": "本阶段结束时要拿到的可量化结果", "desc": "说明", "measure": "可量化的衡量标准", "deadline": "如 第2周"}
   ],
   "tasks": [
     {"title": "任务标题", "desc": "具体动作说明", "estimate": "预计耗时", "goalIndex": 0, "priority": "high|medium|low"}
@@ -173,10 +173,12 @@ function goal_system_prompt(): string
 }
 
 硬性约束：
-1. goals 3-6 条，是通往最终目标的阶梯，按由易到难、由近到远的顺序排列，每条都要有可量化的 measure。
-2. tasks 12-24 条，按执行先后顺序排列，越靠前越先做；goalIndex 必须是 goals 中存在的下标（从 0 开始），每个 goal 至少挂 2 个任务。
-3. rewards 3-5 条，unlockAt 是 0-100 的整数百分比（如 25、50、75、100），按进度递增；奖励要具体、可执行、成本可控，用来给自己正向反馈。
-4. 全部使用简体中文，内容具体可执行，避免空话套话。
+1. goals 4-6 条，就是阶段阶梯，必须按时间先后与依赖关系排列（例如 启动 → 打基础 → 推进 → 优化 → 验收固化），越靠后越接近最终目标。
+2. 每条 goals 的 stage 用"第N阶段·阶段名"格式，N 从 1 开始严格递增；title 写该阶段结束时能拿到的可量化结果；measure 写清衡量标准；deadline 写清时间点（第几周 / 第几月）。
+3. 阶段之间必须递进：后一阶段的成果建立在上一阶段之上，不允许出现阶段之间没有依赖的平行罗列。
+4. tasks 12-24 条，goalIndex 指向所属阶段下标（从 0 开始），每个阶段至少 2 个任务；同一阶段的任务连续排列，并按执行先后排序，越靠前越先做。
+5. rewards 3-5 条，unlockAt 是 0-100 的整数百分比（如 25、50、75、100），按进度递增；奖励要具体、可执行、成本可控，用来给自己正向反馈。
+6. 全部使用简体中文，内容具体可执行，避免空话套话。
 PROMPT;
 }
 
@@ -286,6 +288,7 @@ function goal_normalize_plan(array $raw, string $goal): array
             continue;
         }
         $goals[] = [
+            'stage'    => goal_str($item['stage'] ?? ''),
             'title'    => $title,
             'desc'     => goal_str($item['desc'] ?? ($item['description'] ?? '')),
             'measure'  => goal_str($item['measure'] ?? ''),
@@ -293,6 +296,12 @@ function goal_normalize_plan(array $raw, string $goal): array
         ];
         if (count($goals) >= 8) {
             break;
+        }
+    }
+    // 阶段名缺失时按序号补齐
+    foreach ($goals as $i => $g) {
+        if ($g['stage'] === '') {
+            $goals[$i]['stage'] = '第' . ($i + 1) . '阶段';
         }
     }
 
@@ -326,7 +335,7 @@ function goal_normalize_plan(array $raw, string $goal): array
     // 兜底：模型没有给任务时，按目标阶梯生成占位任务
     if (count($tasks) === 0) {
         if (count($goals) === 0) {
-            $goals[] = ['title' => '完成目标的第一步', 'desc' => '', 'measure' => '', 'deadline' => ''];
+            $goals[] = ['stage' => '第1阶段', 'title' => '完成目标的第一步', 'desc' => '', 'measure' => '', 'deadline' => ''];
         }
         foreach ($goals as $i => $g) {
             $tasks[] = [

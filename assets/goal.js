@@ -40,6 +40,48 @@
     return total > 0 ? Math.round((done / total) * 100) : 0;
   }
 
+  function priorityText(value) {
+    return { high: '高优先', medium: '中优先', low: '低优先' }[value] || '中优先';
+  }
+
+  /**
+   * 阶段统计：每个阶段的完成百分比、是否全部完成，以及当前阶段下标（全部完成为 -1）
+   */
+  function stageStats(plan, done) {
+    var stats = plan.goals.map(function (g, i) {
+      var list = plan.tasks.filter(function (t) { return (Number(t.goalIndex) || 0) === i; });
+      var d = list.filter(function (t) { return done.indexOf(t.id) !== -1; }).length;
+      return { pct: pct(d, list.length), finished: list.length > 0 && d === list.length };
+    });
+    var prevAllDone = true;
+    var currentIndex = -1;
+    stats.forEach(function (info, i) {
+      if (prevAllDone && !info.finished && currentIndex === -1) {
+        currentIndex = i;
+      }
+      prevAllDone = prevAllDone && info.finished;
+    });
+    return { stats: stats, currentIndex: currentIndex };
+  }
+
+  /**
+   * 当前阶段里下一个待完成的任务
+   */
+  function nextTask() {
+    var rec = current();
+    if (!rec) return null;
+    var plan = ensurePlan(rec);
+    var res = stageStats(plan, rec.done);
+    if (res.currentIndex < 0) return null;
+    for (var i = 0; i < plan.tasks.length; i++) {
+      var task = plan.tasks[i];
+      if ((Number(task.goalIndex) || 0) === res.currentIndex && rec.done.indexOf(task.id) === -1) {
+        return { task: task, stageIndex: res.currentIndex, stage: plan.goals[res.currentIndex] };
+      }
+    }
+    return null;
+  }
+
   /* --------------------------- 本地存储 --------------------------- */
 
   function loadStore() {
@@ -134,19 +176,47 @@
 
   function renderGoals(plan) {
     el.goalList.innerHTML = plan.goals.map(function (g, i) {
-      return '<div class="goal-node">' +
+      return '<div class="goal-node" id="gn-' + i + '">' +
         '<div class="goal-node-head">' +
         '<span class="goal-node-index">' + (i + 1) + '</span>' +
-        '<div><div class="goal-node-title">' + escapeHtml(g.title) + '</div>' +
+        '<div>' +
+        '<span class="goal-node-stage">' + escapeHtml(g.stage || ('第' + (i + 1) + '阶段')) + '</span>' +
+        '<div class="goal-node-title">' + escapeHtml(g.title) + '</div>' +
         (g.desc ? '<p class="goal-node-desc">' + escapeHtml(g.desc) + '</p>' : '') +
         (g.measure ? '<p class="goal-node-measure">衡量标准：' + escapeHtml(g.measure) + '</p>' : '') +
         (g.deadline ? '<p class="goal-node-measure">节点：' + escapeHtml(g.deadline) + '</p>' : '') +
+        '<span class="goal-node-state" id="g-state-' + i + '">未开始</span>' +
         '</div>' +
         '<span class="goal-node-pct" id="g-pct-' + i + '">0%</span>' +
         '</div>' +
         '<div class="goal-node-bar"><span id="g-bar-' + i + '"></span></div>' +
         '</div>';
     }).join('') || '<p class="goal-node-desc">暂无目标拆解。</p>';
+  }
+
+  function stageShortName(stage, i) {
+    var text = String(stage || '').trim();
+    var parts = text.split(/[·・:：]/);
+    var name = parts.length > 1 ? parts[parts.length - 1].trim() : text;
+    return name || ('第' + (i + 1) + '阶段');
+  }
+
+  function renderStageAxis(plan) {
+    var total = plan.goals.length;
+    var half = total > 0 ? (100 / (2 * total)) : 0;
+    if (el.stageLine) {
+      el.stageLine.style.left = half + '%';
+      el.stageLine.style.right = half + '%';
+    }
+    if (!el.stageNodes) return;
+    el.stageNodes.innerHTML = plan.goals.map(function (g, i) {
+      var full = g.stage || ('第' + (i + 1) + '阶段');
+      return '<div class="stage-node" id="sn-' + i + '" title="' +
+        escapeHtml(full + ' · ' + g.title) + '">' +
+        '<span class="stage-dot">' + (i + 1) + '</span>' +
+        '<span class="stage-name">' + escapeHtml(stageShortName(g.stage, i)) + '</span>' +
+        '</div>';
+    }).join('');
   }
 
   function renderTasks(plan, done) {
@@ -165,7 +235,8 @@
       var list = map[gi];
       var goal = plan.goals[gi];
       var doneCount = list.filter(function (t) { return done.indexOf(t.id) !== -1; }).length;
-      var title = goal ? ('目标' + (gi + 1) + ' · ' + goal.title) : ('目标' + (gi + 1));
+      var stage = goal ? (goal.stage || ('第' + (gi + 1) + '阶段')) : ('第' + (gi + 1) + '阶段');
+      var title = goal ? (stage + ' · ' + goal.title) : stage;
       return '<div class="task-stage">' +
         '<div class="task-stage-title">' + escapeHtml(title) +
         '<em>' + doneCount + '/' + list.length + '</em></div>' +
@@ -234,16 +305,59 @@
       el.ringLabel.textContent = '完成进度';
     }
 
-    // 目标阶梯进度
-    plan.goals.forEach(function (g, i) {
-      var list = plan.tasks.filter(function (t) { return (Number(t.goalIndex) || 0) === i; });
-      var d = list.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
-      var p = pct(d, list.length);
+    // 阶段阶梯进度：前一阶段全部完成，才解锁下一阶段
+    var stageRes = stageStats(plan, rec.done);
+    var statsOfStage = stageRes.stats;
+    var currentIndex = stageRes.currentIndex;
+    var currentPct = 0;
+    var totalStage = plan.goals.length;
+    var prevAllDone = true;
+    statsOfStage.forEach(function (info, i) {
+      var isCurrent = prevAllDone && !info.finished;
+      if (isCurrent && currentIndex === i) {
+        currentPct = info.pct;
+      }
+      var node = $('gn-' + i);
+      if (node) {
+        node.classList.toggle('is-done', info.finished);
+        node.classList.toggle('is-current', isCurrent);
+        node.classList.toggle('is-locked', !info.finished && !isCurrent);
+        node.classList.toggle('is-last', i === statsOfStage.length - 1);
+      }
+      var axisNode = $('sn-' + i);
+      if (axisNode) {
+        axisNode.classList.toggle('is-done', info.finished);
+        axisNode.classList.toggle('is-current', isCurrent);
+        axisNode.classList.toggle('is-locked', !info.finished && !isCurrent);
+      }
+      var state = $('g-state-' + i);
+      if (state) {
+        state.textContent = info.finished ? '已完成' : (isCurrent ? '进行中' : '待解锁');
+      }
       var bar = $('g-bar-' + i);
       var txt = $('g-pct-' + i);
-      if (bar) bar.style.width = p + '%';
-      if (txt) txt.textContent = p + '%';
+      if (bar) bar.style.width = info.pct + '%';
+      if (txt) txt.textContent = info.pct + '%';
+      prevAllDone = prevAllDone && info.finished;
     });
+
+    // 横轴进度条：填充到当前阶段节点（含该阶段内部进度）
+    if (el.planStage) {
+      el.planStage.hidden = !totalStage;
+      var fill = 0;
+      if (totalStage > 0) {
+        if (currentIndex < 0) {
+          fill = 100;
+        } else if (totalStage > 1) {
+          fill = ((currentIndex + currentPct / 100) / (totalStage - 1)) * 100;
+        } else {
+          fill = currentPct;
+        }
+      }
+      if (el.stageFill) {
+        el.stageFill.style.width = Math.max(0, Math.min(100, fill)) + '%';
+      }
+    }
 
     // 奖励解锁
     var unlocked = 0;
@@ -277,16 +391,19 @@
     var rec = current();
     if (!rec) return;
     var plan = ensurePlan(rec);
+    el.progressWrap.hidden = false;
     el.planWrap.hidden = false;
     el.planGoalTitle.textContent = plan.restatedGoal || rec.goal;
     el.planSummary.textContent = plan.summary || '';
     el.planDuration.textContent = plan.duration ? ('预计周期：' + plan.duration) : '';
     el.planDuration.hidden = !plan.duration;
     el.goalInput.value = rec.goal;
+    renderStageAxis(plan);
     renderGoals(plan);
     renderTasks(plan, rec.done);
     renderRewards(plan);
     updateProgress();
+    showReminder();
   }
 
   /* --------------------------- 状态提示 --------------------------- */
@@ -311,9 +428,121 @@
       : '<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   }
 
+  /* --------------------------- 任务提醒弹窗 --------------------------- */
+
+  function openReminder(data) {
+    var rec = current();
+    if (!rec || !data || !el.reminder) return;
+    var plan = ensurePlan(rec);
+    var task = data.task;
+    var goal = data.stage || {};
+    el.remindStage.textContent = (goal.stage || ('第' + (data.stageIndex + 1) + '阶段')) +
+      (goal.title ? ' · ' + goal.title : '');
+    el.remindTitle.textContent = task.title;
+    el.remindDesc.textContent = task.desc || '';
+    el.remindDesc.hidden = !task.desc;
+    var meta = [];
+    if (task.estimate) meta.push('<span class="goal-modal-tag">' + escapeHtml(task.estimate) + '</span>');
+    meta.push('<span class="goal-modal-tag ' + (task.priority || 'medium') + '">' + priorityText(task.priority) + '</span>');
+    meta.push('<span class="goal-modal-tag">第' + (data.stageIndex + 1) + '/' + plan.goals.length + ' 阶段</span>');
+    el.remindMeta.innerHTML = meta.join('');
+    el.reminder.setAttribute('data-task-id', task.id);
+    el.reminder.hidden = false;
+    document.body.classList.add('is-modal-open');
+  }
+
+  function closeReminder() {
+    if (!el.reminder) return;
+    el.reminder.hidden = true;
+    document.body.classList.remove('is-modal-open');
+  }
+
+  function showReminder() {
+    var data = nextTask();
+    if (!data) {
+      closeReminder();
+      return;
+    }
+    openReminder(data);
+  }
+
+  /* --------------------------- 奖励解锁弹窗 --------------------------- */
+
+  var rewardQueue = [];
+
+  function planProgress(rec, plan) {
+    var total = plan.tasks.length;
+    var done = plan.tasks.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
+    return pct(done, total);
+  }
+
+  function closeReward() {
+    if (!el.rewardModal) return;
+    el.rewardModal.hidden = true;
+    document.body.classList.remove('is-modal-open');
+  }
+
+  function showRewardQueue() {
+    if (!rewardQueue.length) {
+      closeReward();
+      advanceReminder();
+      return;
+    }
+    var reward = rewardQueue.shift();
+    if (!el.rewardModal) {
+      advanceReminder();
+      return;
+    }
+    var at = Number(reward.unlockAt) || 0;
+    el.rewardTitle.textContent = reward.title;
+    el.rewardCond.textContent = reward.condition
+      ? ('解锁条件：' + reward.condition)
+      : ('进度达到 ' + at + '%');
+    el.rewardDesc.textContent = reward.desc || '';
+    el.rewardDesc.hidden = !reward.desc;
+    el.rewardModal.hidden = false;
+    document.body.classList.add('is-modal-open');
+  }
+
+  function advanceReminder() {
+    var next = nextTask();
+    if (next) {
+      openReminder(next);
+    } else {
+      closeReminder();
+    }
+  }
+
+  function completeReminderTask() {
+    var rec = current();
+    if (!rec || !el.reminder) return;
+    var plan = ensurePlan(rec);
+    var id = el.reminder.getAttribute('data-task-id');
+    var before = planProgress(rec, plan);
+
+    if (id && rec.done.indexOf(id) === -1) {
+      rec.done.push(id);
+    }
+    saveStore();
+
+    var after = planProgress(rec, plan);
+    renderTasks(plan, rec.done);
+    updateProgress();
+    closeReminder();
+
+    // 本次达成的新解锁奖励（进度跨过 unlockAt）
+    rewardQueue = plan.rewards.filter(function (r) {
+      var at = Number(r.unlockAt) || 0;
+      return after >= at && before < at;
+    });
+
+    showRewardQueue();
+  }
+
   function showSkeleton(state) {
     el.skeleton.hidden = !state;
-    el.planWrap.hidden = state;
+    el.planWrap.hidden = state || !current();
+    el.progressWrap.hidden = state || !current();
   }
 
   /* --------------------------- 生成方案 --------------------------- */
@@ -386,10 +615,10 @@
 
   function buildOfflinePlan(goal) {
     var goals = [
-      { title: '把目标写成可衡量的指标', desc: '把「' + goal + '」拆成数字与时间点。', measure: '写清衡量标准与截止日期', deadline: '第1周' },
-      { title: '备齐实现目标所需的条件', desc: '', measure: '清单上的条件全部就位', deadline: '第2周' },
-      { title: '按计划持续推进', desc: '每天推进一个关键动作。', measure: '连续 4 周按计划执行', deadline: '第6周' },
-      { title: '验收并固化成果', desc: '对照衡量标准验收，沉淀流程。', measure: '达成最初设定的指标', deadline: '第8周' }
+      { stage: '第1阶段·明确目标', title: '把目标写成可衡量的指标', desc: '把「' + goal + '」拆成数字与时间点。', measure: '写清衡量标准与截止日期', deadline: '第1周' },
+      { stage: '第2阶段·备齐条件', title: '备齐实现目标所需的条件', desc: '完成指标后才进入这一阶段。', measure: '清单上的条件全部就位', deadline: '第2周' },
+      { stage: '第3阶段·持续推进', title: '按计划持续推进', desc: '每天推进一个关键动作。', measure: '连续 4 周按计划执行', deadline: '第6周' },
+      { stage: '第4阶段·验收固化', title: '验收并固化成果', desc: '对照衡量标准验收，沉淀流程。', measure: '达成最初设定的指标', deadline: '第8周' }
     ];
     var taskTpl = [
       ['写下目标的衡量标准', '把目标写成可量化的数字与日期。', 0, 'high'],
@@ -487,7 +716,32 @@
         renderAll();
       } else {
         el.planWrap.hidden = true;
+        el.progressWrap.hidden = true;
         renderSavedGoals();
+      }
+    });
+
+    if (el.remindLater) {
+      el.remindLater.addEventListener('click', closeReminder);
+    }
+    if (el.remindDone) {
+      el.remindDone.addEventListener('click', completeReminderTask);
+    }
+    if (el.remindMask) {
+      el.remindMask.addEventListener('click', closeReminder);
+    }
+    if (el.rewardOk) {
+      el.rewardOk.addEventListener('click', showRewardQueue);
+    }
+    if (el.rewardMask) {
+      el.rewardMask.addEventListener('click', showRewardQueue);
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (el.rewardModal && !el.rewardModal.hidden) {
+        showRewardQueue();
+      } else if (el.reminder && !el.reminder.hidden) {
+        closeReminder();
       }
     });
 
@@ -513,9 +767,14 @@
     el.status = $('goalStatus');
     el.skeleton = $('goalSkeleton');
     el.planWrap = $('goalPlan');
+    el.progressWrap = $('goalProgress');
     el.planGoalTitle = $('planGoalTitle');
     el.planSummary = $('planSummary');
     el.planDuration = $('planDuration');
+    el.planStage = $('planStage');
+    el.stageLine = $('stageAxisLine');
+    el.stageFill = $('stageAxisFill');
+    el.stageNodes = $('stageAxisNodes');
     el.ringFill = $('planRingFill');
     el.ringNum = $('planRingNum');
     el.ringLabel = $('planRingLabel');
@@ -532,6 +791,20 @@
     el.btnRegen = $('btnRegen');
     el.btnDelete = $('btnDelete');
     el.savedWrap = $('savedGoals');
+    el.reminder = $('taskReminder');
+    el.remindMask = $('remindMask');
+    el.remindStage = $('remindStage');
+    el.remindTitle = $('remindTitle');
+    el.remindDesc = $('remindDesc');
+    el.remindMeta = $('remindMeta');
+    el.remindLater = $('remindLater');
+    el.remindDone = $('remindDone');
+    el.rewardModal = $('rewardUnlock');
+    el.rewardMask = $('rewardMask');
+    el.rewardTitle = $('rewardTitle');
+    el.rewardCond = $('rewardCond');
+    el.rewardDesc = $('rewardDesc');
+    el.rewardOk = $('rewardOk');
     el.savedList = $('savedGoalsList');
 
     if (!el.form) return;
