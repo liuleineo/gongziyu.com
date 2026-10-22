@@ -79,23 +79,44 @@ require __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge">
-          <span>AI · 创新 · 未来</span>
+          <span>AI 目标拆解 · 一步一步实现</span>
         </div>
         <h1 class="hero-title">
-          公子鱼<span class="highlight">AI实验室</span>
+          公子鱼<span class="highlight">金手指</span>
         </h1>
         <p class="hero-subtitle">
-          专注于人工智能技术研发与创新应用<br>
-          用AI技术赋能未来，探索无限可能
+          写下你想实现的目标，AI 自动拆解资源、长期目标、短期目标与任务清单<br>
+          完成一项勾选一项，进度实时可见
         </p>
-        <div class="hero-actions">
-          <a href="services.php" class="btn btn-primary">
-            查看服务
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+
+        <form class="hero-goal" id="heroGoalForm" autocomplete="off">
+          <div class="hero-goal-box">
+            <svg class="hero-goal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
             </svg>
-          </a>
-          <a href="tools.php" class="btn btn-secondary">浏览工具</a>
+            <input type="text" id="heroGoalInput" class="hero-goal-input" maxlength="300"
+                   placeholder="输入你想实现的目标，例如：3个月内上线一个AI工具站">
+            <button type="submit" class="btn btn-primary hero-goal-btn" id="heroGoalSubmit">
+              实现目标
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="hero-goal-hints">
+            <span class="hero-goal-hint-label">试试：</span>
+            <button type="button" class="hero-goal-chip" data-goal="3个月减脂10斤">3个月减脂10斤</button>
+            <button type="button" class="hero-goal-chip" data-goal="从零学会Python并做出一个项目">从零学会Python</button>
+            <button type="button" class="hero-goal-chip" data-goal="半年内把副业做到月入1万">副业月入1万</button>
+            <button type="button" class="hero-goal-chip" data-goal="一年内读完24本书并输出读书笔记">一年读24本书</button>
+          </div>
+        </form>
+
+        <div class="hero-actions hero-actions-sub">
+          <a href="services.php" class="btn btn-outline">查看服务</a>
+          <a href="tools.php" class="btn btn-outline">浏览工具</a>
         </div>
       </div>
       
@@ -305,9 +326,34 @@ require __DIR__ . '/includes/header.php';
 ob_start();
 ?>
 <script>
-    const productCards = document.querySelectorAll('.product-card');
-    // 如果有筛选标签，可以添加筛选功能
-    // 这里暂时只保留产品卡片选择器以备将来扩展
+    // 金手指入口：输入目标 -> 跳转目标拆解页
+    (function () {
+      const form = document.getElementById('heroGoalForm');
+      const input = document.getElementById('heroGoalInput');
+      if (!form || !input) return;
+
+      function go(goal) {
+        goal = String(goal || '').trim();
+        if (!goal) {
+          input.focus();
+          input.placeholder = '先写下你的目标，例如：3个月内上线一个AI工具站';
+          return;
+        }
+        window.location.href = '/goal.php?goal=' + encodeURIComponent(goal);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        go(input.value);
+      });
+
+      form.addEventListener('click', function (e) {
+        const chip = e.target.closest('.hero-goal-chip');
+        if (!chip) return;
+        input.value = chip.getAttribute('data-goal') || '';
+        go(input.value);
+      });
+    })();
   </script>
 <?php
 $pageScripts = ob_get_clean();

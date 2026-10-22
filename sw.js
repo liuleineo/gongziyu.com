@@ -1,16 +1,19 @@
 // 公子鱼AI实验室 - Service Worker
-const CACHE_NAME = 'gongziyu-ai-cache-v4';
+const CACHE_NAME = 'gongziyu-ai-cache-v5';
 const urlsToCache = [
   '/',
   '/index.php',
   '/about.php',
   '/aihub.php',
+  '/goal.php',
   '/services.php',
   '/tools.php',
   '/hack.php',
   '/dianshang.php',
   '/assets/styles.css',
   '/assets/script.js',
+  '/assets/goal.css',
+  '/assets/goal.js',
   '/assets/shortcut.png',
   '/assets/logo-big.jpg'
 ];
@@ -49,6 +52,13 @@ self.addEventListener('activate', event => {
 
 // 拦截请求 - 网络优先，缓存兜底
 self.addEventListener('fetch', event => {
+  // 非 GET 请求（如 /api/goal.php 的 AI 请求）与接口请求不缓存
+  if (event.request.method !== 'GET') {
+    return;
+  }
+  if (new URL(event.request.url).pathname.indexOf('/api/') === 0) {
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then(response => {

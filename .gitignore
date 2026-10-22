@@ -1,4 +1,5 @@
 /.DS_Store
+/api/config.local.php
 /.codebuddy
 venv
 .qoder

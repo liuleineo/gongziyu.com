@@ -24,6 +24,7 @@ $pageStyles = $pageStyles ?? '';
 $navItems = [
     'home' => ['label' => '首页', 'href' => '/index.php'],
     'aihub' => ['label' => 'AIHub', 'href' => '/aihub.php'],
+    'goal' => ['label' => '金手指', 'href' => '/goal.php'],
     'services' => ['label' => 'AI服务', 'href' => '/services.php'],
     'tools' => ['label' => '工具', 'href' => '/tools.php'],
     'about' => ['label' => '关于', 'href' => '/about.php'],
