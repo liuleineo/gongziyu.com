@@ -137,7 +137,7 @@ require __DIR__ . '/includes/header.php';
         </section>
 
         <section class="plan-card" id="rewardCard">
-          <h3>奖励清单</h3>
+          <h3>奖励清单<span class="plan-card-note">每个任务有小奖励，完成一个阶段解锁对应大奖励</span></h3>
           <div id="rewardList"></div>
         </section>
 
@@ -148,7 +148,7 @@ require __DIR__ . '/includes/header.php';
     <div class="goal-modal reward-modal" id="rewardUnlock" hidden>
       <div class="goal-modal-mask" id="rewardMask"></div>
       <div class="goal-modal-card" role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
-        <span class="goal-modal-kicker">奖励已解锁</span>
+        <span class="goal-modal-kicker" id="rewardKicker">大奖励已解锁</span>
         <span class="reward-modal-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 21V7"/>

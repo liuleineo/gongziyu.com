@@ -359,16 +359,19 @@
       }
     }
 
-    // 奖励解锁
+    // 奖励解锁：方案里的奖励按阶段一一对应，前 N 个奖励由对应阶段完成解锁
     var unlocked = 0;
     plan.rewards.forEach(function (r, i) {
       var at = Number(r.unlockAt) || 0;
       var node = $('rw-' + i);
       var state = $('rw-state-' + i);
-      var ok = value >= at;
+      var byStage = i < statsOfStage.length;
+      var ok = byStage ? statsOfStage[i].finished : value >= at;
       if (ok) unlocked++;
       if (node) node.classList.toggle('is-unlocked', ok);
-      if (state) state.textContent = ok ? '已解锁' : (at + '% 解锁');
+      if (state) {
+        state.textContent = ok ? '已解锁' : (byStage ? ('完成第' + (i + 1) + '阶段') : (at + '% 解锁'));
+      }
     });
     el.statReward.textContent = unlocked;
 
@@ -529,7 +532,7 @@
     el.reminder.setAttribute('data-task-id', task.id);
     el.reminder.hidden = false;
     document.body.classList.add('is-modal-open');
-    speakModal('接下来要完成，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
+    speakModal('宿主，接下来要完成，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
   }
 
   function closeReminder() {
@@ -550,12 +553,64 @@
 
   /* --------------------------- 奖励解锁弹窗 --------------------------- */
 
-  var rewardQueue = [];
+  /* 即时小奖励池：每完成一个任务随机给一个 */
+  var SMALL_REWARDS = [
+    '伸个懒腰，站起来走动 2 分钟',
+    '喝一杯水，顺便远眺 20 秒',
+    '听一首喜欢的歌',
+    '刷 5 分钟想看的内容',
+    '吃一小块黑巧克力或喜欢的水果',
+    '给朋友发条消息炫耀一下进度',
+    '闭眼深呼吸 10 次，放松肩颈',
+    '看一眼窗外，活动一下手腕'
+  ];
 
-  function planProgress(rec, plan) {
-    var total = plan.tasks.length;
-    var done = plan.tasks.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
-    return pct(done, total);
+  /* 大奖励兜底池：方案里没有对应阶段奖励时使用 */
+  var BIG_REWARDS = [
+    '吃一顿一直想吃的大餐',
+    '买一件惦记已久的东西',
+    '给自己放半天假',
+    '做一次按摩或 SPA',
+    '约朋友好好聚一次',
+    '安排一次短途出行'
+  ];
+
+  var rewardQueue = [];
+  var lastSmallIndex = -1;
+
+  function pickSmallReward() {
+    var i = Math.floor(Math.random() * SMALL_REWARDS.length);
+    if (SMALL_REWARDS.length > 1 && i === lastSmallIndex) {
+      i = (i + 1) % SMALL_REWARDS.length;
+    }
+    lastSmallIndex = i;
+    return SMALL_REWARDS[i];
+  }
+
+  function stageNameOf(plan, i) {
+    return (plan.goals[i] && plan.goals[i].stage) || ('第' + (i + 1) + '阶段');
+  }
+
+  /* 阶段 i 对应的大奖励：优先用方案里的奖励，不足时用兜底池 */
+  function bigRewardFor(plan, i) {
+    var stage = stageNameOf(plan, i);
+    var r = plan.rewards[i];
+    if (r && r.title) {
+      return {
+        big: true,
+        stageIndex: i,
+        title: r.title,
+        desc: r.desc || '',
+        condition: '完成' + stage
+      };
+    }
+    return {
+      big: true,
+      stageIndex: i,
+      title: BIG_REWARDS[i % BIG_REWARDS.length],
+      desc: '完成' + stage + '，值得好好犒劳自己。',
+      condition: '完成' + stage
+    };
   }
 
   function closeReward() {
@@ -576,16 +631,21 @@
       advanceReminder();
       return;
     }
-    var at = Number(reward.unlockAt) || 0;
+    var isBig = !!reward.big;
+    el.rewardModal.classList.toggle('is-big', isBig);
+    el.rewardModal.classList.toggle('is-small', !isBig);
+    el.rewardKicker.textContent = isBig ? '大奖励已解锁' : '小奖励到账';
+    el.rewardOk.textContent = isBig ? '收下奖励' : '收下，继续';
     el.rewardTitle.textContent = reward.title;
-    el.rewardCond.textContent = reward.condition
-      ? ('解锁条件：' + reward.condition)
-      : ('进度达到 ' + at + '%');
+    el.rewardCond.textContent = reward.condition || '';
+    el.rewardCond.hidden = !reward.condition;
     el.rewardDesc.textContent = reward.desc || '';
     el.rewardDesc.hidden = !reward.desc;
     el.rewardModal.hidden = false;
     document.body.classList.add('is-modal-open');
-    speakModal('奖励已解锁，' + reward.title + '。' + (reward.desc || ''));
+    speakModal(isBig
+      ? ('恭喜宿主，' + (reward.condition || '阶段完成') + '，大奖励解锁：' + reward.title + '。' + (reward.desc || ''))
+      : ('宿主，小奖励到账，' + reward.title + '。' + (reward.desc || '')));
   }
 
   function advanceReminder() {
@@ -594,33 +654,63 @@
       openReminder(next);
     } else {
       closeReminder();
+      speakModal('恭喜宿主，全部任务已完成，目标达成。');
     }
   }
 
-  function completeReminderTask() {
+  /**
+   * 勾选一个任务：保存进度并重算阶段状态，返回本次新完成的阶段下标
+   */
+  function finishTask(id) {
     var rec = current();
-    if (!rec || !el.reminder) return;
+    if (!rec) return null;
     var plan = ensurePlan(rec);
-    var id = el.reminder.getAttribute('data-task-id');
-    var before = planProgress(rec, plan);
+    var before = stageStats(plan, rec.done).stats.map(function (s) { return s.finished; });
 
     if (id && rec.done.indexOf(id) === -1) {
       rec.done.push(id);
     }
     saveStore();
 
-    var after = planProgress(rec, plan);
-    renderTasks(plan, rec.done);
-    updateProgress();
-    closeReminder();
-
-    // 本次达成的新解锁奖励（进度跨过 unlockAt）
-    rewardQueue = plan.rewards.filter(function (r) {
-      var at = Number(r.unlockAt) || 0;
-      return after >= at && before < at;
+    var after = stageStats(plan, rec.done).stats;
+    var newStages = [];
+    after.forEach(function (s, i) {
+      if (s.finished && !before[i]) {
+        newStages.push(i);
+      }
     });
 
+    renderTasks(plan, rec.done);
+    updateProgress();
+    return { plan: plan, newStages: newStages };
+  }
+
+  /**
+   * 发放奖励：完成阶段给大奖励，否则给即时小奖励
+   */
+  function grantRewards(res) {
+    if (!res) {
+      closeReminder();
+      return;
+    }
+    rewardQueue = res.newStages.map(function (i) {
+      return bigRewardFor(res.plan, i);
+    });
+    if (!rewardQueue.length) {
+      rewardQueue = [{
+        big: false,
+        title: pickSmallReward(),
+        desc: '完成一个任务，先给自己一点即时反馈。'
+      }];
+    }
     showRewardQueue();
+  }
+
+  function completeReminderTask() {
+    var id = el.reminder ? el.reminder.getAttribute('data-task-id') : '';
+    var res = finishTask(id);
+    closeReminder();
+    grantRewards(res);
   }
 
   function showSkeleton(state) {
@@ -762,7 +852,10 @@
       var index = rec.done.indexOf(id);
       if (input.checked) {
         item.classList.add('is-done');
-        if (index === -1) rec.done.push(id);
+        if (index === -1) {
+          // 列表里直接勾选也发放奖励
+          grantRewards(finishTask(id));
+        }
       } else {
         item.classList.remove('is-done');
         if (index !== -1) rec.done.splice(index, 1);
@@ -907,6 +1000,7 @@
     el.rewardCond = $('rewardCond');
     el.rewardDesc = $('rewardDesc');
     el.rewardOk = $('rewardOk');
+    el.rewardKicker = $('rewardKicker');
     el.remindSpeak = $('remindSpeak');
     el.rewardSpeak = $('rewardSpeak');
     updateSpeakLabels();

@@ -538,6 +538,29 @@ body.is-modal-open {
   height: 28px;
 }
 
+/* 小奖励：绿色系、更轻 */
+.reward-modal.is-small .goal-modal-card {
+  border-color: rgba(5, 150, 105, 0.4);
+  box-shadow: 0 20px 44px rgba(5, 150, 105, 0.16), 0 20px 44px rgba(15, 23, 42, 0.2);
+}
+
+.reward-modal.is-small .goal-modal-kicker {
+  background: linear-gradient(135deg, #059669, #0D9488);
+}
+
+.reward-modal.is-small .reward-modal-icon {
+  width: 44px;
+  height: 44px;
+  color: #047857;
+  background: rgba(5, 150, 105, 0.12);
+  border-color: rgba(5, 150, 105, 0.32);
+}
+
+.reward-modal.is-small .reward-modal-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
 /* ---------- 阶段横轴（所有阶段 + 当前阶段进度条） ---------- */
 .stage-axis {
   position: relative;
