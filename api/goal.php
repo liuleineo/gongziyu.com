@@ -167,6 +167,9 @@ function goal_system_prompt(): string
   "tasks": [
     {"title": "任务标题", "desc": "具体动作说明", "estimate": "预计耗时", "goalIndex": 0, "priority": "high|medium|low"}
   ],
+  "daily": [
+    {"title": "日常任务标题", "desc": "每天重复执行的具体动作", "estimate": "预计耗时"}
+  ],
   "rewards": [
     {"title": "奖励名称", "condition": "解锁条件描述", "desc": "为什么值得奖励自己", "unlockAt": 25}
   ]
@@ -177,8 +180,9 @@ function goal_system_prompt(): string
 2. 每条 goals 的 stage 用"第N阶段·阶段名"格式，N 从 1 开始严格递增；title 写该阶段结束时能拿到的可量化结果；measure 写清衡量标准；deadline 写清时间点（第几周 / 第几月）。
 3. 阶段之间必须递进：后一阶段的成果建立在上一阶段之上，不允许出现阶段之间没有依赖的平行罗列。
 4. tasks 12-24 条，goalIndex 指向所属阶段下标（从 0 开始），每个阶段至少 2 个任务；同一阶段的任务连续排列，并按执行先后排序，越靠前越先做。
-5. rewards 3-5 条，unlockAt 是 0-100 的整数百分比（如 25、50、75、100），按进度递增；奖励要具体、可执行、成本可控，用来给自己正向反馈。
-6. 全部使用简体中文，内容具体可执行，避免空话套话。
+5. daily 3-6 条，是从目标里抽出来的"每日日常任务"：每天都重复执行的动作（例如每天记录数据、每天运动 30 分钟、每天复盘 5 分钟），必须简短、可重复、当天能完成；不要出现一次性任务。
+6. rewards 3-5 条，unlockAt 是 0-100 的整数百分比（如 25、50、75、100），按进度递增；奖励要具体、可执行、成本可控，用来给自己正向反馈。
+7. 全部使用简体中文，内容具体可执行，避免空话套话。
 PROMPT;
 }
 
@@ -348,6 +352,26 @@ function goal_normalize_plan(array $raw, string $goal): array
         }
     }
 
+    // 每日日常任务：每天重复执行的动作，独立于一次性任务
+    $daily = [];
+    foreach ((is_array($raw['daily'] ?? null) ? $raw['daily'] : []) as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $title = goal_str($item['title'] ?? ($item['name'] ?? ''));
+        if ($title === '') {
+            continue;
+        }
+        $daily[] = [
+            'title'    => $title,
+            'desc'     => goal_str($item['desc'] ?? ($item['description'] ?? '')),
+            'estimate' => goal_str($item['estimate'] ?? ''),
+        ];
+        if (count($daily) >= 8) {
+            break;
+        }
+    }
+
     $rewards = [];
     foreach ((is_array($raw['rewards'] ?? null) ? $raw['rewards'] : []) as $item) {
         if (!is_array($item)) {
@@ -379,6 +403,7 @@ function goal_normalize_plan(array $raw, string $goal): array
         'duration'     => goal_str($raw['duration'] ?? ''),
         'goals'        => $goals,
         'tasks'        => $tasks,
+        'daily'        => $daily,
         'rewards'      => $rewards,
         'createdAt'    => date('c'),
     ];

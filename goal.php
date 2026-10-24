@@ -126,14 +126,18 @@ require __DIR__ . '/includes/header.php';
 
       <div class="goal-plan" id="goalPlan" hidden>
 
-        <section class="plan-card">
-          <h3>阶段目标</h3>
-          <div id="goalList"></div>
-        </section>
+       
+
+        
 
         <section class="plan-card">
-          <h3>任务清单<span class="plan-card-note">按阶段推进，完成上一阶段再进入下一阶段</span></h3>
-          <div id="taskGroups"></div>
+          <h3>阶段目标与任务<span class="plan-card-note">按阶段推进，完成上一阶段再进入下一阶段</span></h3>
+          <div id="stageTasks"></div>
+        </section>
+        <section class="plan-card" id="dailyCard" hidden>
+          <h3>每日日常任务<span class="plan-card-note">每天重复执行，0 点自动重置</span></h3>
+          <div class="daily-summary" id="dailySummary"></div>
+          <div id="dailyList"></div>
         </section>
 
         <section class="plan-card" id="rewardCard">

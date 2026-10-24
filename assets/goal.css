@@ -784,6 +784,51 @@ body.is-modal-open {
   color: var(--text-tertiary);
 }
 
+/* ---------- 每日日常任务 ---------- */
+.daily-summary {
+  margin-bottom: var(--space-4);
+}
+
+.daily-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.daily-count {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.daily-count b {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.daily-hint {
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+}
+
+.daily-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.daily-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width var(--transition-base);
+}
+
 /* ---------- 阶段阶梯 ---------- */
 .goal-list {
   position: relative;
@@ -961,6 +1006,16 @@ body.is-modal-open {
 }
 
 /* ---------- 任务清单 ---------- */
+/* 阶段块内嵌的任务列表（阶段目标与任务整合面板） */
+.stage-block .task-stage {
+  margin-top: var(--space-4);
+  margin-bottom: 0;
+}
+
+.stage-block .task-item {
+  background: var(--bg-primary);
+}
+
 .task-stage {
   margin-bottom: var(--space-4);
 }
@@ -1290,7 +1345,8 @@ body.is-modal-open {
 
   .goal-plan {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* 用 auto-fit：隐藏奖励清单后自动收成两列，不留下空格 */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--space-5);
     align-items: start;
   }
