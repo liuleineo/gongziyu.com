@@ -210,10 +210,23 @@ require __DIR__ . '/includes/header.php';
           </div>
         </div>
 
+         <div class="product-card" data-category="web">
+          <div class="product-image">
+             <a href="https://niurouzhou.com" target="_blank"><img src="assets/niurouzhou.png" alt="会员平台"></a>
+            <span class="product-badge new">新品</span>
+          </div>
+          <div class="product-content">
+            <span class="product-category">Web应用</span>
+            <h3 class="product-name">会员平台</h3>
+            <p class="product-desc">AI驱动的会员活动平台</p>
+          </div>
+        </div>
+
+
           <div class="product-card" data-category="web">
           <div class="product-image">
-             <a href="https://niurouzhou.com" target="_blank"><img src="assets/hangfang123.png" alt="电商AI中台"></a>
-            <span class="product-badge hot">热门</span>
+             <a href="https://niurouzhou.com" target="_blank"><img src="assets/zhongbao.png" alt="众包平台"></a>
+            <span class="product-badge new">新品</span>
           </div>
           <div class="product-content">
             <span class="product-category">Web应用</span>
@@ -222,10 +235,13 @@ require __DIR__ . '/includes/header.php';
           </div>
         </div>
 
+         
+
+
         <div class="product-card" data-category="app">
           <div class="product-image">
             <a href="http://fangche.niurouzhou.com/" target="_blank"><img src="assets/fangche.png" alt="房车"></a>
-            <span class="product-badge hot">热门</span>
+            <span class="product-badge new">新品</span>
           </div>
           <div class="product-content">
             <span class="product-category">SAAS应用</span>
@@ -237,7 +253,7 @@ require __DIR__ . '/includes/header.php';
         <div class="product-card" data-category="web">
           <div class="product-image">
             <a href="products/xiaoguanai/index.html"><img src="assets/xiaoguanai.png" alt="销冠AI助手"></a>
-            <span class="product-badge hot">热门</span>
+            
             <span class="product-badge new">新品</span>
           </div>
           <div class="product-content">
@@ -258,6 +274,37 @@ require __DIR__ . '/includes/header.php';
             <p class="product-desc">一键生成主图场景图详情页，在线AI图片编辑</p>
           </div>
         </div>
+
+         <div class="product-card" data-category="web">
+          <div class="product-image">
+            <a href="#"><img src="assets/lianghua.png" alt="量化交易"></a>
+           
+            <span class="product-badge new">新品</span>
+          </div>
+          <div class="product-content">
+            <span class="product-category">AI应用</span>
+            <h3 class="product-name">量化交易</h3>
+            <p class="product-desc">AI驱动的量化交易工具</p>
+          </div>
+        </div>
+
+         <div class="product-card" data-category="web">
+          <div class="product-image">
+            <a href="goal.php"><img src="assets/jinyaoshi.png" alt="金钥匙系统"></a>
+           
+            <span class="product-badge new">新品</span>
+          </div>
+          <div class="product-content">
+            <span class="product-category">AI应用</span>
+            <h3 class="product-name">金钥匙系统</h3>
+            <p class="product-desc">AI驱动金钥匙系统</p>
+          </div>
+        </div>
+
+
+
+
+
       
 
        
