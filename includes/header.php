@@ -78,7 +78,7 @@ $navItems = [
   <link rel="dns-prefetch" href="//hangfang123.com">
   <link rel="dns-prefetch" href="//niurouzhou.com">
 
-  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/styles.css?v=20261025">
 <?= $pageHead ?>
 <?= $pageStyles ?>
 </head>

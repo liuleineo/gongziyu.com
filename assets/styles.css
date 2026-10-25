@@ -1193,6 +1193,17 @@ ul {
   gap: var(--space-2);
 }
 
+/* 图标与文字（邮箱 / 电话 / 地址）保持在同一行 */
+.footer-links li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footer-links li.footer-contact {
+  white-space: nowrap;
+}
+
 .footer-links a {
   display: flex;
   align-items: center;
@@ -1209,6 +1220,7 @@ ul {
 .footer-links svg {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
   stroke: var(--text-secondary);
 }
 

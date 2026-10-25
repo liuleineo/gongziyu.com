@@ -42,20 +42,20 @@
           <div>
             <h4>联系方式</h4>
             <ul>
-              <li>
+              <li class="footer-contact">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
                 <a href="mailto:neo@gongziyu.com">neo@gongziyu.com</a>
               </li>
-              <li>
+              <li class="footer-contact">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.18 5.18 2 2 0 0 1 5.18 3h3a2 2 0 0 1 2 1.72c.13 1.21.37 2.39.72 3.53a2 2 0 0 1-.45 1.95l-2.11 2.11a16.05 16.05 0 0 0 6.58 6.58l2.11-2.11a2 2 0 0 1 1.95-.45c1.14.35 2.32.59 3.53.72A2 2 0 0 1 22 16.92z"/>
                 </svg>
                 <a href="tel:+8618868725001">18868725001</a>
               </li>
-              <li>
+              <li class="footer-contact">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                   <circle cx="12" cy="10" r="3"/>
