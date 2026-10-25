@@ -598,7 +598,63 @@ body.is-modal-open {
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
+  cursor: pointer;
 }
+
+.stage-node.is-active .stage-dot {
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.22);
+}
+
+.stage-node.is-active .stage-name {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* 点击阶段后在下方展开的详情 */
+.stage-detail {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+.stage-detail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.stage-detail .goal-node-title {
+  margin-bottom: var(--space-2);
+}
+
+.stage-detail .task-stage {
+  margin-top: var(--space-4);
+}
+
+.stage-detail .task-item {
+  background: var(--bg-primary);
+}
+
+.stage-detail-close {
+  margin-left: auto;
+  padding: 2px var(--space-2);
+  font-family: inherit;
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.stage-detail-close:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 
 .stage-dot {
   width: 26px;
@@ -829,6 +885,19 @@ body.is-modal-open {
   transition: width var(--transition-base);
 }
 
+/* 今日任务里的一项阶段任务 */
+.today-stage {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--border);
+}
+
+.today-stage-name {
+  font-size: var(--font-xs);
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 /* ---------- 阶段阶梯 ---------- */
 .goal-list {
   position: relative;
@@ -1006,16 +1075,6 @@ body.is-modal-open {
 }
 
 /* ---------- 任务清单 ---------- */
-/* 阶段块内嵌的任务列表（阶段目标与任务整合面板） */
-.stage-block .task-stage {
-  margin-top: var(--space-4);
-  margin-bottom: 0;
-}
-
-.stage-block .task-item {
-  background: var(--bg-primary);
-}
-
 .task-stage {
   margin-bottom: var(--space-4);
 }

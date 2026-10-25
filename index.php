@@ -79,13 +79,13 @@ require __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge">
-          <span>AI 目标拆解 · 一步一步实现</span>
+          <span>想到就要做到</span>
         </div>
         <h1 class="hero-title">
           开启你的<span class="highlight">金手指</span>
         </h1>
         <p class="hero-subtitle">
-          写下你想实现的目标，AI帮你拆解规划实现目标
+          AI帮你拆解目标，规划任务，实现目标。
         </p>
 
         <form class="hero-goal" id="heroGoalForm" autocomplete="off">
@@ -106,10 +106,11 @@ require __DIR__ . '/includes/header.php';
           </div>
           <div class="hero-goal-hints">
             <span class="hero-goal-hint-label">试试：</span>
+            <button type="button" class="hero-goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
            <button type="button" class="hero-goal-chip" data-goal="百万房产销冠">百万房产销冠</button>
           <button type="button" class="hero-goal-chip" data-goal="0-1操盘亿级服装电商">0-1操盘亿级服装电商</button>
-          <button type="button" class="hero-goal-chip" data-goal="一年开发12个app">一年开发12个app</button>
-          <button type="button" class="hero-goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
+          
+          
           </div>
         </form>
 

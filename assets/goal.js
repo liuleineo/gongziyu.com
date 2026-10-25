@@ -204,47 +204,6 @@
       '</span></span></label>';
   }
 
-  /** 阶段目标 + 该阶段任务，整合在同一个面板里逐阶段展示 */
-  function renderStageTasks(plan, done) {
-    var map = {};
-    plan.tasks.forEach(function (task) {
-      var gi = Number(task.goalIndex) || 0;
-      if (!map[gi]) {
-        map[gi] = [];
-      }
-      map[gi].push(task);
-    });
-
-    el.stageTasks.innerHTML = plan.goals.map(function (g, i) {
-      var list = map[i] || [];
-      var doneCount = list.filter(function (t) { return done.indexOf(t.id) !== -1; }).length;
-      return '<div class="goal-node stage-block" id="gn-' + i + '">' +
-        '<div class="goal-node-head">' +
-        '<span class="goal-node-index">' + (i + 1) + '</span>' +
-        '<div>' +
-        '<span class="goal-node-stage">' + escapeHtml(g.stage || ('第' + (i + 1) + '阶段')) + '</span>' +
-        '<div class="goal-node-title">' + escapeHtml(g.title) + '</div>' +
-        (g.desc ? '<p class="goal-node-desc">' + escapeHtml(g.desc) + '</p>' : '') +
-        (g.measure ? '<p class="goal-node-measure">衡量标准：' + escapeHtml(g.measure) + '</p>' : '') +
-        (g.deadline ? '<p class="goal-node-measure">节点：' + escapeHtml(g.deadline) + '</p>' : '') +
-        '<span class="goal-node-state" id="g-state-' + i + '">未开始</span>' +
-        '</div>' +
-        '<span class="goal-node-pct" id="g-pct-' + i + '">0%</span>' +
-        '</div>' +
-        '<div class="goal-node-bar"><span id="g-bar-' + i + '"></span></div>' +
-        (list.length
-          ? '<div class="task-stage">' +
-          '<div class="task-stage-title">阶段任务<em id="gc-' + i + '">' +
-          doneCount + '/' + list.length + '</em></div>' +
-          list.map(function (task) {
-            return taskItemHtml(task, done.indexOf(task.id) !== -1);
-          }).join('') +
-          '</div>'
-          : '') +
-        '</div>';
-    }).join('') || '<p class="goal-node-desc">暂无目标拆解。</p>';
-  }
-
   function stageShortName(stage, i) {
     var text = String(stage || '').trim();
     var parts = text.split(/[·・:：]/);
@@ -262,35 +221,117 @@
     if (!el.stageNodes) return;
     el.stageNodes.innerHTML = plan.goals.map(function (g, i) {
       var full = g.stage || ('第' + (i + 1) + '阶段');
-      return '<div class="stage-node" id="sn-' + i + '" title="' +
-        escapeHtml(full + ' · ' + g.title) + '">' +
+      return '<div class="stage-node" id="sn-' + i + '" data-index="' + i +
+        '" role="button" tabindex="0" title="' + escapeHtml(full + ' · ' + g.title) + '">' +
         '<span class="stage-dot">' + (i + 1) + '</span>' +
         '<span class="stage-name">' + escapeHtml(stageShortName(g.stage, i)) + '</span>' +
         '</div>';
     }).join('');
   }
 
-  /** 每日日常任务：按天记录，换天自动重置，不计入总进度 */
-  function renderDaily(plan, rec) {
-    var list = plan.daily || [];
-    el.dailyCard.hidden = !list.length;
-    if (!list.length) {
-      el.dailyList.innerHTML = '';
-      el.dailySummary.innerHTML = '';
+  /* ------------------- 点击阶段：展开该阶段内容与任务 ------------------- */
+
+  var activeStage = -1;
+
+  function highlightStageNode(index) {
+    if (!el.stageNodes) return;
+    var nodes = el.stageNodes.querySelectorAll('.stage-node');
+    for (var n = 0; n < nodes.length; n++) {
+      nodes[n].classList.toggle('is-active', n === index);
+    }
+  }
+
+  function closeStageDetail() {
+    if (!el.stageDetail) return;
+    el.stageDetail.hidden = true;
+    el.stageDetail.innerHTML = '';
+    activeStage = -1;
+    highlightStageNode(-1);
+  }
+
+  /** 在进度面板下方展开某个阶段的内容 + 任务；不传 index 时展开当前阶段 */
+  function renderStageDetail(index) {
+    var rec = current();
+    if (!rec || !el.stageDetail) return;
+    var plan = ensurePlan(rec);
+    var stats = stageStats(plan, rec.done);
+    if (typeof index !== 'number' || index < 0) {
+      index = stats.currentIndex;
+    }
+    var g = plan.goals[index];
+    if (!g) {
+      closeStageDetail();
       return;
     }
+    activeStage = index;
+    highlightStageNode(index);
+
+    var info = stats.stats[index] || { pct: 0, finished: false };
+    var isCurrent = stats.currentIndex === index;
+    var stateText = info.finished ? '已完成' : (isCurrent ? '进行中' : '待解锁');
+    var list = plan.tasks.filter(function (t) { return (Number(t.goalIndex) || 0) === index; });
+    var doneCount = list.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
+
+    el.stageDetail.innerHTML =
+      '<div class="stage-detail-head">' +
+      '<span class="goal-node-stage">' + escapeHtml(g.stage || ('第' + (index + 1) + '阶段')) + '</span>' +
+      '<span class="goal-node-state' + (info.finished ? ' is-done' : (isCurrent ? ' is-current' : '')) + '">' +
+      stateText + '</span>' +
+      '<span class="goal-node-pct">' + info.pct + '%</span>' +
+      '<button type="button" class="stage-detail-close" id="stageDetailClose">收起</button>' +
+      '</div>' +
+      '<div class="goal-node-title">' + escapeHtml(g.title) + '</div>' +
+      (g.desc ? '<p class="goal-node-desc">' + escapeHtml(g.desc) + '</p>' : '') +
+      (g.measure ? '<p class="goal-node-measure">衡量标准：' + escapeHtml(g.measure) + '</p>' : '') +
+      (g.deadline ? '<p class="goal-node-measure">节点：' + escapeHtml(g.deadline) + '</p>' : '') +
+      '<div class="goal-node-bar"><span style="width:' + info.pct + '%"></span></div>' +
+      (list.length
+        ? '<div class="task-stage">' +
+        '<div class="task-stage-title">阶段任务<em>' + doneCount + '/' + list.length + '</em></div>' +
+        list.map(function (t) {
+          return taskItemHtml(t, rec.done.indexOf(t.id) !== -1);
+        }).join('') +
+        '</div>'
+        : '');
+    el.stageDetail.hidden = false;
+  }
+
+  /** 点击阶段：再次点击已展开的阶段则收起 */
+  function selectStage(index) {
+    if (index === activeStage && el.stageDetail && !el.stageDetail.hidden) {
+      closeStageDetail();
+      return;
+    }
+    renderStageDetail(index);
+  }
+
+  /**
+   * 今日任务 = 日常任务（按天记录，换天自动重置）+ 一项当前阶段任务
+   */
+  function renderToday(plan, rec) {
+    var list = plan.daily || [];
     var ids = rec.daily.ids;
     var doneCount = list.filter(function (t) { return ids.indexOf(t.id) !== -1; }).length;
     var value = pct(doneCount, list.length);
+    var next = nextTask();
 
-    el.dailySummary.innerHTML =
+    el.todayCard.hidden = !list.length && !next;
+    if (el.todayCard.hidden) {
+      el.todaySummary.innerHTML = '';
+      el.todayList.innerHTML = '';
+      el.todayStage.hidden = true;
+      el.todayStageList.innerHTML = '';
+      return;
+    }
+
+    el.todaySummary.innerHTML =
       '<div class="daily-head">' +
-      '<span class="daily-count"><b>' + doneCount + '/' + list.length + '</b> 今日已完成</span>' +
-      '<span class="daily-hint">' + (doneCount === list.length ? '今日日常全部完成' : '每天 0 点自动重置') + '</span>' +
+      '<span class="daily-count"><b>' + doneCount + '/' + list.length + '</b> 日常已完成</span>' +
+      '<span class="daily-hint">' + (list.length && doneCount === list.length ? '今日日常全部完成' : '每天 0 点自动重置') + '</span>' +
       '</div>' +
       '<div class="daily-bar"><span style="width:' + value + '%"></span></div>';
 
-    el.dailyList.innerHTML = list.map(function (task) {
+    el.todayList.innerHTML = list.map(function (task) {
       var isDone = ids.indexOf(task.id) !== -1;
       return '<label class="task-item' + (isDone ? ' is-done' : '') + '" data-id="' + task.id + '">' +
         '<input type="checkbox" ' + (isDone ? 'checked' : '') + '>' +
@@ -303,6 +344,37 @@
         (task.estimate ? '<span class="task-estimate">' + escapeHtml(task.estimate) + '</span>' : '') +
         '</label>';
     }).join('');
+
+    if (!next) {
+      el.todayStage.hidden = true;
+      el.todayStageList.innerHTML = '';
+      return;
+    }
+    el.todayStage.hidden = false;
+    el.todayStageName.textContent = next.stage
+      ? (next.stage.stage || ('第' + (next.stageIndex + 1) + '阶段'))
+      : ('第' + (next.stageIndex + 1) + '阶段');
+    el.todayStageList.innerHTML = taskItemHtml(next.task, false);
+  }
+
+  /** 勾选一次性任务（整合面板 / 阶段详情里都能点），完成给奖励 */
+  function toggleTask(id, checked) {
+    var rec = current();
+    if (!rec) return;
+    var index = rec.done.indexOf(id);
+    if (checked) {
+      if (index === -1) {
+        // 列表里直接勾选也发放奖励
+        grantRewards(finishTask(id));
+      }
+      return;
+    }
+    if (index !== -1) {
+      rec.done.splice(index, 1);
+      saveStore();
+      renderToday(ensurePlan(rec), rec);
+      updateProgress();
+    }
   }
 
   /** 勾选每日日常任务：按天记录，完成给小奖励 */
@@ -317,7 +389,7 @@
       rec.daily.ids.splice(index, 1);
     }
     saveStore();
-    renderDaily(plan, rec);
+    renderToday(plan, rec);
     if (!checked) return;
     var allDone = plan.daily.length > 0 && plan.daily.length === rec.daily.ids.length;
     grantRewards({ plan: plan, newStages: [] },
@@ -427,13 +499,10 @@
     });
     el.statReward.textContent = unlocked;
 
-    // 各阶段任务计数
-    plan.goals.forEach(function (g, i) {
-      var list = plan.tasks.filter(function (t) { return (Number(t.goalIndex) || 0) === i; });
-      var dc = list.filter(function (t) { return rec.done.indexOf(t.id) !== -1; }).length;
-      var em = $('gc-' + i);
-      if (em) em.textContent = dc + '/' + list.length;
-    });
+    // 阶段详情展开时同步刷新
+    if (el.stageDetail && !el.stageDetail.hidden) {
+      renderStageDetail(activeStage);
+    }
 
     renderSavedGoals();
   }
@@ -450,8 +519,8 @@
     el.planDuration.hidden = !plan.duration;
     el.goalInput.value = rec.goal;
     renderStageAxis(plan);
-    renderStageTasks(plan, rec.done);
-    renderDaily(plan, rec);
+    renderStageDetail();
+    renderToday(plan, rec);
     renderRewards();
     updateProgress();
     showReminder();
@@ -580,7 +649,7 @@
     el.reminder.setAttribute('data-task-id', task.id);
     el.reminder.hidden = false;
     document.body.classList.add('is-modal-open');
-    speakModal('宿主，接下来要完成，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
+    speakModal('叮....宿主，新任务开启，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
   }
 
   function closeReminder() {
@@ -693,7 +762,7 @@
     document.body.classList.add('is-modal-open');
     speakModal(isBig
       ? ('恭喜宿主，' + (reward.condition || '阶段完成') + '，大奖励解锁：' + reward.title + '。' + (reward.desc || ''))
-      : ('宿主，小奖励到账，' + reward.title + '。' + (reward.desc || '')));
+      : ('恭喜宿主，小奖励到账，' + reward.title + '。' + (reward.desc || '')));
   }
 
   function advanceReminder() {
@@ -728,7 +797,7 @@
       }
     });
 
-    renderStageTasks(plan, rec.done);
+    renderToday(plan, rec);
     updateProgress();
     return { plan: plan, newStages: newStages };
   }
@@ -895,7 +964,7 @@
       generate(el.goalInput.value, '', { keepProgress: true });
     });
 
-    el.dailyList.addEventListener('change', function (e) {
+    el.todayList.addEventListener('change', function (e) {
       var input = e.target.closest('input[type="checkbox"]');
       if (!input) return;
       var item = input.closest('.task-item');
@@ -903,26 +972,43 @@
       toggleDailyTask(item.getAttribute('data-id'), input.checked);
     });
 
-    el.stageTasks.addEventListener('change', function (e) {
+    // 今日任务里的那一项阶段任务
+    el.todayStageList.addEventListener('change', function (e) {
       var input = e.target.closest('input[type="checkbox"]');
       if (!input) return;
-      var rec = current();
-      if (!rec) return;
       var item = input.closest('.task-item');
-      var id = item.getAttribute('data-id');
-      var index = rec.done.indexOf(id);
-      if (input.checked) {
-        item.classList.add('is-done');
-        if (index === -1) {
-          // 列表里直接勾选也发放奖励
-          grantRewards(finishTask(id));
-        }
-      } else {
-        item.classList.remove('is-done');
-        if (index !== -1) rec.done.splice(index, 1);
+      if (!item) return;
+      toggleTask(item.getAttribute('data-id'), input.checked);
+    });
+
+    // 点击横轴阶段：在下方展开该阶段内容与任务
+    if (el.stageNodes) {
+      el.stageNodes.addEventListener('click', function (e) {
+        var node = e.target.closest('.stage-node');
+        if (!node) return;
+        selectStage(Number(node.getAttribute('data-index')));
+      });
+      el.stageNodes.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        var node = e.target.closest('.stage-node');
+        if (!node) return;
+        e.preventDefault();
+        selectStage(Number(node.getAttribute('data-index')));
+      });
+    }
+
+    el.stageDetail.addEventListener('change', function (e) {
+      var input = e.target.closest('input[type="checkbox"]');
+      if (!input) return;
+      var item = input.closest('.task-item');
+      if (!item) return;
+      toggleTask(item.getAttribute('data-id'), input.checked);
+    });
+
+    el.stageDetail.addEventListener('click', function (e) {
+      if (e.target.closest('#stageDetailClose')) {
+        closeStageDetail();
       }
-      saveStore();
-      updateProgress();
     });
 
     el.btnReset.addEventListener('click', function () {
@@ -931,7 +1017,7 @@
       if (!window.confirm('确定清空这个目标的所有完成进度吗？（方案本身保留）')) return;
       rec.done = [];
       saveStore();
-      renderStageTasks(ensurePlan(rec), rec.done);
+      renderToday(ensurePlan(rec), rec);
       updateProgress();
     });
 
@@ -1031,6 +1117,7 @@
     el.stageLine = $('stageAxisLine');
     el.stageFill = $('stageAxisFill');
     el.stageNodes = $('stageAxisNodes');
+    el.stageDetail = $('stageDetail');
     el.ringFill = $('planRingFill');
     el.ringNum = $('planRingNum');
     el.ringLabel = $('planRingLabel');
@@ -1039,10 +1126,12 @@
     el.statLeft = $('statLeft');
     el.statReward = $('statReward');
     el.planBar = $('planBar');
-    el.stageTasks = $('stageTasks');
-    el.dailyCard = $('dailyCard');
-    el.dailySummary = $('dailySummary');
-    el.dailyList = $('dailyList');
+    el.todayCard = $('todayCard');
+    el.todaySummary = $('todaySummary');
+    el.todayList = $('todayList');
+    el.todayStage = $('todayStage');
+    el.todayStageName = $('todayStageName');
+    el.todayStageList = $('todayStageList');
     el.rewardCard = $('rewardCard');
     el.rewardList = $('rewardList');
     el.btnReset = $('btnReset');

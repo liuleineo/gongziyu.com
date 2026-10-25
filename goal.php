@@ -45,11 +45,10 @@ require __DIR__ . '/includes/header.php';
         </div>
 
         <div class="goal-chips" id="goalChips">
-          
+           <button type="button" class="goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
           <button type="button" class="goal-chip" data-goal="百万房产销冠">百万房产销冠</button>
           <button type="button" class="goal-chip" data-goal="0-1操盘亿级服装电商">0-1操盘亿级服装电商</button>
-          <button type="button" class="goal-chip" data-goal="一年开发12个app">一年开发12个app</button>
-          <button type="button" class="goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
+         
         </div>
       </form>
        
@@ -94,6 +93,7 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="stage-axis-nodes" id="stageAxisNodes"></div>
           </div>
+          <div class="stage-detail" id="stageDetail" hidden></div>
 
           <div class="plan-stats">
             <div class="plan-stat"><b id="statDone">0</b><span>已完成</span></div>
@@ -125,20 +125,16 @@ require __DIR__ . '/includes/header.php';
       </div>
 
       <div class="goal-plan" id="goalPlan" hidden>
-
-       
-
-        
-
-        <section class="plan-card">
-          <h3>阶段目标与任务<span class="plan-card-note">按阶段推进，完成上一阶段再进入下一阶段</span></h3>
-          <div id="stageTasks"></div>
+        <section class="plan-card" id="todayCard" hidden>
+          <h3>今日任务<span class="plan-card-note">日常任务每天 0 点重置，另含一项当前阶段任务</span></h3>
+          <div class="daily-summary" id="todaySummary"></div>
+          <div id="todayList"></div>
+          <div class="today-stage" id="todayStage" hidden>
+            <div class="task-stage-title">阶段推进<span class="today-stage-name" id="todayStageName"></span></div>
+            <div id="todayStageList"></div>
+          </div>
         </section>
-        <section class="plan-card" id="dailyCard" hidden>
-          <h3>每日日常任务<span class="plan-card-note">每天重复执行，0 点自动重置</span></h3>
-          <div class="daily-summary" id="dailySummary"></div>
-          <div id="dailyList"></div>
-        </section>
+
 
         <section class="plan-card" id="rewardCard">
           <h3>奖励清单<span class="plan-card-note">每个任务有小奖励，完成一个阶段解锁对应大奖励</span></h3>
