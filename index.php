@@ -269,8 +269,8 @@ require __DIR__ . '/includes/header.php';
             <span class="product-badge hot">热门</span>
           </div>
           <div class="product-content">
-            <span class="product-category">网站</span>
-            <h3 class="product-name">电商设计助手</h3>
+            <span class="product-category">AI应用</span>
+            <h3 class="product-name">AI电商设计助手</h3>
             <p class="product-desc">一键生成主图场景图详情页，在线AI图片编辑</p>
           </div>
         </div>
