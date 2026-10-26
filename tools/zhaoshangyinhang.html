@@ -30,9 +30,143 @@
   }
   .app{
     position:relative;width:100%;max-width:430px;min-height:100vh;overflow-x:hidden;
-    background:linear-gradient(180deg,#eee9ff 0%,#f6f5fc 16%,var(--bg) 30%,var(--bg) 100%);
-    padding-bottom:92px;box-shadow:0 0 32px rgba(20,28,48,.08);
+    background:var(--bg);padding-bottom:92px;box-shadow:0 0 32px rgba(20,28,48,.08);
   }
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ---------------- 首页 ---------------- */
+  .home-head{
+    background:linear-gradient(180deg,#1a5dbb 0%,#2a7ad9 42%,#57a4ec 100%);
+    padding-bottom:16px;border-radius:0 0 20px 20px;
+  }
+  .nav.hb .icon-btn{color:#fff}
+  .nav.hb .badge{border-color:#2a7ad9}
+  .hsearch{
+    flex:1;display:flex;align-items:center;gap:6px;height:32px;margin:0 12px;padding:0 12px;
+    border-radius:999px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.32);
+    color:#fff;font-size:13px;
+  }
+  .hsearch svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;flex-shrink:0}
+
+  /* 四个快捷入口 */
+  .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px 10px 4px}
+  .quick-item{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:#fff;font-size:12.5px;cursor:pointer;text-decoration:none;
+  }
+  .quick-ico{
+    width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+    background:rgba(255,255,255,.94);box-shadow:0 4px 10px rgba(8,40,90,.18);
+  }
+  .quick-ico svg{width:23px;height:23px;stroke:#1b62bb;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+  /* 11.11 活动 */
+  .banner{
+    position:relative;margin:16px 12px 2px;padding:14px 14px 13px;border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg,#fff7f4 0%,#fdeff0 46%,#eaf3ff 100%);
+    box-shadow:0 8px 20px rgba(20,60,120,.14);
+  }
+  .banner-text{position:relative;z-index:2;max-width:64%}
+  .banner-pill{
+    display:inline-block;padding:2px 8px;border-radius:999px;background:#fff;
+    border:1px solid #f0d3c7;color:#a9683f;font-size:11px;
+  }
+  .banner-title{display:flex;align-items:baseline;gap:2px;margin-top:7px;font-size:19px;font-weight:700;color:#b52b2b;letter-spacing:-.2px}
+  .banner-title b{font-size:25px;font-weight:800;font-style:italic;letter-spacing:-1px;color:#e23a2e}
+  .banner-sub{margin-top:5px;font-size:12px;color:#7a6a63}
+  .banner-sub span{color:#c9352c;font-weight:700}
+  .banner-note{margin-top:3px;font-size:10px;color:#a99a93;transform:scale(.94);transform-origin:left}
+  .banner-btn{
+    margin-top:10px;border:0;border-radius:999px;padding:7px 18px;font-family:inherit;
+    font-size:13px;font-weight:600;color:#7a3f0f;cursor:pointer;
+    background:linear-gradient(180deg,#ffe2a6,#f6c169);
+    box-shadow:0 4px 10px rgba(214,150,40,.35);
+  }
+  .banner-art{position:absolute;right:6px;bottom:6px;width:126px;height:120px;z-index:1;pointer-events:none}
+  .banner-art .art-circle{
+    position:absolute;right:0;bottom:0;width:112px;height:112px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff 0%,#ffe7e3 55%,#ffd2cb 100%);
+    box-shadow:inset 0 0 18px rgba(226,58,46,.12);
+  }
+  .banner-art .art-emoji{
+    position:absolute;right:16px;bottom:14px;font-size:52px;line-height:1;
+    filter:drop-shadow(0 6px 8px rgba(200,50,40,.25));transform:rotate(-8deg);
+  }
+  .banner-art .art-coin{
+    position:absolute;left:6px;top:16px;width:28px;height:28px;border-radius:50%;
+    display:grid;place-items:center;font-size:14px;font-weight:700;color:#b57a10;
+    background:linear-gradient(180deg,#ffe9a8,#f5c24f);box-shadow:0 3px 6px rgba(200,150,30,.3);
+  }
+
+  .home-body{padding:16px 0 4px}
+
+  /* 十宫格 */
+  .grid10{display:grid;grid-template-columns:repeat(5,1fr);row-gap:20px;padding:2px 8px 20px}
+  .grid-item{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px;color:#3c424b;cursor:pointer}
+  .grid-item svg{width:25px;height:25px;stroke:#22252b;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+  /* 小招 */
+  .assist{
+    display:flex;align-items:center;gap:8px;margin:0 12px 14px;padding:10px 14px;
+    background:#fff;border-radius:999px;font-size:12.5px;color:#5a6069;
+    box-shadow:0 1px 2px rgba(16,24,40,.05);
+  }
+  .assist-ico{
+    display:grid;place-items:center;width:22px;height:22px;border-radius:8px;
+    background:#1b1b1f;color:#fff;font-size:12px;flex-shrink:0;
+  }
+
+  /* 信用卡分期 */
+  .promo{
+    margin:0 12px 14px;padding:14px;border-radius:16px;
+    background:linear-gradient(120deg,#fff3ef 0%,#fdeae7 100%);
+  }
+  .promo-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;font-weight:700;color:#1b1b1f}
+  .promo-tag{
+    font-size:11px;font-weight:600;color:#e2402f;background:#fff;border-radius:6px;padding:2px 6px;
+    border:1px solid #ffd9d3;
+  }
+  .promo-box{margin-top:10px;padding:11px 12px;border-radius:12px;background:#fff}
+  .promo-top{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#5a6069}
+  .promo-top i{width:6px;height:6px;border-radius:50%;background:#f4333c;flex-shrink:0}
+  .promo-top b{font-size:15px;font-weight:700;color:#1b1b1f;letter-spacing:-.2px}
+  .promo-hint{margin-left:2px;font-size:11px;color:#9aa0aa}
+  .promo-bottom{display:flex;align-items:flex-end;gap:14px;margin-top:9px}
+  .promo-col{display:flex;flex-direction:column;gap:3px}
+  .promo-label{font-size:11px;color:#8b909a}
+  .promo-label.green{color:#12a150}
+  .promo-num{font-size:13px;font-weight:600;color:#1b1b1f;letter-spacing:-.2px}
+  .promo-num.green{color:#12a150}
+  .promo-btn{
+    margin-left:auto;border:0;border-radius:999px;padding:7px 16px;font-family:inherit;
+    font-size:12.5px;font-weight:600;color:#fff;cursor:pointer;
+    background:linear-gradient(135deg,#ff5a5c,#f4333c);box-shadow:0 4px 10px rgba(244,51,60,.28);
+  }
+
+  /* 借钱服务 */
+  .sec-head{display:flex;align-items:center;justify-content:space-between;padding:2px 12px 10px}
+  .sec-head h2{font-size:17px;font-weight:700;letter-spacing:-.2px}
+  .sec-head .more{font-size:12.5px;color:#8b909a;cursor:pointer}
+  .loan-card{
+    margin:0 12px 12px;padding:14px;border-radius:16px;background:#fff;
+    box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 18px rgba(16,24,40,.03);
+  }
+  .loan-title{font-size:15px;font-weight:700}
+  .loan-desc{margin-top:6px;font-size:12px;color:#8b909a}
+  .loan-desc b{color:#1b1b1f;font-weight:600}
+  .loan-btn{
+    margin-top:12px;border:1px solid #ffc9c4;background:#fff5f4;color:#e2402f;
+    border-radius:999px;padding:6px 16px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+  }
+
+  /* 占位频道 */
+  .soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:8px;color:var(--ink-2)}
+  .soon-ico{font-size:28px;color:#c9ced8}
+  .soon-name{font-size:17px;font-weight:600;color:var(--ink)}
+  .soon-tip{font-size:12.5px}
+
+  #view-me{min-height:100vh;background:linear-gradient(180deg,#eee9ff 0%,#f6f5fc 16%,var(--bg) 30%,var(--bg) 100%)}
 
   /* ---------------- 导航 ---------------- */
   .nav{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 14px}
@@ -151,6 +285,7 @@
   .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#8b909a;cursor:pointer;transition:color .18s}
   .tab svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .tab.active{color:#15161a;font-weight:600}
+  .tab.active svg{fill:currentColor}
 
   /* ---------------- 编辑态 ---------------- */
   body.editing [data-k]{
@@ -188,6 +323,125 @@
 </head>
 <body>
 <div class="app" id="app">
+
+  <!-- ===================== 首页 ===================== -->
+  <section class="view active" id="view-home">
+    <div class="home-head">
+      <div class="nav hb">
+        <button class="icon-btn" type="button" aria-label="扫一扫">
+          <svg viewBox="0 0 24 24"><path d="M4 8.5V6a2 2 0 0 1 2-2h2.5"/><path d="M15.5 4H18a2 2 0 0 1 2 2v2.5"/><path d="M20 15.5V18a2 2 0 0 1-2 2h-2.5"/><path d="M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><path d="M3.5 12h17"/></svg>
+        </button>
+        <div class="hsearch">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          <span>指数拼图</span>
+        </div>
+        <div class="nav-right">
+          <button class="icon-btn" type="button" aria-label="语音助手">
+            <svg viewBox="0 0 24 24"><path d="M12 4v3m0 10v3M4 12h3m10 0h3"/><circle cx="12" cy="12" r="3.4"/></svg>
+          </button>
+          <button class="icon-btn" type="button" aria-label="消息">
+            <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/></svg>
+            <em class="badge">99</em>
+          </button>
+        </div>
+      </div>
+
+      <div class="quick">
+        <div class="quick-item">
+          <span class="quick-ico"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.4"/><path d="M3 10h18"/><circle cx="12" cy="14.5" r="2"/></svg></span>
+          朝朝宝
+        </div>
+        <div class="quick-item">
+          <span class="quick-ico"><svg viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M12 10.2v3.6M10.6 13.6l2.8-3.2"/></svg></span>
+          借钱
+        </div>
+        <div class="quick-item">
+          <span class="quick-ico"><svg viewBox="0 0 24 24"><path d="M4 8h13l-2.5-2.5"/><path d="M20 16H7l2.5 2.5"/></svg></span>
+          转账
+        </div>
+        <div class="quick-item">
+          <span class="quick-ico"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.6 5.9"/><path d="M20 5v6h-6"/></svg></span>
+          账户总览
+        </div>
+      </div>
+
+      <div class="banner">
+        <div class="banner-text">
+          <span class="banner-pill">支付享好礼</span>
+          <div class="banner-title"><b>11.11</b>招行卡好用</div>
+          <p class="banner-sub">手机支付至高抽<span data-k="drawMax" data-type="int">1111</span>元</p>
+          <p class="banner-note">仅限部分客户参与，权益以实际为准</p>
+          <button class="banner-btn" type="button">点击参与</button>
+        </div>
+        <div class="banner-art" aria-hidden="true">
+          <span class="art-circle"></span>
+          <span class="art-emoji">🎁</span>
+          <span class="art-coin">¥</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <div class="grid10">
+        <div class="grid-item"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.4"/><path d="M2.5 10h19"/></svg>信用卡</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14.5 3v4.5H19"/><path d="M11.6 11v6M10.2 12.4h2.4M10.2 15.6h2.4"/></svg>收支明细</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.4"/><path d="M6 12h8m-2.5-2.5L14 12l-2.5 2.5"/></svg>他行卡转入</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><path d="M4 20V9l5-4 5 4v11"/><path d="M14 20V11l6 2v7"/><path d="M8 20v-4h2v4"/></svg>城市服务</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><path d="M12 21c4 0 6-2.6 6-6 0-4.4-3.4-6.4-4-10-1.2 2.4-2 3.6-3.4 4.6C9 10.8 8 12.2 8 14c0 1 .3 1.9.9 2.6"/><path d="M12 21c-1.6 0-2.8-1.1-2.8-2.6 0-1.6 1.3-2.3 2.8-4.4 1.5 2.1 2.8 2.8 2.8 4.4C14.8 19.9 13.6 21 12 21Z"/></svg>热门活动</div>
+
+        <div class="grid-item"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.4"/><path d="M12 15.6c1.8-1.5 2.6-2.5 2.6-3.5a1.6 1.6 0 0 0-2.6-1.2 1.6 1.6 0 0 0-2.6 1.2c0 1 .8 2 2.6 3.5Z"/></svg>养老金融</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 15.5v-7l3.5 4 3.5-4v7"/></svg>M+会员</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><path d="M3 9.5V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5Z"/><path d="M9 9v6"/></svg>影票</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><path d="M7 8V4h10v4"/><rect x="3.5" y="8" width="17" height="7" rx="1.8"/><path d="M6 15v5h12v-5"/><path d="M8 17h8"/></svg>流水打印</div>
+        <div class="grid-item"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/></svg>全部</div>
+      </div>
+
+      <div class="assist">
+        <span class="assist-ico">✳</span>
+        <span>Hi，我是你的智能财富助理</span>
+      </div>
+
+      <section class="promo">
+        <div class="promo-head">
+          <b>信用卡分期还款</b>
+          <span class="promo-tag">限时2.1折，5天后失效</span>
+        </div>
+        <div class="promo-box">
+          <div class="promo-top">
+            <i></i>可分期
+            <b>¥<span data-k="instAmount" data-type="num2">4,207.77</span></b>
+            <span class="promo-hint">推荐分24期</span>
+          </div>
+          <div class="promo-bottom">
+            <div class="promo-col">
+              <span class="promo-label">分期利息</span>
+              <span class="promo-num">-¥<span data-k="instFee" data-type="num2">547.73</span></span>
+            </div>
+            <div class="promo-col">
+              <span class="promo-label green">另享财政贴息</span>
+              <span class="promo-num green">-¥<span data-k="instSubsidy" data-type="num2">10.10</span></span>
+            </div>
+            <button class="promo-btn" type="button">去看看</button>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <h2>借钱服务</h2>
+          <span class="more">更多</span>
+        </div>
+        <div class="loan-card">
+          <div class="loan-title">生意贷</div>
+          <p class="loan-desc">最高可借 <b><span data-k="bizMax" data-type="int">50</span> 万</b>，年利率低至 <b><span data-k="bizRate" data-type="text">3.45%</span></b></p>
+          <button class="loan-btn" type="button">去申请</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== 我的 ===================== -->
+  <section class="view" id="view-me">
 
   <!-- 顶部导航 -->
   <div class="nav">
@@ -300,13 +554,24 @@
     </div>
   </div>
 
+  </section>
+
+  <!-- ===================== 其他频道占位 ===================== -->
+  <section class="view" id="view-soon">
+    <div class="soon">
+      <span class="soon-ico">✦</span>
+      <p class="soon-name" id="soonName">社区</p>
+      <p class="soon-tip">该频道暂未开放</p>
+    </div>
+  </section>
+
   <!-- 底部导航 -->
   <nav class="tabbar">
-    <div class="tab"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1Z"/></svg>首页</div>
-    <div class="tab"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15 20a4.6 4.6 0 0 1 5.6-4.4"/></svg>社区</div>
-    <div class="tab"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>财富</div>
-    <div class="tab"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>生活</div>
-    <div class="tab active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.5a7.2 7.2 0 0 1 14.4 0"/></svg>我的</div>
+    <div class="tab active" data-view="home"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1Z"/></svg>首页</div>
+    <div class="tab" data-view="soon" data-label="社区"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15 20a4.6 4.6 0 0 1 5.6-4.4"/></svg>社区</div>
+    <div class="tab" data-view="soon" data-label="财富"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>财富</div>
+    <div class="tab" data-view="soon" data-label="生活"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>生活</div>
+    <div class="tab" data-view="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.5a7.2 7.2 0 0 1 14.4 0"/></svg>我的</div>
   </nav>
 </div>
 
@@ -524,11 +789,28 @@
     document.getElementById('ovGrid').style.opacity = '';
   });
 
-  /* 底部导航切换 */
+  /* 底部导航切换：首页 / 我的 / 其余频道占位 */
+  var views = {
+    home: document.getElementById('view-home'),
+    me: document.getElementById('view-me'),
+    soon: document.getElementById('view-soon')
+  };
+  var soonName = document.getElementById('soonName');
+
+  function switchView(key, label, tab) {
+    var target = views[key] || views.home;
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    if (key === 'soon' && label) soonName.textContent = label;
+    target.classList.add('active');
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    if (tab) tab.classList.add('active');
+    if (editingAll) setAllEditing(false);
+    window.scrollTo(0, 0);
+  }
+
   document.querySelectorAll('.tab').forEach(function (tab) {
     tab.addEventListener('click', function () {
-      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
-      tab.classList.add('active');
+      switchView(tab.getAttribute('data-view'), tab.getAttribute('data-label'), tab);
     });
   });
 
