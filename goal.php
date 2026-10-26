@@ -23,7 +23,7 @@ require __DIR__ . '/includes/header.php';
 
       <div class="goal-hero">
         
-        <h1 class="goal-title">金手指系统，<span class="highlight">帮你实现目标。</span></h1>
+        <h1 class="goal-title">金手指系统，<span class="highlight">帮你实现任何目标。</span></h1>
         <form class="goal-form" id="goalForm" autocomplete="off">
         <div class="goal-form-row">
           <div class="goal-input-wrap">
@@ -170,7 +170,7 @@ require __DIR__ . '/includes/header.php';
     <div class="goal-modal" id="taskReminder" hidden>
       <div class="goal-modal-mask" id="remindMask"></div>
       <div class="goal-modal-card" role="dialog" aria-modal="true" aria-labelledby="remindTitle">
-        <span class="goal-modal-kicker">接下来要完成</span>
+        <span class="goal-modal-kicker" id="remindKicker">接下来要完成</span>
         <p class="goal-modal-stage" id="remindStage"></p>
         <h3 class="goal-modal-title" id="remindTitle"></h3>
         <p class="goal-modal-desc" id="remindDesc" hidden></p>

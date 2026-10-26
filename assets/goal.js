@@ -82,6 +82,29 @@
     return null;
   }
 
+  /**
+   * 今日待办（提醒弹窗只提示这些）：未完成的日常任务 + 当前阶段的那一项任务
+   */
+  function todayPending() {
+    var rec = current();
+    if (!rec) return [];
+    var plan = ensurePlan(rec);
+    var items = [];
+    (plan.daily || []).forEach(function (task) {
+      if (rec.daily.ids.indexOf(task.id) === -1) {
+        items.push({ kind: 'daily', id: task.id, task: task, stageIndex: -1, stage: null });
+      }
+    });
+    // 阶段任务每天只提醒一项：今天已经推进过就不再弹
+    if (!rec.daily.stageDone) {
+      var next = nextTask();
+      if (next) {
+        items.push({ kind: 'stage', id: next.task.id, task: next.task, stageIndex: next.stageIndex, stage: next.stage });
+      }
+    }
+    return items;
+  }
+
   /* --------------------------- 本地存储 --------------------------- */
 
   function loadStore() {
@@ -134,9 +157,11 @@
     if (!Array.isArray(record.done)) record.done = [];
     // 每日日常任务：换成新的一天就清空
     if (!record.daily || record.daily.date !== todayKey()) {
-      record.daily = { date: todayKey(), ids: [] };
+      // stageDone：今天是否已经推进过一项阶段任务（提醒每天只推一项）
+      record.daily = { date: todayKey(), ids: [], stageDone: false };
     }
     if (!Array.isArray(record.daily.ids)) record.daily.ids = [];
+    if (typeof record.daily.stageDone !== 'boolean') record.daily.stageDone = false;
     return plan;
   }
 
@@ -598,6 +623,57 @@
     } catch (e) { /* ignore */ }
   }
 
+  /* --------------------- 系统播报文案（金手指系统流） --------------------- */
+
+  var SYS_BELL = '叮，系统提示，';
+
+  /** 拼接成一句，末尾只保留一个句号（避免“。。”连读） */
+  function sysDot(text) {
+    var s = String(text || '').trim();
+    if (!s) return '';
+    return s.replace(/[。！？、,.!?；;]+$/, '') + '。';
+  }
+
+  /** 今日日常任务提醒 */
+  function sysDailyTaskLine(task) {
+    return SYS_BELL + '今日日常任务已刷新。' +
+      '任务名称：' + sysDot(task.title) +
+      (task.desc ? '任务说明：' + sysDot(task.desc) : '') +
+      '请宿主及时完成，完成后可领取随机奖励。';
+  }
+
+  /** 阶段任务提醒 */
+  function sysStageTaskLine(task, stageName, index, total) {
+    return SYS_BELL + '系统发布阶段任务。' +
+      '当前进度：第 ' + (index + 1) + ' 阶段，共 ' + total + ' 阶段。' +
+      '阶段名称：' + sysDot(stageName) +
+      '任务名称：' + sysDot(task.title) +
+      (task.desc ? '任务说明：' + sysDot(task.desc) : '') +
+      '请宿主尽快推进，完成后即可解锁本阶段大奖励。';
+  }
+
+  /** 小奖励到账 */
+  function sysSmallRewardLine(reward) {
+    return SYS_BELL + '任务结算完成，恭喜宿主。' +
+      '系统发放随机奖励：' + sysDot(reward.title) +
+      (reward.desc ? '备注：' + sysDot(reward.desc) : '') +
+      '奖励已存入背包，请宿主查收。';
+  }
+
+  /** 阶段大奖励解锁 */
+  function sysBigRewardLine(reward) {
+    return SYS_BELL + '检测到宿主' + (reward.condition || '完成当前阶段') + '，' +
+      '主线进度推进。系统解锁阶段大奖励：' + sysDot(reward.title) +
+      (reward.desc ? '奖励说明：' + sysDot(reward.desc) : '') +
+      '恭喜宿主，请再接再厉，继续冲刺下一阶段。';
+  }
+
+  /** 今日任务全部完成 */
+  function sysTodayDoneLine() {
+    return SYS_BELL + '今日任务清单已全部完成，系统给予高度评价：宿主今日执行力优秀。' +
+      '明日零点将刷新新的日常任务，请宿主继续保持，早日达成目标。';
+  }
+
   /**
    * 播报弹窗内容；iOS Safari 等要求用户交互后才能发声，
    * 因此先尝试播报，失败/无声时存为 pending，等首次交互再补播。
@@ -616,7 +692,8 @@
     } catch (e) { /* ignore */ }
     updateSpeakLabels();
     if (next) {
-      speak(pendingSpeak || (el.remindTitle ? el.remindTitle.textContent : ''));
+      // 只在弹窗还开着（有待播内容）时补播
+      if (pendingSpeak) speak(pendingSpeak);
     } else {
       stopSpeak();
     }
@@ -636,36 +713,52 @@
     var plan = ensurePlan(rec);
     var task = data.task;
     var goal = data.stage || {};
-    el.remindStage.textContent = (goal.stage || ('第' + (data.stageIndex + 1) + '阶段')) +
-      (goal.title ? ' · ' + goal.title : '');
+    var isDaily = data.kind === 'daily';
+
+    el.remindKicker.textContent = isDaily ? '今日日常任务' : '接下来要完成';
+    el.remindStage.textContent = isDaily
+      ? '今日任务 · 每天 0 点重置'
+      : (goal.stage || ('第' + (data.stageIndex + 1) + '阶段')) + (goal.title ? ' · ' + goal.title : '');
     el.remindTitle.textContent = task.title;
     el.remindDesc.textContent = task.desc || '';
     el.remindDesc.hidden = !task.desc;
+
     var meta = [];
     if (task.estimate) meta.push('<span class="goal-modal-tag">' + escapeHtml(task.estimate) + '</span>');
-    meta.push('<span class="goal-modal-tag ' + (task.priority || 'medium') + '">' + priorityText(task.priority) + '</span>');
-    meta.push('<span class="goal-modal-tag">第' + (data.stageIndex + 1) + '/' + plan.goals.length + ' 阶段</span>');
+    if (isDaily) {
+      meta.push('<span class="goal-modal-tag">每日重复</span>');
+    } else {
+      meta.push('<span class="goal-modal-tag ' + (task.priority || 'medium') + '">' + priorityText(task.priority) + '</span>');
+      meta.push('<span class="goal-modal-tag">第' + (data.stageIndex + 1) + '/' + plan.goals.length + ' 阶段</span>');
+    }
     el.remindMeta.innerHTML = meta.join('');
-    el.reminder.setAttribute('data-task-id', task.id);
+    el.reminder.setAttribute('data-task-id', data.id);
+    el.reminder.setAttribute('data-task-kind', data.kind);
     el.reminder.hidden = false;
     document.body.classList.add('is-modal-open');
-    speakModal('叮....宿主，新任务开启，' + (goal.stage || '') + '，' + task.title + '。' + (task.desc || ''));
+    speakModal(isDaily
+      ? sysDailyTaskLine(task)
+      : sysStageTaskLine(task, goal.stage || ('第' + (data.stageIndex + 1) + '阶段'),
+        data.stageIndex, plan.goals.length));
   }
 
   function closeReminder() {
     if (!el.reminder) return;
     el.reminder.hidden = true;
     document.body.classList.remove('is-modal-open');
+    // 关掉弹窗就把待补播的内容清掉，避免点「稍后安排」后又被补播出来
+    pendingSpeak = '';
     stopSpeak();
   }
 
+  /** 只提醒今日要完成的任务：未完成的日常任务 + 当前阶段任务 */
   function showReminder() {
-    var data = nextTask();
-    if (!data) {
+    var items = todayPending();
+    if (!items.length) {
       closeReminder();
       return;
     }
-    openReminder(data);
+    openReminder(items[0]);
   }
 
   /* --------------------------- 奖励解锁弹窗 --------------------------- */
@@ -760,19 +853,17 @@
     el.rewardDesc.hidden = !reward.desc;
     el.rewardModal.hidden = false;
     document.body.classList.add('is-modal-open');
-    speakModal(isBig
-      ? ('恭喜宿主，' + (reward.condition || '阶段完成') + '，大奖励解锁：' + reward.title + '。' + (reward.desc || ''))
-      : ('恭喜宿主，小奖励到账，' + reward.title + '。' + (reward.desc || '')));
+    speakModal(isBig ? sysBigRewardLine(reward) : sysSmallRewardLine(reward));
   }
 
   function advanceReminder() {
-    var next = nextTask();
-    if (next) {
-      openReminder(next);
-    } else {
-      closeReminder();
-      speakModal('恭喜宿主，全部任务已完成，目标达成。');
+    var items = todayPending();
+    if (items.length) {
+      openReminder(items[0]);
+      return;
     }
+    closeReminder();
+    speakModal(sysTodayDoneLine());
   }
 
   /**
@@ -787,6 +878,8 @@
     if (id && rec.done.indexOf(id) === -1) {
       rec.done.push(id);
     }
+    // 当天已推进过阶段任务：任务提醒今天就不再推阶段任务了
+    rec.daily.stageDone = true;
     saveStore();
 
     var after = stageStats(plan, rec.done).stats;
@@ -824,10 +917,16 @@
   }
 
   function completeReminderTask() {
-    var id = el.reminder ? el.reminder.getAttribute('data-task-id') : '';
-    var res = finishTask(id);
+    if (!el.reminder) return;
+    var id = el.reminder.getAttribute('data-task-id') || '';
+    var kind = el.reminder.getAttribute('data-task-kind') || 'stage';
     closeReminder();
-    grantRewards(res);
+    if (kind === 'daily') {
+      // 日常任务按天记录，完成后发小奖励并继续下一个今日任务
+      toggleDailyTask(id, true);
+      return;
+    }
+    grantRewards(finishTask(id));
   }
 
   function showSkeleton(state) {
@@ -1070,7 +1169,10 @@
     document.addEventListener('click', function flush() {
       document.removeEventListener('click', flush);
       if (!pendingSpeak) return;
-      if (speakOn()) {
+      // 只有在弹窗仍然打开时才补播：点「稍后安排」/ 遮罩关闭后不再出声
+      var modalOpen = (el.reminder && !el.reminder.hidden) ||
+        (el.rewardModal && !el.rewardModal.hidden);
+      if (modalOpen && speakOn()) {
         speak(pendingSpeak);
       }
       pendingSpeak = '';
@@ -1141,6 +1243,7 @@
     el.reminder = $('taskReminder');
     el.remindMask = $('remindMask');
     el.remindStage = $('remindStage');
+    el.remindKicker = $('remindKicker');
     el.remindTitle = $('remindTitle');
     el.remindDesc = $('remindDesc');
     el.remindMeta = $('remindMeta');
