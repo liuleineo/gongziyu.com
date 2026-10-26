@@ -316,7 +316,7 @@
   <button type="button" class="eb" id="btnReset">还原默认</button>
   <button type="button" class="eb primary" id="btnDone">完成</button>
 </div>
-<div class="toast" id="toast">双击任意位置即可修改数据</div>
+<div class="toast" id="toast"></div>
 
 <script>
 (function () {
@@ -535,8 +535,6 @@
   document.querySelectorAll('[data-k]').forEach(function (el) {
     el.setAttribute('contenteditable', 'false');
   });
-
-  setTimeout(function () { showToast('双击任意位置即可修改'); }, 600);
 })();
 </script>
 </body>
