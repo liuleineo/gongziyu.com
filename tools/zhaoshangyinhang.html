@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f2f3f6">
+<title>个人中心 · 仿招商银行 App</title>
+<style>
+  :root{
+    --bg:#f2f3f6;
+    --card:#ffffff;
+    --ink:#15161a;
+    --ink-2:#8b909a;
+    --ink-3:#b6bbc4;
+    --line:#f1f2f5;
+    --orange:#ff7a30;
+    --orange-soft:#fff3e9;
+    --purple:#8b6bff;
+    --blue:#2f7bff;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    background:#e9ebef;color:var(--ink);display:flex;justify-content:center;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .app{
+    position:relative;width:100%;max-width:430px;min-height:100vh;overflow-x:hidden;
+    background:linear-gradient(180deg,#eee9ff 0%,#f6f5fc 16%,var(--bg) 30%,var(--bg) 100%);
+    padding-bottom:92px;box-shadow:0 0 32px rgba(20,28,48,.08);
+  }
+
+  /* ---------------- 导航 ---------------- */
+  .nav{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 14px}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .icon-btn{
+    position:relative;display:grid;place-items:center;width:30px;height:30px;
+    background:transparent;border:0;color:#20222a;cursor:pointer;
+  }
+  .icon-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .badge{
+    position:absolute;top:-3px;right:-5px;min-width:19px;height:16px;padding:0 4px;
+    display:grid;place-items:center;border-radius:9px;background:#f4333c;color:#fff;
+    font-size:10px;font-weight:600;line-height:1;border:1.5px solid #f6f5fc;
+  }
+
+  /* ---------------- 用户信息 ---------------- */
+  .profile{display:flex;align-items:center;gap:12px;padding:6px 16px 0}
+  .avatar{
+    width:58px;height:58px;border-radius:50%;flex-shrink:0;overflow:hidden;
+    background:radial-gradient(120% 120% at 25% 20%,#dfe4ee 0%,#aab4c7 55%,#7d8798 100%);
+    display:grid;place-items:center;color:#fff;font-size:21px;font-weight:600;letter-spacing:1px;
+    box-shadow:0 6px 14px rgba(24,34,60,.16),inset 0 0 0 2px rgba(255,255,255,.5);
+  }
+  .p-name{font-size:19px;font-weight:700;letter-spacing:.2px}
+  .p-sub{display:flex;align-items:center;gap:2px;margin-top:4px;font-size:12px;color:var(--ink-2)}
+  .p-sub svg{width:12px;height:12px;stroke:var(--ink-3);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .profile-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:7px;padding-top:2px}
+  .gift{
+    display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px;border-radius:11px;
+    background:var(--orange-soft);border:1px solid #ffe0c9;color:#ff6a00;
+    font-size:11px;font-weight:500;
+  }
+  .gift svg{width:11px;height:11px;color:#ff8b3d}
+  .level{
+    position:relative;background:#3f424b;color:#fff;font-size:11px;font-weight:500;
+    padding:2px 9px;border-radius:7px 7px 7px 0;letter-spacing:.5px;
+  }
+
+  /* ---------------- 四宫格数字 ---------------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);padding:20px 8px 18px}
+  .stat{text-align:center}
+  .stat b{display:block;font-size:20px;font-weight:700;letter-spacing:-.2px;font-variant-numeric:tabular-nums}
+  .stat span{position:relative;display:inline-block;margin-top:6px;font-size:11px;color:var(--ink-2)}
+  .stat .dot{
+    position:absolute;top:-1px;right:-7px;width:5px;height:5px;border-radius:50%;background:#f4333c;
+  }
+
+  /* ---------------- 卡片 ---------------- */
+  .card{
+    background:var(--card);border-radius:var(--radius);margin:0 12px 10px;padding:16px;
+    box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 18px rgba(16,24,40,.03);
+  }
+  .card-title{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;letter-spacing:.2px}
+  .card-title .eye{
+    display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+    color:#9aa0aa;cursor:pointer;
+  }
+  .card-title .eye svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  .ov-grid{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:16px}
+  .ov-label{font-size:12px;color:var(--ink-2);margin-bottom:7px}
+  .amount{
+    display:flex;align-items:baseline;font-size:26px;font-weight:700;letter-spacing:-.6px;
+    font-variant-numeric:tabular-nums;line-height:1.1;
+  }
+  .amount .cur{font-size:15px;font-weight:600;margin-right:1px;transform:translateY(-2px)}
+  .amount.sm{font-size:23px;letter-spacing:-.4px}
+  .ov-right{text-align:right}
+  .hr{height:1px;background:#eceef3;margin:15px 0 11px}
+  .tip{display:flex;align-items:center;gap:6px;font-size:12px;color:#7d838d}
+  .tip i{width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0}
+
+  .flow-grid{display:flex;justify-content:space-between;gap:12px;margin-top:14px}
+  .flow-grid .ov-right{text-align:right}
+  .bar{display:flex;gap:2px;height:5px;margin-top:16px;border-radius:4px;overflow:hidden;background:#f4f5f8}
+  .bar i{display:block;height:100%;border-radius:4px;transition:flex .3s ease}
+  .bar .out{flex:0 0 47.8%;background:#f0a63c}
+  .bar .in{flex:1 1 auto;background:var(--purple)}
+  .flow-foot{display:flex;align-items:center;justify-content:space-between;margin-top:13px;font-size:12px;color:#6f747d}
+  .flow-foot .left{display:flex;align-items:center;gap:6px}
+  .flow-foot .coin{font-size:14px;line-height:1}
+  .flow-foot .link{color:var(--blue);font-weight:500;cursor:pointer}
+
+  /* ---------------- 信用卡 / 贷款 ---------------- */
+  .duo-wrap{position:relative;margin:0 12px 10px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mini{
+    background:var(--card);border-radius:var(--radius);padding:14px 14px 15px;
+    box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 18px rgba(16,24,40,.03);
+  }
+  .mini-title{display:flex;align-items:center;gap:5px;font-size:14px;font-weight:600}
+  .mini-tag{
+    font-size:10px;font-weight:500;color:#ff6a00;background:var(--orange-soft);
+    border:1px solid #ffe2cc;border-radius:6px;padding:1px 4px;line-height:1.4;
+  }
+  .mini-label{margin-top:10px;font-size:11px;color:var(--ink-2)}
+  .mini-value{margin-top:4px;font-size:15px;font-weight:600;letter-spacing:-.2px;font-variant-numeric:tabular-nums}
+  .mini-value.big{margin-top:8px;font-size:19px;font-weight:700;letter-spacing:-.4px}
+  .mini-rate{margin-top:8px;font-size:11px;color:#6f747d}
+  .mini-rate b{color:#ff6a00;font-weight:600}
+  .signin{
+    position:absolute;right:-5px;top:-8px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:1px;
+    width:46px;height:46px;border-radius:50%;color:#fff;font-size:9px;font-weight:600;
+    background:linear-gradient(140deg,#ffb44d,#ff6a3d);box-shadow:0 6px 14px rgba(255,106,61,.35);
+    justify-content:center;cursor:pointer;
+  }
+  .signin span{font-size:14px;line-height:1}
+
+  /* ---------------- 底部导航 ---------------- */
+  .tabbar{
+    position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;z-index:30;
+    display:grid;grid-template-columns:repeat(5,1fr);padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-top:1px solid #edeef2;
+  }
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#8b909a;cursor:pointer;transition:color .18s}
+  .tab svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tab.active{color:#15161a;font-weight:600}
+
+  /* ---------------- 编辑态 ---------------- */
+  body.editing [data-k]{
+    outline:1px dashed rgba(255,122,48,.6);outline-offset:3px;border-radius:4px;cursor:text;
+  }
+  [data-k][contenteditable="true"]{
+    outline:2px solid var(--orange)!important;outline-offset:3px;
+    background:rgba(255,122,48,.07);border-radius:4px;cursor:text;user-select:text;
+  }
+  .editbar{
+    position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;
+    display:flex;align-items:center;gap:10px;padding:7px 8px 7px 14px;border-radius:999px;
+    background:rgba(23,24,28,.92);backdrop-filter:blur(10px);color:#fff;font-size:12px;
+    box-shadow:0 10px 24px rgba(10,14,24,.28);
+  }
+  .editbar[hidden]{display:none}
+  .editbar b{font-weight:600;letter-spacing:.2px}
+  .editbar .eb{
+    border:0;border-radius:999px;padding:5px 12px;font-size:12px;font-family:inherit;cursor:pointer;
+    background:rgba(255,255,255,.16);color:#fff;
+  }
+  .editbar .eb.primary{background:var(--orange);color:#fff;font-weight:600}
+  .toast{
+    position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(6px);z-index:70;
+    padding:8px 14px;border-radius:999px;background:rgba(23,24,28,.86);color:#fff;font-size:12px;
+    opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:360px){
+    .amount{font-size:23px}
+    .stat b{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- 顶部导航 -->
+  <div class="nav">
+    <button class="icon-btn" type="button" aria-label="返回">
+      <svg viewBox="0 0 24 24"><path d="M15 19 8 12l7-7"/></svg>
+    </button>
+    <div class="nav-right">
+      <button class="icon-btn" type="button" aria-label="搜索">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </button>
+      <button class="icon-btn" type="button" aria-label="设置">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.9 19.3a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.7 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1.03-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.7a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.09a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/>
+        </svg>
+      </button>
+      <button class="icon-btn" type="button" aria-label="消息">
+        <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/></svg>
+        <em class="badge">99</em>
+      </button>
+    </div>
+  </div>
+
+  <!-- 用户 -->
+  <div class="profile">
+    <div class="avatar">磊</div>
+    <div>
+      <div class="p-name" data-k="name">*磊</div>
+      <div class="p-sub">个人主页
+        <svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+    </div>
+    <div class="profile-right">
+      <span class="gift">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/></svg>
+        点击领福利
+      </span>
+      <span class="level" data-k="level">大众M2</span>
+    </div>
+  </div>
+
+  <!-- 四宫格 -->
+  <div class="stats">
+    <div class="stat"><b data-k="cards" data-type="int">5</b><span>银行卡</span></div>
+    <div class="stat"><b data-k="todos" data-type="int">1</b><span>待办</span></div>
+    <div class="stat"><b data-k="coupons" data-type="int">1</b><span>卡券<i class="dot"></i></span></div>
+    <div class="stat"><b data-k="points" data-type="int">5065</b><span>积分</span></div>
+  </div>
+
+  <!-- 账户总览 -->
+  <section class="card">
+    <div class="card-title">
+      <span>账户总览</span>
+      <span class="eye" id="eyeToggle" title="隐藏/显示金额">
+        <svg viewBox="0 0 24 24"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>
+      </span>
+    </div>
+    <div class="ov-grid" id="ovGrid">
+      <div>
+        <div class="ov-label">总资产</div>
+        <div class="amount"><span class="cur">¥</span><span data-k="total" data-type="num2">8,280,000.11</span></div>
+      </div>
+      <div class="ov-right">
+        <div class="ov-label">昨日收益</div>
+        <div class="amount sm"><span data-k="profit" data-type="signed2">+0.00</span></div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="tip"><i></i><span>免费领<span data-k="trial" data-type="int">50000</span>元理财体验金</span></div>
+  </section>
+
+  <!-- 本月收支 -->
+  <section class="card">
+    <div class="card-title"><span>本月收支</span></div>
+    <div class="flow-grid">
+      <div>
+        <div class="ov-label">支出</div>
+        <div class="amount"><span class="cur">¥</span><span data-k="expense" data-type="num2">42,543.37</span></div>
+      </div>
+      <div class="ov-right">
+        <div class="ov-label">收入</div>
+        <div class="amount"><span class="cur">¥</span><span data-k="income" data-type="num2">46,410.19</span></div>
+      </div>
+    </div>
+    <div class="bar"><i class="out" id="barOut"></i><i class="in" id="barIn"></i></div>
+    <div class="flow-foot">
+      <span class="left">
+        <span class="coin">🪙</span>
+        <span><span data-k="month" data-type="text">9月</span>结余
+          <b><span data-k="balance" data-type="money">¥-993.16</span></b>
+        </span>
+      </span>
+      <span class="link">查看</span>
+    </div>
+  </section>
+
+  <!-- 信用卡 / 贷款 -->
+  <div class="duo-wrap">
+    <div class="signin" title="签到抽好礼"><span>🎁</span>签到</div>
+    <div class="duo">
+      <section class="mini">
+        <div class="mini-title">信用卡</div>
+        <div class="mini-label">账单日 <span data-k="billDay" data-type="text">11-03</span></div>
+        <div class="mini-value big">¥<span data-k="ccBill" data-type="num2">6,649.57</span></div>
+      </section>
+      <section class="mini">
+        <div class="mini-title">贷款<span class="mini-tag">抽好礼</span></div>
+        <div class="mini-label">最高可借 <span data-k="loanMax" data-type="int">30</span> 万</div>
+        <div class="mini-rate">年利率(单利)低至<b><span data-k="loanRate" data-type="text">3.05%</span></b></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <div class="tab"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1Z"/></svg>首页</div>
+    <div class="tab"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15 20a4.6 4.6 0 0 1 5.6-4.4"/></svg>社区</div>
+    <div class="tab"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>财富</div>
+    <div class="tab"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>生活</div>
+    <div class="tab active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.5a7.2 7.2 0 0 1 14.4 0"/></svg>我的</div>
+  </nav>
+</div>
+
+<!-- 编辑工具条 -->
+<div class="editbar" id="editbar" hidden>
+  <b>编辑中</b>
+  <button type="button" class="eb" id="btnReset">还原默认</button>
+  <button type="button" class="eb primary" id="btnDone">完成</button>
+</div>
+<div class="toast" id="toast">双击任意位置即可修改数据</div>
+
+<script>
+(function () {
+  var STORE_KEY = 'zs_profile_v1';
+  var cells = Array.prototype.slice.call(document.querySelectorAll('[data-k]'));
+  var defaults = {};
+
+  /* ----------------------------- 数字格式化 ----------------------------- */
+
+  function parseNum(text) {
+    var cleaned = String(text).replace(/[^\d.+-]/g, '');
+    var n = parseFloat(cleaned);
+    return isNaN(n) ? null : n;
+  }
+
+  function group(n, dec) {
+    var fixed = Math.abs(n).toFixed(dec);
+    var parts = fixed.split('.');
+    var int = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return dec > 0 ? int + '.' + parts[1] : int;
+  }
+
+  function format(el) {
+    var type = el.getAttribute('data-type') || 'text';
+    var raw = el.textContent.replace(/\s+/g, ' ').trim();
+    if (type === 'text') return raw;
+    var n = parseNum(raw);
+    if (n === null) return raw;
+
+    if (type === 'int') return group(n, 0);
+    if (type === 'num2') return group(n, 2);
+    if (type === 'signed2') {
+      var positive = n > 0 || (n === 0 && raw.indexOf('+') !== -1);
+      return (n < 0 ? '-' : (positive ? '+' : '')) + group(n, 2);
+    }
+    if (type === 'money') {
+      return '¥' + (n < 0 ? '-' : '') + group(n, 2);
+    }
+    return raw;
+  }
+
+  /* ----------------------------- 存储 ----------------------------- */
+
+  function loadAll() {
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { saved = {}; }
+    cells.forEach(function (el) {
+      var key = el.getAttribute('data-k');
+      defaults[key] = defaults[key] || el.textContent.trim();
+      if (typeof saved[key] === 'string') el.textContent = saved[key];
+    });
+  }
+
+  function saveAll() {
+    var data = {};
+    cells.forEach(function (el) {
+      data[el.getAttribute('data-k')] = el.textContent.trim();
+    });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) { /* 忽略 */ }
+  }
+
+  loadAll();
+  applyNumbers();
+
+  /* ----------------------------- 编辑模式 ----------------------------- */
+
+  var editingAll = false;
+  var editbar = document.getElementById('editbar');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2400);
+  }
+
+  function setAllEditing(on) {
+    editingAll = on;
+    document.body.classList.toggle('editing', on);
+    editbar.hidden = !on;
+    cells.forEach(function (el) {
+      el.setAttribute('contenteditable', on ? 'true' : 'false');
+    });
+    if (!on) {
+      saveAll();
+      applyNumbers();
+    }
+  }
+
+  function focusCell(el) {
+    el.setAttribute('contenteditable', 'true');
+    el.focus();
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  /* 双击：命中数据则编辑该处，否则进入整体编辑模式 */
+  document.addEventListener('dblclick', function (e) {
+    if (e.target.closest('.editbar')) return;
+    var cell = e.target.closest('[data-k]');
+    if (cell) {
+      focusCell(cell);
+      return;
+    }
+    if (!editingAll) {
+      setAllEditing(true);
+      showToast('已进入编辑模式，点击任意数字修改');
+    }
+  });
+
+  /* 提交：格式化并保存 */
+  document.addEventListener('blur', function (e) {
+    var el = e.target;
+    if (!el.hasAttribute || !el.hasAttribute('data-k')) return;
+    el.textContent = format(el);
+    if (!editingAll) el.setAttribute('contenteditable', 'false');
+    saveAll();
+    applyNumbers();
+  }, true);
+
+  document.addEventListener('keydown', function (e) {
+    var el = e.target;
+    var inCell = el.hasAttribute && el.hasAttribute('data-k');
+    if (e.key === 'Escape') {
+      if (inCell) el.blur();
+      if (editingAll) setAllEditing(false);
+      return;
+    }
+    if (e.key === 'Enter') {
+      if (inCell) {
+        e.preventDefault();
+        el.blur();
+      }
+      return;
+    }
+    /* 只允许数字相关输入，避免误输入文字 */
+    if (inCell) {
+      var type = el.getAttribute('data-type') || 'text';
+      if (type === 'text') return;
+      if (e.key.length === 1 && !/[\d.,+\-]/.test(e.key) && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+      }
+    }
+  });
+
+  document.getElementById('btnDone').addEventListener('click', function () {
+    setAllEditing(false);
+    showToast('已保存');
+  });
+
+  document.getElementById('btnReset').addEventListener('click', function () {
+    try { localStorage.removeItem(STORE_KEY); } catch (e) { /* 忽略 */ }
+    cells.forEach(function (el) {
+      var key = el.getAttribute('data-k');
+      if (typeof defaults[key] === 'string') el.textContent = defaults[key];
+    });
+    applyNumbers();
+    showToast('已还原默认数据');
+  });
+
+  /* 点空白处退出整体编辑（编辑模式下单击非数据区域） */
+  document.addEventListener('click', function (e) {
+    if (!editingAll) return;
+    if (e.target.closest('[data-k]') || e.target.closest('.editbar')) return;
+    setAllEditing(false);
+  });
+
+  /* ----------------------- 金额联动（收支条 / 眼睛） ----------------------- */
+
+  function applyNumbers() {
+    var outEl = document.querySelector('[data-k="expense"]');
+    var inEl = document.querySelector('[data-k="income"]');
+    var out = outEl ? parseNum(outEl.textContent) : null;
+    var inc = inEl ? parseNum(inEl.textContent) : null;
+    if (out !== null && inc !== null && out + inc > 0) {
+      var share = out / (out + inc) * 100;
+      document.getElementById('barOut').style.flex = '0 0 ' + share.toFixed(2) + '%';
+      document.getElementById('barIn').style.flex = '1 1 auto';
+    }
+  }
+
+  var hidden = false;
+  document.getElementById('eyeToggle').addEventListener('click', function () {
+    hidden = !hidden;
+    document.querySelectorAll('.amount, .mini-value, .flow-foot b').forEach(function (el) {
+      el.style.filter = hidden ? 'blur(6px)' : '';
+      el.style.transition = 'filter .2s';
+    });
+    document.getElementById('ovGrid').style.opacity = '';
+  });
+
+  /* 底部导航切换 */
+  document.querySelectorAll('.tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('[data-k]').forEach(function (el) {
+    el.setAttribute('contenteditable', 'false');
+  });
+
+  setTimeout(function () { showToast('双击任意位置即可修改数据'); }, 600);
+})();
+</script>
+</body>
+</html>
