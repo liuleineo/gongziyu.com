@@ -54,6 +54,7 @@
     display:grid;place-items:center;color:#fff;font-size:21px;font-weight:600;letter-spacing:1px;
     box-shadow:0 6px 14px rgba(24,34,60,.16),inset 0 0 0 2px rgba(255,255,255,.5);
   }
+  .avatar[contenteditable="true"]{overflow:visible}
   .p-name{font-size:19px;font-weight:700;letter-spacing:.2px}
   .p-sub{display:flex;align-items:center;gap:2px;margin-top:4px;font-size:12px;color:var(--ink-2)}
   .p-sub svg{width:12px;height:12px;stroke:var(--ink-3);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -209,7 +210,7 @@
 
   <!-- 用户 -->
   <div class="profile">
-    <div class="avatar">磊</div>
+    <div class="avatar" data-k="avatar" data-type="text" title="双击可修改头像文字">磊</div>
     <div>
       <div class="p-name" data-k="name">*磊</div>
       <div class="p-sub">个人主页
@@ -488,7 +489,18 @@
 
   /* ----------------------- 金额联动（收支条 / 眼睛） ----------------------- */
 
+  /* 头像文字：字数越多字号越小，避免溢出圆形 */
+  function fitAvatar() {
+    var el = document.querySelector('[data-k="avatar"]');
+    if (!el) return;
+    var len = el.textContent.trim().length;
+    var size = len <= 1 ? 21 : (len === 2 ? 16 : (len === 3 ? 12 : 10));
+    el.style.fontSize = size + 'px';
+    el.style.letterSpacing = len > 1 ? '0' : '1px';
+  }
+
   function applyNumbers() {
+    fitAvatar();
     var outEl = document.querySelector('[data-k="expense"]');
     var inEl = document.querySelector('[data-k="income"]');
     var out = outEl ? parseNum(outEl.textContent) : null;
@@ -522,7 +534,7 @@
     el.setAttribute('contenteditable', 'false');
   });
 
-  setTimeout(function () { showToast('双击任意位置即可修改数据'); }, 600);
+  setTimeout(function () { showToast('双击任意位置即可修改'); }, 600);
 })();
 </script>
 </body>
