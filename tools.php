@@ -466,6 +466,36 @@ require __DIR__ . '/includes/header.php';
                 <span class="nav-link-desc">趣味人生哲理</span>
               </a>
             </li>
+            
+
+
+          </ul>
+        </div>
+
+        <!-- 金融演示 -->
+        <div class="nav-card">
+          <div class="nav-card-title">
+            <div class="nav-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+                <line x1="6" y1="15" x2="10" y2="15"/>
+              </svg>
+            </div>
+            金融演示
+          </div>
+          <ul class="nav-link-list">
+            <li class="nav-link-item">
+              <a href="tools/zhaoshangyinhang.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/>
+                  <line x1="2" y1="10" x2="22" y2="10"/>
+                  <line x1="6" y1="15" x2="10" y2="15"/>
+                </svg>
+                招商银行个人中心
+                <span class="nav-link-desc">双击任意数字可修改</span>
+              </a>
+            </li>
           </ul>
         </div>
 
