@@ -213,7 +213,7 @@ require __DIR__ . '/includes/header.php';
 
          <div class="product-card" data-category="web">
           <div class="product-image">
-             <a href="https://niurouzhou.com" target="_blank"><img src="assets/niurouzhou.png" alt="会员平台"></a>
+             <a href="https://neoapp.gongziyu.com/" target="_blank"><img src="assets/niurouzhou.png" alt="会员平台"></a>
             <span class="product-badge new">新品</span>
           </div>
           <div class="product-content">
@@ -226,7 +226,7 @@ require __DIR__ . '/includes/header.php';
 
           <div class="product-card" data-category="web">
           <div class="product-image">
-             <a href="https://niurouzhou.com" target="_blank"><img src="assets/zhongbao.png" alt="众包平台"></a>
+             <a href="https://neoapp.gongziyu.com/" target="_blank"><img src="assets/zhongbao.png" alt="众包平台"></a>
             <span class="product-badge new">新品</span>
           </div>
           <div class="product-content">
