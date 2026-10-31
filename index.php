@@ -108,7 +108,7 @@ require __DIR__ . '/includes/header.php';
             <span class="hero-goal-hint-label">试试：</span>
             <button type="button" class="hero-goal-chip" data-goal="三个月练成六块腹肌">三个月练成六块腹肌</button>
            <button type="button" class="hero-goal-chip" data-goal="百万房产销冠">百万房产销冠</button>
-          <button type="button" class="hero-goal-chip" data-goal="0-1操盘亿级服装电商">0-1操盘亿级服装电商</button>
+          <button type="button" class="hero-goal-chip" data-goal="3天学会AI漫剧生成">3天学会AI漫剧生成</button>
           
           
           </div>

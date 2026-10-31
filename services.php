@@ -8,6 +8,88 @@ $ogDescription = '网站开发、小程序开发、企业软件定制、AI解决
 $activeNav = 'services';
 $pwaTitle = '公子鱼AI';
 
+ob_start();
+?>
+<style>
+    /* 手机端适配（覆盖行内样式的固定两栏 / 大字号） */
+    @media (max-width: 1024px) {
+      .svc-steps { grid-template-columns: repeat(2, 1fr) !important; gap: var(--space-8) !important; }
+    }
+
+    @media (max-width: 900px) {
+      .svc-row {
+        grid-template-columns: 1fr !important;
+        gap: var(--space-8) !important;
+        margin-bottom: var(--space-16) !important;
+      }
+      .svc-row > div { order: 0 !important; }
+      .svc-row img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .svc-hero {
+        padding-top: calc(var(--header-height) + var(--space-10)) !important;
+        padding-bottom: var(--space-10) !important;
+      }
+      .svc-hero h1 { font-size: 36px !important; margin-bottom: var(--space-4) !important; }
+      .svc-hero p { font-size: var(--font-base) !important; }
+
+      .svc-row { gap: var(--space-6) !important; margin-bottom: var(--space-12) !important; }
+      .svc-row h2 { font-size: 24px !important; margin-bottom: var(--space-4) !important; }
+      .svc-row p { font-size: var(--font-base) !important; }
+      .svc-row ul { margin-bottom: var(--space-6) !important; }
+      .svc-row ul li {
+        align-items: flex-start !important;
+        font-size: var(--font-sm) !important;
+      }
+      .svc-row ul li svg { flex-shrink: 0; margin-top: 2px; }
+      .svc-row img { aspect-ratio: 16 / 10; }
+
+      .svc-steps { gap: var(--space-6) !important; }
+      .svc-steps h3 { font-size: var(--font-lg) !important; }
+      .svc-step-num {
+        width: 64px !important;
+        height: 64px !important;
+        font-size: var(--font-xl) !important;
+        margin-bottom: var(--space-4) !important;
+      }
+
+      .accordion-trigger {
+        font-size: var(--font-base) !important;
+        padding: var(--space-4) var(--space-5) !important;
+        gap: var(--space-3) !important;
+      }
+      .accordion-trigger svg { width: 20px; height: 20px; flex-shrink: 0; }
+      .accordion-content > div { padding: 0 var(--space-5) var(--space-5) !important; }
+
+      .svc-cta h2 { font-size: 28px !important; }
+      .svc-cta p { font-size: var(--font-base) !important; margin-bottom: var(--space-8) !important; }
+      .svc-cta .btn { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .svc-hero h1 { font-size: 30px !important; }
+      .svc-row h2 { font-size: 21px !important; }
+      .svc-row img { aspect-ratio: 4 / 3; }
+      .svc-steps { gap: var(--space-5) !important; }
+      .svc-steps h3 { font-size: var(--font-base) !important; }
+      .svc-steps p { font-size: 13px !important; }
+      .svc-step-num {
+        width: 54px !important;
+        height: 54px !important;
+        font-size: var(--font-lg) !important;
+      }
+      .svc-cta h2 { font-size: 24px !important; }
+    }
+  </style>
+<?php
+$pageStyles = ob_get_clean();
+
 require __DIR__ . '/includes/header.php';
 ?>
   <div class="page-loader">
@@ -16,7 +98,7 @@ require __DIR__ . '/includes/header.php';
 
 
   <!-- 页面标题 -->
-  <section style="padding-top: calc(var(--header-height) + var(--space-20)); padding-bottom: var(--space-16); text-align: center; position: relative;">
+  <section class="svc-hero" style="padding-top: calc(var(--header-height) + var(--space-20)); padding-bottom: var(--space-16); text-align: center; position: relative;">
     <div class="grid-bg"></div>
     <div class="container" style="position: relative; z-index: 1;">
       <div class="reveal">
@@ -33,7 +115,7 @@ require __DIR__ . '/includes/header.php';
   <section class="section" style="background: var(--bg-secondary);">
     <div class="container">
       <!-- 网站开发 -->
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
+      <div class="reveal svc-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
         <div>
           <div class="service-card-icon" style="margin-bottom: var(--space-6);">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 32px; height: 32px;">
@@ -86,7 +168,7 @@ require __DIR__ . '/includes/header.php';
       </div>
 
       <!-- 小程序开发 -->
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
+      <div class="reveal svc-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
         <div style="order: 2;">
           <div class="service-card-icon" style="margin-bottom: var(--space-6);">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 32px; height: 32px;">
@@ -137,7 +219,7 @@ require __DIR__ . '/includes/header.php';
       </div>
 
       <!-- 企业软件 -->
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
+      <div class="reveal svc-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; margin-bottom: var(--space-24);">
         <div>
           <div class="service-card-icon" style="margin-bottom: var(--space-6);">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 32px; height: 32px;">
@@ -190,7 +272,7 @@ require __DIR__ . '/includes/header.php';
       </div>
 
       <!-- AI解决方案 -->
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center;">
+      <div class="reveal svc-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center;">
         <div style="order: 2;">
           <div class="service-card-icon" style="margin-bottom: var(--space-6);">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 32px; height: 32px;">
@@ -251,27 +333,27 @@ require __DIR__ . '/includes/header.php';
         <p class="section-subtitle">标准化的开发流程，确保项目高效、高质量交付</p>
       </div>
       
-      <div class="process-steps stagger-children" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-8);">
+      <div class="process-steps stagger-children svc-steps" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-8);">
         <div style="text-align: center; position: relative;">
-          <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">1</div>
+          <div class="svc-step-num" style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">1</div>
           <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">需求沟通</h3>
           <p style="color: var(--text-muted); font-size: var(--text-sm);">深入了解您的业务需求，制定项目方案和时间计划</p>
         </div>
         
         <div style="text-align: center; position: relative;">
-          <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">2</div>
+          <div class="svc-step-num" style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">2</div>
           <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">设计开发</h3>
           <p style="color: var(--text-muted); font-size: var(--text-sm);">UI/UX设计，前后端开发，迭代测试优化</p>
         </div>
         
         <div style="text-align: center; position: relative;">
-          <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">3</div>
+          <div class="svc-step-num" style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">3</div>
           <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">测试上线</h3>
           <p style="color: var(--text-muted); font-size: var(--text-sm);">全面测试，部署上线，确保系统稳定运行</p>
         </div>
         
         <div style="text-align: center; position: relative;">
-          <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">4</div>
+          <div class="svc-step-num" style="width: 80px; height: 80px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6); font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">4</div>
           <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">运维支持</h3>
           <p style="color: var(--text-muted); font-size: var(--text-sm);">持续监控，定期更新，技术支持服务</p>
         </div>
@@ -351,7 +433,7 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- CTA -->
-  <section class="section" style="background: var(--gradient-primary);">
+  <section class="section svc-cta" style="background: var(--gradient-primary);">
     <div class="container">
       <div class="reveal" style="text-align: center; max-width: 700px; margin: 0 auto;">
         <h2 style="font-size: var(--text-4xl); font-weight: var(--font-bold); color: white; margin-bottom: var(--space-6);">
